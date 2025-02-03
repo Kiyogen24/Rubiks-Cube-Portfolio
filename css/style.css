@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1a1a33 0%, #1a3366 25%, #1a1a33 50%, #1a3366 75%, #1a1a33 100%);
+}
+
+#reset {
+    position: absolute; 
+    z-index: 1;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#reset:hover {
+    background-color: #0056b3;
+}
+
+canvas {
+    display: block;
+}
