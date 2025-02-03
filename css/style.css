@@ -26,3 +26,59 @@ canvas {
     display: block;
 }
 
+.info-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(25, 25, 35, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    min-width: 300px;
+    max-width: 80%;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.info-card.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+
+.close-button:hover {
+    color: #ff4444;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    cursor: pointer;
+}
+  
+  .overlay.active {
+    display: block;
+  }
+  
+  .info-card {
+    cursor: default;
+}

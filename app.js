@@ -8,6 +8,9 @@ let rubiksCube;
 const cubies = [];
 let resetButton;
 let originalMaterials = new Map(); // Pour stocker les matériaux originaux
+let activeInfoCard = null; // Ajouter au début du fichier avec les autres variables globales
+let overlay = null; // Ajouter aux variables globales
+let isModalOpen = false; // Ajouter aux variables globales en haut du fichier
 
 // Paramètres du cube
 const cubeSize = 1;
@@ -160,6 +163,8 @@ function init() {
     }
     isDragging = false;
   });
+
+  createOverlay(); // Ajouter à init()
 }
 
 // Fonctions de base
@@ -393,6 +398,18 @@ function dezoom() {
   });
 }
 
+// Ajouter les autres éléments DOM
+function createOverlay() {
+  overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay && activeInfoCard) {
+      activeInfoCard.querySelector('.close-button').click();
+    }
+  });
+  document.body.appendChild(overlay);
+}
+
 // Ajoutez la gestion du raycasting
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -415,40 +432,129 @@ function getCentralCubie(faceType) {
   );
 }
 
+// Fonction pour créer et afficher la carte d'information
+function showInfoCard(event, faceType, imageIndex) {
+    if (!overlay) createOverlay();
+    
+    isModalOpen = true;
+    controls.enabled = false; // Désactiver les contrôles du cube
+    overlay.classList.add('active');
+
+    // Activer l'overlay
+    overlay.classList.add('active');
+
+    // Fermer la carte précédente si elle existe
+    if (activeInfoCard) {
+        activeInfoCard.remove();
+    }
+
+    const card = document.createElement('div');
+    card.className = 'info-card';
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-button';
+    closeBtn.innerHTML = '×';
+    closeBtn.onclick = () => {
+        isModalOpen = false;
+        controls.enabled = true; // Réactiver les contrôles
+        card.classList.remove('active');
+        overlay.classList.remove('active');
+        setTimeout(() => card.remove(), 300);
+        activeInfoCard = null;
+    };
+
+    const content = document.createElement('div');
+    content.innerHTML = `
+        <h2>${CATEGORIES[faceType]}</h2>
+        <div class="card-content">
+            <!-- Ajoutez ici le contenu spécifique à chaque carte -->
+            <p>Contenu détaillé pour ${CATEGORIES[faceType]}</p>
+        </div>
+    `;
+
+    card.appendChild(closeBtn);
+    card.appendChild(content);
+    document.body.appendChild(card);
+    
+    // Animation d'ouverture
+    requestAnimationFrame(() => {
+        card.classList.add('active');
+    });
+
+    activeInfoCard = card;
+}
+
 // Modifier handleClick
 function handleClick(event) {
-  if (isZoomed || controls.getDistance() !== controls.target.distanceTo(camera.position)) {
-    return;
-  }
-
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(cubies);
-
-  if (intersects.length > 0) {
-    const intersection = intersects[0];
-    const normal = intersection.face.normal.clone();
-    normal.transformDirection(intersection.object.matrixWorld);
+    if (isModalOpen) return; // Ignorer les clics quand le modal est ouvert
     
-    // Déterminer la face avec une meilleure précision
-    let faceType;
-    const epsilon = 0.1;
-    if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
-    else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
-    else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
+    if (isZoomed) {
+        // Si on est en mode zoom, vérifier si on clique sur un cubie avec une image
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // Obtenir le cubie central de la face
-    const centralCubie = getCentralCubie(faceType);
-    
-    if (centralCubie) {
-      titleElement.textContent = CATEGORIES[faceType];
-      titleElement.style.opacity = '1';
-      zoomToFace(centralCubie, normal, faceType);
-      isZoomed = true;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(cubies);
+
+        if (intersects.length > 0) {
+            const cubie = intersects[0].object;
+            const pos = cubie.userData.gridPos;
+            const rowIndex = 2 - Math.floor((pos.y + 1));
+            const colIndex = Math.floor((pos.x + 1));
+
+            // Déterminer la face cliquée
+            const normal = intersects[0].face.normal.clone();
+            normal.transformDirection(cubie.matrixWorld);
+            
+            const epsilon = 0.1;
+            let faceType;
+            if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
+            else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
+            else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
+
+            // Vérifier si ce cubie a une image
+            if (FACE_PREVIEWS[faceType] && 
+                FACE_PREVIEWS[faceType].images[rowIndex] && 
+                FACE_PREVIEWS[faceType].images[rowIndex][colIndex]) {
+                showInfoCard(event, faceType, rowIndex * 3 + colIndex);
+            }
+        }
+        return;
     }
-  }
+
+    // Le reste du code handleClick existant pour la gestion du zoom...
+    if (isZoomed || controls.getDistance() !== controls.target.distanceTo(camera.position)) {
+        return;
+    }
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(cubies);
+
+    if (intersects.length > 0) {
+        const intersection = intersects[0];
+        const normal = intersection.face.normal.clone();
+        normal.transformDirection(intersection.object.matrixWorld);
+        
+        // Déterminer la face avec une meilleure précision
+        let faceType;
+        const epsilon = 0.1;
+        if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
+        else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
+        else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
+
+        // Obtenir le cubie central de la face
+        const centralCubie = getCentralCubie(faceType);
+        
+        if (centralCubie) {
+            titleElement.textContent = CATEGORIES[faceType];
+            titleElement.style.opacity = '1';
+            zoomToFace(centralCubie, normal, faceType);
+            isZoomed = true;
+        }
+    }
 }
 
 // Boucle d'animation simplifiée
