@@ -6,6 +6,8 @@ import { RoundedBoxGeometry } from './node_modules/three/examples/jsm/geometries
 let scene, camera, renderer, controls;
 let rubiksCube;
 const cubies = [];
+let resetButton;
+let originalMaterials = new Map(); // Pour stocker les matériaux originaux
 
 // Paramètres du cube
 const cubeSize = 1;
@@ -32,6 +34,27 @@ const CATEGORIES = {
   left: 'Projets'
 };
 
+
+
+// Modifier le format de FACE_PREVIEWS
+const FACE_PREVIEWS = {
+  front: {
+    images: [
+      ['assets/previews/javascript.png', 'assets/previews/python.jpg', 'assets/previews/java.png'],
+      ['assets/previews/react.png', 'assets/previews/node.png', 'assets/previews/mysql.png'],
+      ['assets/previews/html.png', 'assets/previews/css.png', 'assets/previews/php.png']
+    ]
+  },
+  back: {
+    images: [
+      ['assets/previews/stage1.jpg', 'assets/previews/stage2.jpg', 'assets/previews/stage3.jpg'],
+      ['assets/previews/exp1.jpg', 'assets/previews/exp2.jpg', 'assets/previews/exp3.jpg'],
+      ['assets/previews/proj1.jpg', 'assets/previews/proj2.jpg', 'assets/previews/proj3.jpg']
+    ]
+  }
+};
+
+
 // Créez un élément pour afficher le titre
 const titleElement = document.createElement('div');
 titleElement.style.cssText = `
@@ -56,6 +79,21 @@ let mouseStartY = 0;
 let lastCameraPosition = null;
 let lastCameraRotation = null;
 
+
+// Créer le bouton avant init()
+resetButton = document.createElement('button');
+resetButton.textContent = 'Retour';
+resetButton.id = 'reset';
+resetButton.style.cssText = `
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  display: none;
+`;
+resetButton.addEventListener('click', dezoom);
+document.body.appendChild(resetButton);
 
 // Fonction d'initialisation
 function init() {
@@ -122,20 +160,6 @@ function init() {
     }
     isDragging = false;
   });
-
-  // Modifier le bouton reset
-  const resetButton = document.createElement('button');
-  resetButton.textContent = 'Retour';
-  resetButton.id = 'reset';
-  resetButton.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: auto;
-  `;
-  resetButton.addEventListener('click', dezoom);
-  document.body.appendChild(resetButton);
 }
 
 // Fonctions de base
@@ -143,8 +167,9 @@ function createCubie(size) {
   const geometry = new RoundedBoxGeometry(size, size, size, 5, 0.1);
   const materials = [];
   const faceNames = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+  
   for (let i = 0; i < 6; i++) {
-    // Création d'un canvas pour la texture du sticker
+    const faceName = faceNames[i];
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 256;
     const ctx = canvas.getContext('2d');
@@ -153,35 +178,27 @@ function createCubie(size) {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, 256, 256);
     
-    // Sticker arrondi
-    ctx.fillStyle = stickerColors[faceNames[i]];
-    const radius = 20; // Rayon des coins arrondis
+    // Sticker de base
+    ctx.fillStyle = stickerColors[faceName];
+    const radius = 20;
     const margin = 24;
     const size = 208;
     ctx.beginPath();
-    ctx.moveTo(margin + radius, margin);
-    ctx.lineTo(margin + size - radius, margin);
-    ctx.arcTo(margin + size, margin, margin + size, margin + radius, radius);
-    ctx.lineTo(margin + size, margin + size - radius);
-    ctx.arcTo(margin + size, margin + size, margin + size - radius, margin + size, radius);
-    ctx.lineTo(margin + radius, margin + size);
-    ctx.arcTo(margin, margin + size, margin, margin + size - radius, radius);
-    ctx.lineTo(margin, margin + radius);
-    ctx.arcTo(margin, margin, margin + radius, margin, radius);
-    ctx.closePath();
+    ctx.roundRect(margin, margin, size, size, radius);
     ctx.fill();
     
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshStandardMaterial({
       map: texture,
-      metalness: 0.5,  // Réduit l'aspect métallique
-      roughness: 0.6,  // Augmente la matité
-      envMapIntensity: 0.5
+      metalness: 0.1,
+      roughness: 0.8
     });
-    material.needsUpdate = true;
     materials.push(material);
   }
+
   const mesh = new THREE.Mesh(geometry, materials);
+  originalMaterials.set(mesh.uuid, materials.map(m => m.clone()));
+  
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.rubikPosition = mesh.position.clone(); 
@@ -223,6 +240,32 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// Ajouter cette fonction pour obtenir tous les cubies d'une face
+function getFaceCubies(faceType) {
+  let cubiesOnFace = [];
+  switch(faceType) {
+    case 'front':
+      cubiesOnFace = cubies.filter(cubie => Math.abs(cubie.userData.gridPos.z - 1) < 0.1);
+      break;
+    case 'back':
+      cubiesOnFace = cubies.filter(cubie => Math.abs(cubie.userData.gridPos.z + 1) < 0.1);
+      break;
+    case 'right':
+      cubiesOnFace = cubies.filter(cubie => Math.abs(cubie.userData.gridPos.x - 1) < 0.1);
+      break;
+    case 'left':
+      cubiesOnFace = cubies.filter(cubie => Math.abs(cubie.userData.gridPos.x + 1) < 0.1);
+      break;
+    case 'top':
+      cubiesOnFace = cubies.filter(cubie => Math.abs(cubie.userData.gridPos.y - 1) < 0.1);
+      break;
+    case 'bottom':
+      cubiesOnFace = cubies.filter(cubie => Math.abs(cubie.userData.gridPos.y + 1) < 0.1);
+      break;
+  }
+  return cubiesOnFace;
 }
 
 // Modifier la fonction zoomToFace
@@ -296,11 +339,29 @@ function zoomToFace(face, normal, faceType) {
   }
 
   updateCamera();
+
+  // Afficher le bouton retour
+  resetButton.style.display = 'block';
+
+  // Mettre à jour tous les cubies de la face
+  const faceCubies = getFaceCubies(faceType);
+  faceCubies.forEach(cubie => {
+    updateFaceTextures(cubie, faceType, true);
+  });
 }
 
 // Nouvelle fonction de dézoom
 function dezoom() {
   if (!isZoomed || !lastCameraPosition) return;
+
+  // Cacher le bouton retour
+  resetButton.style.display = 'none';
+  
+  // Supprimer les éléments de la face
+  const container = document.getElementById('face-content');
+  if (container) {
+    container.remove();
+  }
 
   const duration = 1000;
   const startTime = Date.now();
@@ -324,6 +385,12 @@ function dezoom() {
     }
   }
   updateCamera();
+
+  cubies.forEach(cubie => {
+    ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
+      updateFaceTextures(cubie, faceType, false);
+    });
+  });
 }
 
 // Ajoutez la gestion du raycasting
@@ -400,6 +467,70 @@ function animate() {
       camera: !!camera,
       renderer: !!renderer
     });
+  }
+}
+
+// Modifier la fonction updateFaceTextures
+function updateFaceTextures(cubie, faceType, showPreviews = false) {
+  if (!cubie) return;
+  
+  const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
+  if (faceIndex === -1) return;
+
+  if (showPreviews && FACE_PREVIEWS[faceType]) {
+    const pos = cubie.userData.gridPos;
+    // Inverser rowIndex pour commencer par le haut
+    const rowIndex = 2 - Math.floor((pos.y + 1));
+    const colIndex = Math.floor((pos.x + 1));
+    
+    console.log(`Tentative de chargement image pour cubie à position: x=${pos.x}, y=${pos.y}, z=${pos.z}`);
+    console.log(`Indices calculés: row=${rowIndex}, col=${colIndex}`);
+    
+    // Vérifier si l'image existe pour cette position
+    if (FACE_PREVIEWS[faceType].images[rowIndex] && 
+        FACE_PREVIEWS[faceType].images[rowIndex][colIndex]) {
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, 256, 256);
+      
+      const img = new Image();
+      
+      img.onerror = () => {
+        console.log(`Erreur de chargement pour l'image: ${FACE_PREVIEWS[faceType].images[rowIndex][colIndex]}`);
+        // Garder le sticker original en cas d'erreur
+        const originals = originalMaterials.get(cubie.uuid);
+        if (originals) {
+          cubie.material[faceIndex] = originals[faceIndex].clone();
+        }
+      };
+      
+      img.onload = () => {
+        console.log(`Image chargée avec succès: ${img.src}`);
+        ctx.drawImage(img, 24, 24, 208, 208);
+        const texture = new THREE.CanvasTexture(canvas);
+        cubie.material[faceIndex].map = texture;
+        cubie.material[faceIndex].map.needsUpdate = true;
+      };
+      
+      img.src = FACE_PREVIEWS[faceType].images[rowIndex][colIndex];
+    } else {
+      console.log(`Pas d'image trouvée pour position row=${rowIndex}, col=${colIndex}`);
+      // Garder le sticker original si pas d'image
+      const originals = originalMaterials.get(cubie.uuid);
+      if (originals) {
+        cubie.material[faceIndex] = originals[faceIndex].clone();
+      }
+    }
+  } else {
+    // Restaurer le matériau original
+    const originals = originalMaterials.get(cubie.uuid);
+    if (originals) {
+      cubie.material[faceIndex] = originals[faceIndex].clone();
+    }
   }
 }
 
