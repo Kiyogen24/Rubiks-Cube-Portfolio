@@ -19,10 +19,10 @@ const positions = [-1, 0, 1];
 
 // Couleurs pour les stickers
 const stickerColors = {
-  front: '#FF6F00',  // Orange 
-  back: '#FF3D3D',   // Rouge 
+  front: '#B90000',  // Rouge 
+  back: '#E87000',   // Orange 
   top: '#FAFAFA',    // Blanc 
-  bottom: '#FFFF00', // Jaune 
+  bottom: '#ffff00', // Jaune  
   right: '#3366FF',  // Bleu
   left: '#00CC66'    // Vert
 };
@@ -127,11 +127,15 @@ function init() {
   controls.maxDistance = 15;  // Distance maximale
 
   // Éclairage
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
   directionalLight.position.set(10, 10, 10);
   scene.add(directionalLight);
+  // Ajouter une lumière supplémentaire pour plus d'équilibre
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  fillLight.position.set(-10, -10, -10);
+  scene.add(fillLight);
 
   // Ajouter des logs de débogage
   console.log("Scene créée:", scene);
@@ -215,8 +219,8 @@ function createCubie(size, gridPosition) { // Ajouter gridPosition comme paramè
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshStandardMaterial({
       map: texture,
-      metalness: 0.1,
-      roughness: 0.7, 
+      metalness: 0,
+      roughness: 0.8, 
     });
     
     // Améliorer la qualité des textures
@@ -336,7 +340,12 @@ function zoomToFace(face, normal, faceType) {
 
   const targetCameraPos = targetPosition.clone().add(cameraOffset);
 
-  // Calcul amélioré de la matrice de rotation
+
+  // Animation fluide
+  controls.enabled = false;
+  const duration = 1000;
+  const startTime = Date.now();
+  const startPos = camera.position.clone();
   const lookDirection = targetPosition.clone().sub(targetCameraPos).normalize();
   const rightVector = new THREE.Vector3().crossVectors(upVector, lookDirection).normalize();
   const adjustedUpVector = new THREE.Vector3().crossVectors(lookDirection, rightVector).normalize();
@@ -346,15 +355,9 @@ function zoomToFace(face, normal, faceType) {
     adjustedUpVector,
     lookDirection.negate()
   );
-
   const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(targetMatrix);
-
-  // Animation fluide
-  controls.enabled = false;
-  const duration = 1000;
-  const startTime = Date.now();
-  const startPos = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
+
 
   function updateCamera() {
     const elapsed = Date.now() - startTime;
