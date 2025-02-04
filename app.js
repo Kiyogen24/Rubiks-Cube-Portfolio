@@ -11,6 +11,9 @@ let originalMaterials = new Map(); // Pour stocker les matériaux originaux
 let activeInfoCard = null; // Ajouter au début du fichier avec les autres variables globales
 let overlay = null; // Ajouter aux variables globales
 let isModalOpen = false; // Ajouter aux variables globales en haut du fichier
+let currentSection = 'intro';
+let isScrolling = false;
+let menuBtn, menu; // Ajouter aux variables globales
 
 // Paramètres du cube
 const cubeSize = 1;
@@ -24,7 +27,7 @@ const stickerColors = {
   top: '#FAFAFA',    // Blanc 
   bottom: '#ffff00', // Jaune  
   right: '#3366FF',  // Bleu
-  left: '#00CC66'    // Vert
+  left: '#00994C'    // Vert
 };
 
 // Ajoutez ces constantes au début du fichier
@@ -115,7 +118,11 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  document.body.appendChild(renderer.domElement);
+
+  // Déplacer le renderer dans la section cube
+  const cubeSection = document.getElementById('cube-section');
+  cubeSection.appendChild(renderer.domElement);
+  renderer.domElement.style.position = 'absolute';
 
   // Contrôles
   controls = new OrbitControls(camera, renderer.domElement);
@@ -129,10 +136,9 @@ function init() {
   // Éclairage
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
   directionalLight.position.set(10, 10, 10);
   scene.add(directionalLight);
-  // Ajouter une lumière supplémentaire pour plus d'équilibre
   const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
   fillLight.position.set(-10, -10, -10);
   scene.add(fillLight);
@@ -168,6 +174,7 @@ function init() {
   });
 
   createOverlay(); // Ajouter à init()
+  setupNavigation();
 }
 
 // Fonctions de base
@@ -182,8 +189,14 @@ function createCubie(size, gridPosition) { // Ajouter gridPosition comme paramè
     canvas.width = canvas.height = 512; // Augmenter la résolution
     const ctx = canvas.getContext('2d');
     
-    // Fond noir
-    ctx.fillStyle = 'black';
+    // Fond noir avec dégradé
+    const gradient = ctx.createRadialGradient(
+      256, 256, 0,
+      256, 256, 256
+    );
+    gradient.addColorStop(0, '#222');
+    gradient.addColorStop(1, '#000');
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 512, 512);
     
     // Sticker arrondi
@@ -194,6 +207,16 @@ function createCubie(size, gridPosition) { // Ajouter gridPosition comme paramè
     ctx.beginPath();
     ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
     ctx.fill();
+
+    /*
+    // Ajouter un effet de brillance léger
+    const highlight = ctx.createLinearGradient(0, 0, 512, 512);
+    highlight.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+    highlight.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+    highlight.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+    ctx.fillStyle = highlight;
+    ctx.fill();
+    */
 
     // Si c'est la face supérieure du cubie central, ajouter la photo de profil
     if (faceName === 'top' && 
@@ -672,13 +695,56 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
   }
 }
 
+// Modifier la fonction setupNavigation
+function setupNavigation() {
+    const container = document.querySelector('.container');
+    const sections = Array.from(document.querySelectorAll('section'));
+    const buttons = document.querySelectorAll('.nav-button');
+    menuBtn = document.querySelector('.menu-btn');
+    menu = document.querySelector('.menu');
+    
+    function updateUI() {
+        const currentScroll = container.scrollTop;
+        const windowHeight = window.innerHeight;
+        const currentIndex = Math.round(currentScroll / windowHeight);
+        
+        // Mettre à jour les boutons
+        buttons.forEach((button, index) => {
+            button.classList.toggle('active', index === currentIndex);
+        });
+        
+        // Gérer la visibilité du menu
+        const isCubeSection = currentIndex === 1;
+        menuBtn.style.display = isCubeSection ? 'flex' : 'none';
+        if (!isCubeSection && menu.classList.contains('active')) {
+            menu.classList.remove('active');
+            menuBtn.classList.remove('open');
+        }
+    }
+
+    // Gérer le clic sur les boutons
+    buttons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            sections[index].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Écouter le scroll
+    container.addEventListener('scroll', () => {
+        updateUI();
+    }, { passive: true });
+
+    // État initial
+    updateUI();
+}
+
 // Démarrage
 init();
 animate();
 
 // Menu hamburger
-const menuBtn = document.querySelector('.menu-btn');
-const menu = document.querySelector('.menu');
+menuBtn = document.querySelector('.menu-btn');
+menu = document.querySelector('.menu');
 let menuOpen = false;
 
 

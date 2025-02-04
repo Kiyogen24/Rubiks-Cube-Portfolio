@@ -15,39 +15,88 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <script type="module" src="app.js"></script>
-
-    <h1 class="main-title">Mon Portfolio</h1>
-
-    <div class="menu-btn">
-        <div class="menu-btn__burger"></div>
+    <!-- Boutons de navigation -->
+    <div class="nav-buttons">
+        <button class="nav-button" data-section="0"></button>
+        <button class="nav-button" data-section="1"></button>
+        <button class="nav-button" data-section="2"></button>
     </div>
 
-    <nav class="menu">
-      <div class="menu-item">
-          <h3>À propos</h3>
-          <p>Découvrez qui je suis</p>
-      </div>
-      <div class="menu-item">
-          <h3>Compétences</h3>
-          <p>Mes technologies et savoir-faire</p>
-      </div>
-      <div class="menu-item">
-          <h3>Projets</h3>
-          <p>Mes réalisations</p>
-      </div>
-      <div class="menu-item">
-          <h3>Formation</h3>
-          <p>Mon parcours académique</p>
-      </div>
-      <div class="menu-item">
-          <h3>Expériences</h3>
-          <p>Mon parcours professionnel</p>
-      </div>
-      <div class="menu-item">
-          <h3>Mon CV</h3>
-          <p>Télécharger mon CV</p>
-      </div>
-    </nav>
+    <div class="container">
+        <!-- Section Introduction -->
+        <section id="intro">
+          <div class="intro-content">
+            <h1>Bienvenue sur mon Portfolio</h1>
+            <p class="typing-text">Je suis développeur web &amp; applications</p>
+            <div class="intro-text">
+              <p>Passionné par le développement et l'innovation technologique</p>
+              <p>Scroll pour découvrir mon univers en 3D</p>
+            </div>
+            <div class="scroll-indicator">
+              <span class="mouse"></span>
+              <span class="scroll-text">Scroll</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section Cube -->
+        <section id="cube-section">
+          <!-- Le canvas Three.js sera injecté ici -->
+          <div class="menu-btn">
+            <div class="menu-btn__burger"></div>
+          </div>
+
+          <nav class="menu">
+            <!-- menu items -->
+            <div class="menu-item">
+              <h3>À propos</h3>
+              <p>Découvrez qui je suis</p>
+            </div>
+            <div class="menu-item">
+              <h3>Compétences</h3>
+              <p>Mes technologies et savoir-faire</p>
+            </div>
+            <div class="menu-item">
+              <h3>Projets</h3>
+              <p>Mes réalisations</p>
+            </div>
+            <div class="menu-item">
+              <h3>Formation</h3>
+              <p>Mon parcours académique</p>
+            </div>
+            <div class="menu-item">
+              <h3>Expériences</h3>
+              <p>Mon parcours professionnel</p>
+            </div>
+            <div class="menu-item">
+              <h3>Mon CV</h3>
+              <p>Télécharger mon CV</p>
+            </div>
+          </nav>
+        </section>
+
+        <!-- Section Footer -->
+        <section id="footer-section">
+          <footer>
+            <div class="footer-content">
+              <div class="contact-info">
+                <h3>Contact</h3>
+                <p>📧 Email: contact@example.com</p>
+                <p>📱 Téléphone: +33 6 XX XX XX XX</p>
+                <p>📍 Localisation: Paris, France</p>
+              </div>
+              <div class="social-links">
+                <h3>Réseaux sociaux</h3>
+                <a href="#" target="_blank">🔗 GitHub</a>
+                <a href="#" target="_blank">🔗 LinkedIn</a>
+                <a href="#" target="_blank">🔗 Twitter</a>
+                <a href="#" target="_blank">📄 Télécharger mon CV</a>
+              </div>
+            </div>
+          </footer>
+        </section>
+    </div>
+
+    <script type="module" src="app.js"></script>
   </body>
 </html>
