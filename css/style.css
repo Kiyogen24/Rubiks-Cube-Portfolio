@@ -1,29 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Raleway:wght@400;600&display=swap');
+
 body {
     margin: 0;
     overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1a1a33 0%, #1a3366 25%, #1a1a33 50%, #1a3366 75%, #1a1a33 100%);
+    font-family: 'Raleway', sans-serif;
+    background: radial-gradient(circle, #FFFCF1 0%, #FFF8DE 40%, #FFF4C6 100%);
 }
 
-#reset {
-    position: absolute; 
-    z-index: 1;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
+.main-title {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    transform: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 2em;
+    color: #3a3a3a;
+    margin: 0;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.97);;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(205, 190, 144, 0.2);
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+    z-index: 99;
+    transition: all 0.3s ease;
+}
+
+.main-title.hidden {
+    opacity: 0;
+    transform: translateX(-100%);
+    pointer-events: none;
+}
+
+/* Style du menu hamburger amélioré */
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    z-index: 101;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.97);;
+    border-radius: 8px;
+    border: 2px solid #cdbe90;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-btn__burger {
+    position: absolute;
+    width: 25px;
+    height: 2px;
+    background: #3a3a3a;
+    border-radius: 5px;
+    transition: all .3s ease-in-out;
+}
+
+.menu-btn__burger::before,
+.menu-btn__burger::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 2px;
+    background: #3a3a3a;
+    border-radius: 5px;
+    transition: all .3s ease-in-out;
+}
+
+.menu-btn__burger::before {
+    transform: translateY(-8px);
+}
+
+.menu-btn__burger::after {
+    transform: translateY(8px);
+}
+
+/* Animation du menu hamburger */
+.menu-btn.open .menu-btn__burger {
+    transform: translateX(-50px);
+    background: transparent;
+}
+
+.menu-btn.open .menu-btn__burger::before {
+    transform: rotate(45deg) translate(35px, -35px);
+}
+
+.menu-btn.open .menu-btn__burger::after {
+    transform: rotate(-45deg) translate(35px, 35px);
+}
+
+/* Menu déroulant amélioré */
+.menu {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 300px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.97);
+    padding: 80px 20px 120px; /* Augmenter le padding bottom */
+    transition: 0.3s ease-in-out;
+    z-index: 100;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    overflow-y: scroll; /* Changer auto en scroll */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cdbe90 #f5f5dc;
+}
+
+.menu-item:last-child {
+    margin-bottom: 100px; /* Ajouter une marge en bas du dernier élément */
+}
+
+.menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background: #f5f5dc;
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background-color: #cdbe90;
+    border-radius: 4px;
+}
+
+.menu.active {
+    right: 0;
+}
+
+.menu-item {
+    margin: 15px 0;
+    padding: 15px;
+    border-bottom: 1px solid rgba(205, 190, 144, 0.3);
+    cursor: pointer;
+    transition: 0.3s ease;
+    pointer-events: auto;
+}
+
+.menu-item:hover {
+    background: rgba(205, 190, 144, 0.2);
+    padding-left: 25px;
+}
+
+.menu-item.active {
+    background: rgba(205, 190, 144, 0.3);
+    padding-left: 25px;
+}
+
+#titleElement {
+    display: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #4a4a4a;
+    font-size: 2.5em;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style du bouton retour modernisé */
+#reset {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.97);;
+    color: #3a3a3a;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#reset::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    border-left: 3px solid #3a3a3a;
+    border-bottom: 3px solid #3a3a3a;
+    transform: translate(-25%, -50%) rotate(45deg);
 }
 
 #reset:hover {
-    background-color: #0056b3;
-}
-
-canvas {
-    display: block;
+    background: #e5e5cc;
+    transform: translateX(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .info-card {
@@ -31,15 +204,29 @@ canvas {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    background: rgba(25, 25, 35, 0.95);
-    padding: 20px;
-    border-radius: 10px;
-    color: white;
+    background: rgba(245, 245, 220, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    color: #4a4a4a;
     min-width: 300px;
     max-width: 80%;
     z-index: 1000;
-    transition: transform 0.3s ease-in-out;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    font-family: 'Raleway', sans-serif;
+    border: 1px solid rgba(205, 190, 144, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.info-card h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #3a3a3a;
+    font-size: 1.8em;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(205, 190, 144, 0.3);
+    padding-bottom: 10px;
 }
 
 .info-card.active {
@@ -48,19 +235,21 @@ canvas {
 
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
     background: none;
     border: none;
-    color: white;
-    font-size: 24px;
+    color: #4a4a4a;
+    font-size: 28px;
     cursor: pointer;
     padding: 5px;
     line-height: 1;
+    transition: all 0.2s ease;
 }
 
 .close-button:hover {
-    color: #ff4444;
+    color: #cd7f32;
+    transform: scale(1.1);
 }
 
 .overlay {
@@ -69,16 +258,19 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(205, 190, 144, 0.3);
     z-index: 999;
     display: none;
     cursor: pointer;
+    backdrop-filter: blur(3px);
+    transition: all 0.3s ease;
 }
-  
-  .overlay.active {
+
+.overlay.active {
     display: block;
-  }
-  
-  .info-card {
-    cursor: default;
+}
+
+.card-content {
+    line-height: 1.6;
+    color: #4a4a4a;
 }

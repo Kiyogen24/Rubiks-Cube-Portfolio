@@ -14,25 +14,25 @@ let isModalOpen = false; // Ajouter aux variables globales en haut du fichier
 
 // Paramètres du cube
 const cubeSize = 1;
-const gap = 0;
+const gap = 0.001;
 const positions = [-1, 0, 1];
 
 // Couleurs pour les stickers
 const stickerColors = {
-  front:  '#FF5900',
-  back:   '#ff0000', 
-  top:    '#ffffff',
-  bottom: '#ffff00',
-  right:  '#008000',
-  left:   '#0000ff'  
+  front: '#FF6F00',  // Orange 
+  back: '#FF3D3D',   // Rouge 
+  top: '#FAFAFA',    // Blanc 
+  bottom: '#FFFF00', // Jaune 
+  right: '#3366FF',  // Bleu
+  left: '#00CC66'    // Vert
 };
 
 // Ajoutez ces constantes au début du fichier
 const CATEGORIES = {
   front: 'Compétences',
   back: 'Expériences',
-  top: 'Contact',
-  bottom: 'Passions',
+  top: 'À propos', 
+  bottom: 'Mon CV', 
   right: 'Formation',
   left: 'Projets'
 };
@@ -60,6 +60,7 @@ const FACE_PREVIEWS = {
 
 // Créez un élément pour afficher le titre
 const titleElement = document.createElement('div');
+titleElement.id = 'titleElement';
 titleElement.style.cssText = `
   position: fixed;
   top: 20px;
@@ -85,16 +86,8 @@ let lastCameraRotation = null;
 
 // Créer le bouton avant init()
 resetButton = document.createElement('button');
-resetButton.textContent = 'Retour';
 resetButton.id = 'reset';
-resetButton.style.cssText = `
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
-  display: none;
-`;
+resetButton.setAttribute('aria-label', 'Retour');
 resetButton.addEventListener('click', dezoom);
 document.body.appendChild(resetButton);
 
@@ -108,14 +101,20 @@ function init() {
   camera.position.set(5, 5, 7);
   camera.lookAt(0, 0, 0);
 
-  // Configuration du rendu
+  // Configuration du rendu avec meilleure qualité
   renderer = new THREE.WebGLRenderer({ 
     antialias: true,
-    alpha: true  // Rend le fond transparent
+    alpha: true,
+    precision: 'highp',
+    powerPreference: "high-performance"
   });
-  renderer.setClearColor(0x000000, 0); // Fond transparent
+  
+  // Augmenter la résolution du rendu
+  const pixelRatio = window.devicePixelRatio;
+  renderer.setPixelRatio(pixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.body.appendChild(renderer.domElement);
 
   // Contrôles
@@ -168,36 +167,64 @@ function init() {
 }
 
 // Fonctions de base
-function createCubie(size) {
-  const geometry = new RoundedBoxGeometry(size, size, size, 5, 0.1);
+function createCubie(size, gridPosition) { // Ajouter gridPosition comme paramètre
+  const geometry = new THREE.BoxGeometry(size, size, size);
   const materials = [];
   const faceNames = ['right', 'left', 'top', 'bottom', 'front', 'back'];
   
   for (let i = 0; i < 6; i++) {
     const faceName = faceNames[i];
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 256;
+    canvas.width = canvas.height = 512; // Augmenter la résolution
     const ctx = canvas.getContext('2d');
     
     // Fond noir
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, 256, 256);
+    ctx.fillRect(0, 0, 512, 512);
     
-    // Sticker de base
+    // Sticker arrondi
     ctx.fillStyle = stickerColors[faceName];
-    const radius = 20;
-    const margin = 24;
-    const size = 208;
+    const radius = 35; // Augmenter le rayon d'arrondi
+    const margin = 32;
+    const stickerSize = 448;
     ctx.beginPath();
-    ctx.roundRect(margin, margin, size, size, radius);
+    ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
     ctx.fill();
+
+    // Si c'est la face supérieure du cubie central, ajouter la photo de profil
+    if (faceName === 'top' && 
+      gridPosition && 
+      gridPosition.x === 0 && 
+      gridPosition.y === 1 && 
+      gridPosition.z === 0) {
+    const img = new Image();
+    img.onload = () => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
+      ctx.clip();
+      ctx.drawImage(img, margin, margin, stickerSize, stickerSize);
+      ctx.restore();
+      
+      const texture = materials[i].map;
+      texture.needsUpdate = true;
+    };
+    img.src = '/assets/pp.png';
+  }
     
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshStandardMaterial({
       map: texture,
       metalness: 0.1,
-      roughness: 0.8
+      roughness: 0.7, 
     });
+    
+    // Améliorer la qualité des textures
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    texture.minFilter = THREE.LinearMipMapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = true;
+    
     materials.push(material);
   }
 
@@ -207,8 +234,6 @@ function createCubie(size) {
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.rubikPosition = mesh.position.clone(); 
-
-  // Ajouter l'interactivité
   mesh.userData.hoverable = true;
   mesh.userData.clickable = true;
 
@@ -221,13 +246,14 @@ function createRubiksCube() {
   for (let x of positions) {
     for (let y of positions) {
       for (let z of positions) {
-        const cubie = createCubie(cubeSize);
+        const gridPosition = new THREE.Vector3(x, y, z);
+        const cubie = createCubie(cubeSize, gridPosition);
         cubie.position.set(
           x * (cubeSize + gap),
           y * (cubeSize + gap),
           z * (cubeSize + gap)
         );
-        cubie.userData.gridPos = new THREE.Vector3(x, y, z);
+        cubie.userData.gridPos = gridPosition;
         rubiksCube.add(cubie);
         cubies.push(cubie);
         
@@ -279,7 +305,7 @@ function zoomToFace(face, normal, faceType) {
   lastCameraRotation = camera.quaternion.clone();
   
   const targetPosition = face.position.clone();
-  const distance = 5;
+  const distance = 6;
   
   // Calculer l'orientation finale avec des vecteurs normalisés
   let cameraOffset;
@@ -359,6 +385,11 @@ function zoomToFace(face, normal, faceType) {
 function dezoom() {
   if (!isZoomed || !lastCameraPosition) return;
 
+  // Cacher le menu et réinitialiser son état
+  menuBtn.classList.remove('open');
+  menu.classList.remove('active');
+  menuOpen = false;
+
   // Cacher le bouton retour
   resetButton.style.display = 'none';
   
@@ -371,7 +402,18 @@ function dezoom() {
   const duration = 1000;
   const startTime = Date.now();
   const startPos = camera.position.clone();
-  const endPos = lastCameraPosition;
+  let endPos = lastCameraPosition.clone();
+
+  // Vérifier si la caméra est trop proche
+  const minDistance = 7;
+  const distanceFromCenter = endPos.length();
+  
+  if (distanceFromCenter < minDistance) {
+    // Calculer la direction normalisée depuis l'origine
+    const direction = endPos.clone().normalize();
+    // Appliquer la distance minimale dans cette direction
+    endPos = direction.multiplyScalar(minDistance);
+  }
 
   function updateCamera() {
     const elapsed = Date.now() - startTime;
@@ -488,45 +530,6 @@ function showInfoCard(event, faceType, imageIndex) {
 function handleClick(event) {
     if (isModalOpen) return; // Ignorer les clics quand le modal est ouvert
     
-    if (isZoomed) {
-        // Si on est en mode zoom, vérifier si on clique sur un cubie avec une image
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(cubies);
-
-        if (intersects.length > 0) {
-            const cubie = intersects[0].object;
-            const pos = cubie.userData.gridPos;
-            const rowIndex = 2 - Math.floor((pos.y + 1));
-            const colIndex = Math.floor((pos.x + 1));
-
-            // Déterminer la face cliquée
-            const normal = intersects[0].face.normal.clone();
-            normal.transformDirection(cubie.matrixWorld);
-            
-            const epsilon = 0.1;
-            let faceType;
-            if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
-            else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
-            else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
-
-            // Vérifier si ce cubie a une image
-            if (FACE_PREVIEWS[faceType] && 
-                FACE_PREVIEWS[faceType].images[rowIndex] && 
-                FACE_PREVIEWS[faceType].images[rowIndex][colIndex]) {
-                showInfoCard(event, faceType, rowIndex * 3 + colIndex);
-            }
-        }
-        return;
-    }
-
-    // Le reste du code handleClick existant pour la gestion du zoom...
-    if (isZoomed || controls.getDistance() !== controls.target.distanceTo(camera.position)) {
-        return;
-    }
-
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -538,21 +541,33 @@ function handleClick(event) {
         const normal = intersection.face.normal.clone();
         normal.transformDirection(intersection.object.matrixWorld);
         
-        // Déterminer la face avec une meilleure précision
         let faceType;
         const epsilon = 0.1;
         if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
         else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
         else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
 
-        // Obtenir le cubie central de la face
         const centralCubie = getCentralCubie(faceType);
         
         if (centralCubie) {
-            titleElement.textContent = CATEGORIES[faceType];
-            titleElement.style.opacity = '1';
             zoomToFace(centralCubie, normal, faceType);
             isZoomed = true;
+
+            // Ouvrir le menu et sélectionner la bonne catégorie
+            if (!menuOpen) {
+                menuBtn.classList.add('open');
+                menu.classList.add('active');
+                menuOpen = true;
+            }
+
+            // Activer la bonne catégorie dans le menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.querySelector('h3').textContent === CATEGORIES[faceType]) {
+                    item.classList.add('active');
+                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
         }
     }
 }
@@ -597,11 +612,11 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
         FACE_PREVIEWS[faceType].images[rowIndex][colIndex]) {
       
       const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 256;
+      canvas.width = canvas.height = 512;
       const ctx = canvas.getContext('2d');
       
       ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, 256, 256);
+      ctx.fillRect(0, 0, 512, 512);
       
       const img = new Image();
       
@@ -615,9 +630,23 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
       };
       
       img.onload = () => {
-        console.log(`Image chargée avec succès: ${img.src}`);
-        ctx.drawImage(img, 24, 24, 208, 208);
+        // Créer le masque arrondi
+        ctx.beginPath();
+        const radius = 35;
+        const margin = 32;
+        const previewSize = 448;
+        ctx.roundRect(margin, margin, previewSize, previewSize, radius);
+        ctx.clip();
+        
+        // Dessiner l'image avec les nouvelles dimensions
+        ctx.drawImage(img, margin, margin, previewSize, previewSize);
+        
         const texture = new THREE.CanvasTexture(canvas);
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        texture.minFilter = THREE.LinearMipMapLinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.generateMipmaps = true;
+        
         cubie.material[faceIndex].map = texture;
         cubie.material[faceIndex].map.needsUpdate = true;
       };
@@ -643,3 +672,50 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
 // Démarrage
 init();
 animate();
+
+// Menu hamburger
+const menuBtn = document.querySelector('.menu-btn');
+const menu = document.querySelector('.menu');
+let menuOpen = false;
+
+
+// Après l'initialisation du menu
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+      const category = item.querySelector('h3').textContent;
+      // Trouver le type de face correspondant à la catégorie
+      const faceType = Object.keys(CATEGORIES).find(key => CATEGORIES[key] === category);
+      
+      if (faceType) {
+          const centralCubie = getCentralCubie(faceType);
+          if (centralCubie) {
+              // Créer un vecteur normal pour la face
+              let normal = new THREE.Vector3();
+              switch(faceType) {
+                  case 'front': normal.set(0, 0, 1); break;
+                  case 'back': normal.set(0, 0, -1); break;
+                  case 'right': normal.set(1, 0, 0); break;
+                  case 'left': normal.set(-1, 0, 0); break;
+                  case 'top': normal.set(0, 1, 0); break;
+                  case 'bottom': normal.set(0, -1, 0); break;
+              }
+              
+              zoomToFace(centralCubie, normal, faceType);
+              isZoomed = true;
+
+              // Activer l'élément du menu
+              document.querySelectorAll('.menu-item').forEach(menuItem => {
+                  menuItem.classList.remove('active');
+              });
+              item.classList.add('active');
+          }
+      }
+  });
+});
+
+// Modification de l'événement du menu hamburger
+menuBtn.addEventListener('click', () => {
+  menuBtn.classList.toggle('open');
+  menu.classList.toggle('active');
+  menuOpen = !menuOpen;
+});
