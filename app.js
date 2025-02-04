@@ -23,10 +23,10 @@ const positions = [-1, 0, 1];
 // Couleurs pour les stickers
 const stickerColors = {
   front: '#B90000',  // Rouge 
-  back: '#E87000',   // Orange 
-  top: '#FAFAFA',    // Blanc 
+  back: '#ff8000',   // Orange 
+  top: '#FFFFFF',    // Blanc 
   bottom: '#ffff00', // Jaune  
-  right: '#3366FF',  // Bleu
+  right: '#000FFF',  // Bleu 
   left: '#00994C'    // Vert
 };
 
@@ -94,6 +94,21 @@ resetButton.setAttribute('aria-label', 'Retour');
 resetButton.addEventListener('click', dezoom);
 document.body.appendChild(resetButton);
 
+const themeBtn = document.querySelector('.theme-btn');
+const themeIcon = document.querySelector('.theme-icon');
+const currentTheme = localStorage.getItem('theme');
+
+themeBtn.addEventListener('click', function() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  
+  // Changer l'icône
+  const themeIcon = document.querySelector('.theme-icon');
+  themeIcon.classList.remove(isDark ? 'fa-moon' : 'fa-sun');
+  themeIcon.classList.add(isDark ? 'fa-sun' : 'fa-moon');
+});
+
 // Fonction d'initialisation
 function init() {
   // Création de la scène
@@ -155,23 +170,41 @@ function init() {
   window.addEventListener('resize', onWindowResize);
 
   window.addEventListener('mousedown', (e) => {
+    const cubeSection = document.getElementById('cube-section');
+    const rect = cubeSection.getBoundingClientRect();
+    const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+
+    if (!isCubeVisible) return;
+
     isDragging = false;
     mouseStartX = e.clientX;
     mouseStartY = e.clientY;
   });
 
-  window.addEventListener('mousemove', (e) => {
-    if (Math.abs(e.clientX - mouseStartX) > 5 || Math.abs(e.clientY - mouseStartY) > 5) {
-      isDragging = true;
-    }
-  });
+    window.addEventListener('mousemove', (e) => {
+        const cubeSection = document.getElementById('cube-section');
+        const rect = cubeSection.getBoundingClientRect();
+        const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
 
-  window.addEventListener('mouseup', (e) => {
-    if (!isDragging) {
-      handleClick(e);
-    }
-    isDragging = false;
-  });
+        if (!isCubeVisible) return;
+
+        if (Math.abs(e.clientX - mouseStartX) > 5 || Math.abs(e.clientY - mouseStartY) > 5) {
+            isDragging = true;
+        }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        const cubeSection = document.getElementById('cube-section');
+        const rect = cubeSection.getBoundingClientRect();
+        const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+
+        if (!isCubeVisible) return;
+
+        if (!isDragging) {
+            handleClick(e);
+        }
+        isDragging = false;
+    });
 
   createOverlay(); // Ajouter à init()
   setupNavigation();
@@ -409,61 +442,72 @@ function zoomToFace(face, normal, faceType) {
 
 // Nouvelle fonction de dézoom
 function dezoom() {
-  if (!isZoomed || !lastCameraPosition) return;
+    if (!isZoomed || !lastCameraPosition) return;
 
-  // Cacher le menu et réinitialiser son état
-  menuBtn.classList.remove('open');
-  menu.classList.remove('active');
-  menuOpen = false;
+    // Réactiver le scroll
+    const body = document.querySelector('.container');
+    body.style.overflow = 'auto';
 
-  // Cacher le bouton retour
-  resetButton.style.display = 'none';
-  
-  // Supprimer les éléments de la face
-  const container = document.getElementById('face-content');
-  if (container) {
-    container.remove();
-  }
+    menuBtn.classList.remove('open');
+    menu.classList.remove('active');
+    menuOpen = false;
 
-  const duration = 1000;
-  const startTime = Date.now();
-  const startPos = camera.position.clone();
-  let endPos = lastCameraPosition.clone();
+    resetButton.style.display = 'none';
+    
 
-  // Vérifier si la caméra est trop proche
-  const minDistance = 7;
-  const distanceFromCenter = endPos.length();
-  
-  if (distanceFromCenter < minDistance) {
-    // Calculer la direction normalisée depuis l'origine
-    const direction = endPos.clone().normalize();
-    // Appliquer la distance minimale dans cette direction
-    endPos = direction.multiplyScalar(minDistance);
-  }
+    // Cacher le menu et réinitialiser son état
+    menuBtn.classList.remove('open');
+    menu.classList.remove('active');
+    menuOpen = false;
 
-  function updateCamera() {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-    camera.position.lerpVectors(startPos, endPos, easeProgress);
-    camera.lookAt(0, 0, 0);
-
-    if (progress < 1) {
-      requestAnimationFrame(updateCamera);
-    } else {
-      controls.enabled = true;
-      isZoomed = false;
-      titleElement.style.opacity = '0';
+    // Cacher le bouton retour
+    resetButton.style.display = 'none';
+    
+    // Supprimer les éléments de la face
+    const container = document.getElementById('face-content');
+    if (container) {
+      container.remove();
     }
-  }
-  updateCamera();
 
-  cubies.forEach(cubie => {
-    ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
-      updateFaceTextures(cubie, faceType, false);
+    const duration = 1000;
+    const startTime = Date.now();
+    const startPos = camera.position.clone();
+    let endPos = lastCameraPosition.clone();
+
+    // Vérifier si la caméra est trop proche
+    const minDistance = 7;
+    const distanceFromCenter = endPos.length();
+    
+    if (distanceFromCenter < minDistance) {
+      // Calculer la direction normalisée depuis l'origine
+      const direction = endPos.clone().normalize();
+      // Appliquer la distance minimale dans cette direction
+      endPos = direction.multiplyScalar(minDistance);
+    }
+
+    function updateCamera() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+      camera.position.lerpVectors(startPos, endPos, easeProgress);
+      camera.lookAt(0, 0, 0);
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCamera);
+      } else {
+        controls.enabled = true;
+        isZoomed = false;
+        titleElement.style.opacity = '0';
+      }
+    }
+    updateCamera();
+
+    cubies.forEach(cubie => {
+      ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
+        updateFaceTextures(cubie, faceType, false);
+      });
     });
-  });
 }
 
 // Ajouter les autres éléments DOM
@@ -554,7 +598,12 @@ function showInfoCard(event, faceType, imageIndex) {
 
 // Modifier handleClick
 function handleClick(event) {
-    if (isModalOpen) return; // Ignorer les clics quand le modal est ouvert
+    // Vérifier si nous sommes dans la section cube
+    const cubeSection = document.getElementById('cube-section');
+    const rect = cubeSection.getBoundingClientRect();
+    const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+    
+    if (!isCubeVisible || isModalOpen) return; 
     
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -576,17 +625,19 @@ function handleClick(event) {
         const centralCubie = getCentralCubie(faceType);
         
         if (centralCubie) {
+            // Désactiver le scroll
+            const container = document.querySelector('.container');
+            container.style.overflow = 'hidden';
+            
             zoomToFace(centralCubie, normal, faceType);
             isZoomed = true;
 
-            // Ouvrir le menu et sélectionner la bonne catégorie
             if (!menuOpen) {
                 menuBtn.classList.add('open');
                 menu.classList.add('active');
                 menuOpen = true;
             }
 
-            // Activer la bonne catégorie dans le menu
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.querySelector('h3').textContent === CATEGORIES[faceType]) {
@@ -695,32 +746,34 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
   }
 }
 
+
 // Modifier la fonction setupNavigation
 function setupNavigation() {
-    const container = document.querySelector('.container');
-    const sections = Array.from(document.querySelectorAll('section'));
-    const buttons = document.querySelectorAll('.nav-button');
-    menuBtn = document.querySelector('.menu-btn');
-    menu = document.querySelector('.menu');
-    
-    function updateUI() {
-        const currentScroll = container.scrollTop;
-        const windowHeight = window.innerHeight;
-        const currentIndex = Math.round(currentScroll / windowHeight);
-        
-        // Mettre à jour les boutons
-        buttons.forEach((button, index) => {
-            button.classList.toggle('active', index === currentIndex);
-        });
-        
-        // Gérer la visibilité du menu
-        const isCubeSection = currentIndex === 1;
-        menuBtn.style.display = isCubeSection ? 'flex' : 'none';
-        if (!isCubeSection && menu.classList.contains('active')) {
-            menu.classList.remove('active');
-            menuBtn.classList.remove('open');
-        }
-    }
+  const container = document.querySelector('.container');
+  const sections = Array.from(document.querySelectorAll('section'));
+  const buttons = document.querySelectorAll('.nav-button');
+  menuBtn = document.querySelector('.menu-btn');
+  menu = document.querySelector('.menu');
+  
+  function updateUI() {
+      const currentScroll = container.scrollTop;
+      const windowHeight = window.innerHeight;
+      const currentIndex = Math.round(currentScroll / windowHeight);
+      
+      buttons.forEach((button, index) => {
+          button.classList.toggle('active', index === currentIndex);
+      });
+      
+      // Gérer la visibilité du menu et du bouton thème
+      const isCubeSection = currentIndex === 1;
+      menuBtn.style.display = isCubeSection ? 'flex' : 'none';
+      themeBtn.classList.toggle('hidden', isCubeSection);
+      
+      if (!isCubeSection && menu.classList.contains('active')) {
+          menu.classList.remove('active');
+          menuBtn.classList.remove('open');
+      }
+  }
 
     // Gérer le clic sur les boutons
     buttons.forEach((button, index) => {
