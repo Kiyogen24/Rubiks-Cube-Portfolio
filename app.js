@@ -60,6 +60,35 @@ const FACE_PREVIEWS = {
   }
 };
 
+const CUBE_CONTENT = {
+  front: { // Compétences
+    0: {
+      title: "JavaScript",
+      description: "Expertise en développement web moderne",
+      details: ["ES6+", "React", "Node.js", "Vue.js"],
+      icon: "fa-brands fa-js"
+    },
+    1: {
+      title: "Python",
+      description: "Développement backend et data science",
+      details: ["Django", "Flask", "NumPy", "Pandas"],
+      icon: "fa-brands fa-python"
+    },
+    // ... autres positions
+  },
+  back: { // Expériences
+    0: {
+      title: "Stage - Entreprise X",
+      period: "2023",
+      description: "Développement full-stack",
+      details: ["Création d'une application web", "Optimisation des performances"],
+      icon: "fa-solid fa-briefcase"
+    },
+    // ... autres positions
+  },
+  // ... autres faces
+};
+
 
 // Créez un élément pour afficher le titre
 const titleElement = document.createElement('div');
@@ -545,7 +574,7 @@ function getCentralCubie(faceType) {
 }
 
 // Fonction pour créer et afficher la carte d'information
-function showInfoCard(event, faceType, imageIndex) {
+function showInfoCard(event, faceType, cubePosition) {
     if (!overlay) createOverlay();
     
     isModalOpen = true;
@@ -565,10 +594,10 @@ function showInfoCard(event, faceType, imageIndex) {
     
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-button';
-    closeBtn.innerHTML = '×';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
     closeBtn.onclick = () => {
         isModalOpen = false;
-        controls.enabled = true; // Réactiver les contrôles
+        controls.enabled = true;
         card.classList.remove('active');
         overlay.classList.remove('active');
         setTimeout(() => card.remove(), 300);
@@ -576,13 +605,28 @@ function showInfoCard(event, faceType, imageIndex) {
     };
 
     const content = document.createElement('div');
-    content.innerHTML = `
-        <h2>${CATEGORIES[faceType]}</h2>
-        <div class="card-content">
-            <!-- Ajoutez ici le contenu spécifique à chaque carte -->
-            <p>Contenu détaillé pour ${CATEGORIES[faceType]}</p>
-        </div>
-    `;
+    const contentData = CUBE_CONTENT[faceType]?.[cubePosition];
+
+    if (contentData) {
+      content.innerHTML = `
+          <div class="card-header">
+              <i class="${contentData.icon} card-icon"></i>
+              <h2>${contentData.title}</h2>
+              ${contentData.period ? `<span class="period">${contentData.period}</span>` : ''}
+          </div>
+          <div class="card-content">
+              <p class="description">${contentData.description}</p>
+              <ul class="details-list">
+                  ${contentData.details.map(detail => `<li>${detail}</li>`).join('')}
+              </ul>
+          </div>
+      `;
+  } else {
+      content.innerHTML = `
+          <h2>${CATEGORIES[faceType]}</h2>
+          <p>Position: ${cubePosition}</p>
+      `;
+  }
 
     card.appendChild(closeBtn);
     card.appendChild(content);
@@ -625,28 +669,37 @@ function handleClick(event) {
         const centralCubie = getCentralCubie(faceType);
         
         if (centralCubie) {
-            // Désactiver le scroll
-            const container = document.querySelector('.container');
-            container.style.overflow = 'hidden';
-            
-            zoomToFace(centralCubie, normal, faceType);
-            isZoomed = true;
+          if (isZoomed) {
+              // Si on est déjà zoomé, on affiche la carte d'info
+              const clickedCubie = intersection.object;
+              const pos = clickedCubie.userData.gridPos;
+              const rowIndex = 2 - Math.floor((pos.y + 1));
+              const colIndex = Math.floor((pos.x + 1));
+              showInfoCard(event, faceType, rowIndex * 3 + colIndex);
+          } else {
+              // Sinon, on zoome sur la face
+              const container = document.querySelector('.container');
+              container.style.overflow = 'hidden';
+              
+              zoomToFace(centralCubie, normal, faceType);
+              isZoomed = true;
 
-            if (!menuOpen) {
-                menuBtn.classList.add('open');
-                menu.classList.add('active');
-                menuOpen = true;
-            }
+              if (!menuOpen) {
+                  menuBtn.classList.add('open');
+                  menu.classList.add('active');
+                  menuOpen = true;
+              }
 
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.querySelector('h3').textContent === CATEGORIES[faceType]) {
-                    item.classList.add('active');
-                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        }
-    }
+              document.querySelectorAll('.menu-item').forEach(item => {
+                  item.classList.remove('active');
+                  if (item.querySelector('h3').textContent === CATEGORIES[faceType]) {
+                      item.classList.add('active');
+                      item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+              });
+          }
+      }
+  }
 }
 
 // Boucle d'animation simplifiée
