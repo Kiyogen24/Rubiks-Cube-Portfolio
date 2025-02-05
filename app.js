@@ -57,6 +57,13 @@ const FACE_PREVIEWS = {
       ['assets/previews/exp1.jpg', 'assets/previews/exp2.jpg', 'assets/previews/exp3.jpg'],
       ['assets/previews/proj1.jpg', 'assets/previews/proj2.jpg', 'assets/previews/proj3.jpg']
     ]
+  },
+  bottom: {
+    images: [
+      ['', '', ''],
+      ['', 'assets/previews/cv_pr.png', ''],
+      ['', '', '']
+    ]
   }
 };
 
@@ -84,6 +91,14 @@ const CUBE_CONTENT = {
       details: ["Création d'une application web", "Optimisation des performances"],
       icon: "fa-solid fa-briefcase"
     },
+  },
+    bottom: {
+      4: {
+        title: "Mon CV",
+        details: [],
+        icon: "fa-solid fa-file-pdf card-icon",
+        file: true,
+      },
     // ... autres positions
   },
   // ... autres faces
@@ -591,6 +606,7 @@ function showInfoCard(event, faceType, cubePosition) {
 
     const card = document.createElement('div');
     card.className = 'info-card';
+    card.setAttribute('data-face', faceType);
     
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-button';
@@ -607,21 +623,35 @@ function showInfoCard(event, faceType, cubePosition) {
     const content = document.createElement('div');
     const contentData = CUBE_CONTENT[faceType]?.[cubePosition];
 
+
     if (contentData) {
-      content.innerHTML = `
-          <div class="card-header">
-              <i class="${contentData.icon} card-icon"></i>
-              <h2>${contentData.title}</h2>
-              ${contentData.period ? `<span class="period">${contentData.period}</span>` : ''}
+      content.innerHTML = contentData.file 
+        ? `<div class="pdf-view">
+         <object 
+           data="assets/previews/cv.pdf" 
+           type="application/pdf" 
+           width="100%" 
+           height="90%">
+           <p>Impossible d'afficher le PDF. <a href="assets/previews/cv.pdf" target="_blank">Cliquez ici pour le télécharger</a></p>
+         </object>
+         <a href="assets/previews/cv.pdf" class="pdf-download-link" download>
+           <i class="fas fa-download"></i> Télécharger le CV
+         </a>
+       </div>`
+        : `<div class="card-header">
+        <i class="${contentData.icon} card-icon"></i>
+        <h2>${contentData.title}</h2>
           </div>
           <div class="card-content">
-              <p class="description">${contentData.description}</p>
-              <ul class="details-list">
-                  ${contentData.details.map(detail => `<li>${detail}</li>`).join('')}
-              </ul>
-          </div>
-      `;
-  } else {
+        ${contentData.description ? `<p class="card-content">${contentData.description}</p>` : ''}
+        ${contentData.details.length > 0 
+          ? `<ul class="details-list">
+          ${contentData.details.map(detail => `<li>${detail}</li>`).join('')}
+            </ul>`
+          : ''
+        }
+          </div>`;
+    } else {
       content.innerHTML = `
           <h2>${CATEGORIES[faceType]}</h2>
           <p>Position: ${cubePosition}</p>
@@ -670,12 +700,34 @@ function handleClick(event) {
         
         if (centralCubie) {
           if (isZoomed) {
-              // Si on est déjà zoomé, on affiche la carte d'info
-              const clickedCubie = intersection.object;
-              const pos = clickedCubie.userData.gridPos;
-              const rowIndex = 2 - Math.floor((pos.y + 1));
-              const colIndex = Math.floor((pos.x + 1));
-              showInfoCard(event, faceType, rowIndex * 3 + colIndex);
+            const clickedCubie = intersection.object;
+            const pos = clickedCubie.userData.gridPos;
+            
+            // Calcul différent selon la face
+            let position;
+            if (faceType === 'top' || faceType === 'bottom') {
+                // Pour les faces top/bottom, on calcule la position de 0 à 8
+                const x = Math.floor(pos.x + 1); // 0 à 2
+                const z = Math.floor(pos.z + 1); // 0 à 2
+                position = z * 3 + x; // 0 à 8
+                console.log('Position calculée (top/bottom):', {
+                    x: pos.x,
+                    z: pos.z,
+                    position: position
+                });
+            } else {
+                // Pour les autres faces, on garde le calcul existant
+                const rowIndex = 2 - Math.floor((pos.y + 1));
+                const colIndex = Math.floor((pos.x + 1));
+                position = rowIndex * 3 + colIndex;
+                console.log('Position calculée (autres faces):', {
+                    y: pos.y,
+                    x: pos.x,
+                    position: position
+                });
+            }
+            
+            showInfoCard(event, faceType, position);
           } else {
               // Sinon, on zoome sur la face
               const container = document.querySelector('.container');
@@ -730,10 +782,19 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
 
   if (showPreviews && FACE_PREVIEWS[faceType]) {
     const pos = cubie.userData.gridPos;
-    // Inverser rowIndex pour commencer par le haut
-    const rowIndex = 2 - Math.floor((pos.y + 1));
-    const colIndex = Math.floor((pos.x + 1));
     
+    // Calcul différent selon la face
+    let rowIndex, colIndex;
+    if (faceType === 'top' || faceType === 'bottom') {
+      // Pour les faces top/bottom, utiliser z pour les lignes et x pour les colonnes
+      rowIndex = 2 - Math.floor((pos.z + 1));
+      colIndex = Math.floor((pos.x + 1));
+    } else {
+      // Pour les autres faces, garder la logique existante
+      rowIndex = 2 - Math.floor((pos.y + 1));
+      colIndex = Math.floor((pos.x + 1));
+    }
+
     console.log(`Tentative de chargement image pour cubie à position: x=${pos.x}, y=${pos.y}, z=${pos.z}`);
     console.log(`Indices calculés: row=${rowIndex}, col=${colIndex}`);
     
@@ -813,6 +874,12 @@ function setupNavigation() {
       const windowHeight = window.innerHeight;
       const currentIndex = Math.round(currentScroll / windowHeight);
       
+      // Gérer la visibilité de l'indicateur de scroll
+      const scrollIndicator = document.querySelector('.scroll-indicator');
+      if (scrollIndicator) {
+          scrollIndicator.classList.toggle('hidden', currentIndex !== 0);
+      }
+
       buttons.forEach((button, index) => {
           button.classList.toggle('active', index === currentIndex);
       });
@@ -833,6 +900,52 @@ function setupNavigation() {
         button.addEventListener('click', () => {
             sections[index].scrollIntoView({ behavior: 'smooth' });
         });
+    });
+
+
+    document.querySelectorAll('.quick-link[data-face]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const faceType = link.getAttribute('data-face');
+        
+        // Scroll vers la section cube
+        document.getElementById('cube-section').scrollIntoView({ behavior: 'smooth' });
+        
+        // Attendre la fin du scroll avant de zoomer
+        setTimeout(() => {
+          const centralCubie = getCentralCubie(faceType);
+          if (centralCubie) {
+            let normal = new THREE.Vector3();
+            switch(faceType) {
+              case 'front': normal.set(0, 0, 1); break;
+              case 'back': normal.set(0, 0, -1); break;
+              case 'right': normal.set(1, 0, 0); break;
+              case 'left': normal.set(-1, 0, 0); break;
+              case 'top': normal.set(0, 1, 0); break;
+              case 'bottom': normal.set(0, -1, 0); break;
+            }
+
+            // Ouvrir le menu et activer l'élément correspondant
+            if (!menuOpen) {
+              menuBtn.classList.add('open');
+              menu.classList.add('active');
+              menuOpen = true;
+            }
+
+            // Activer l'élément du menu correspondant
+            document.querySelectorAll('.menu-item').forEach(item => {
+              item.classList.remove('active');
+              if (item.querySelector('h3').textContent === CATEGORIES[faceType]) {
+                item.classList.add('active');
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            });
+            
+            zoomToFace(centralCubie, normal, faceType);
+            isZoomed = true;
+          }
+        }, 1000); // Délai pour laisser le scroll se terminer
+      });
     });
 
     // Écouter le scroll
