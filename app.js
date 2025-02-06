@@ -48,7 +48,7 @@ const FACE_PREVIEWS = {
     images: [
       ['assets/previews/python.jpg', 'assets/previews/javascript.png', 'assets/previews/java.png'],
       ['assets/previews/c.png', 'assets/previews/data_b.png', 'assets/previews/html.svg'],
-      ['assets/previews/office.png', 'assets/previews/css.png', 'assets/previews/soft.avif']
+      ['assets/previews/office.png', '', 'assets/previews/soft.avif']
     ]
   },
   back: {
@@ -141,6 +141,69 @@ const CUBE_CONTENT = {
   }
 };
 
+const CUBIE_CONTENT = {
+  front: {
+    0: {
+      preview: 'assets/previews/python.jpg',
+      icon: 'fa-brands fa-python',
+      hasContent: true
+    },
+    1: {
+      preview: 'assets/previews/javascript.png', 
+      icon: 'fa-brands fa-js',
+      hasContent: true
+    },
+    2: {
+      preview: 'assets/previews/java.png',
+      icon: 'fa-brands fa-java',
+      hasContent: true
+    },
+    3: {
+      preview: 'assets/previews/c.png',
+      icon: 'fa-regular fa-file-code',
+      hasContent: false
+    },
+    4: {
+      preview: 'assets/previews/data_b.png',
+      icon: 'fa-solid fa-database',
+      hasContent: true
+    },
+    5: {
+      preview: 'assets/previews/html.svg',
+      icon: 'fa-brands fa-html5',
+      hasContent: true
+    },
+    6: {
+      preview: 'assets/previews/office.png',
+      icon: 'fa-regular fa-file-word',
+      hasContent: true
+    },
+    8: {
+      preview: 'assets/previews/soft.avif',
+      icon: 'fa-regular fa-lightbulb',
+      hasContent: true
+    }
+  },
+  back: {
+    0: {
+      preview: 'assets/previews/prof.png',
+      icon: 'fa-solid fa-chalkboard-user',
+      hasContent: true
+    },
+    1: {
+      preview: 'assets/previews/siemens.jpg',
+      icon: 'fa-solid fa-industry', 
+      hasContent: true
+    }
+  },
+  bottom: {
+    4: {
+      preview: 'assets/previews/cv_pr.png',
+      icon: 'fa-regular fa-file-pdf',
+      hasContent: true
+    }
+  }
+};
 
 // Créez un élément pour afficher le titre
 const titleElement = document.createElement('div');
@@ -292,80 +355,14 @@ function init() {
 }
 
 // Fonctions de base
-function createCubie(size, gridPosition) { // Ajouter gridPosition comme paramètre
+function createCubie(size, gridPosition) {
   const geometry = new THREE.BoxGeometry(size, size, size);
   const materials = [];
   const faceNames = ['right', 'left', 'top', 'bottom', 'front', 'back'];
   
   for (let i = 0; i < 6; i++) {
     const faceName = faceNames[i];
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 512; // Augmenter la résolution
-    const ctx = canvas.getContext('2d');
-    
-    // Fond noir avec dégradé
-    const gradient = ctx.createRadialGradient(
-      256, 256, 0,
-      256, 256, 256
-    );
-    gradient.addColorStop(0, '#222');
-    gradient.addColorStop(1, '#000');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 512, 512);
-    
-    // Sticker arrondi
-    ctx.fillStyle = stickerColors[faceName];
-    const radius = 35; // Augmenter le rayon d'arrondi
-    const margin = 32;
-    const stickerSize = 448;
-    ctx.beginPath();
-    ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
-    ctx.fill();
-
-    /*
-    // Ajouter un effet de brillance léger
-    const highlight = ctx.createLinearGradient(0, 0, 512, 512);
-    highlight.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
-    highlight.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
-    highlight.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
-    ctx.fillStyle = highlight;
-    ctx.fill();
-    */
-
-    // Si c'est la face supérieure du cubie central, ajouter la photo de profil
-    if (faceName === 'top' && 
-      gridPosition && 
-      gridPosition.x === 0 && 
-      gridPosition.y === 1 && 
-      gridPosition.z === 0) {
-    const img = new Image();
-    img.onload = () => {
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
-      ctx.clip();
-      ctx.drawImage(img, margin, margin, stickerSize, stickerSize);
-      ctx.restore();
-      
-      const texture = materials[i].map;
-      texture.needsUpdate = true;
-    };
-    img.src = '/assets/pp.png';
-  }
-    
-    const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.MeshStandardMaterial({
-      map: texture,
-      metalness: 0,
-      roughness: 0.8, 
-    });
-    
-    // Améliorer la qualité des textures
-    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    texture.minFilter = THREE.LinearMipMapLinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = true;
-    
+    const material = createStickerMaterial(faceName, gridPosition);
     materials.push(material);
   }
 
@@ -374,11 +371,65 @@ function createCubie(size, gridPosition) { // Ajouter gridPosition comme paramè
   
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  mesh.rubikPosition = mesh.position.clone(); 
+  mesh.rubikPosition = mesh.position.clone();
   mesh.userData.hoverable = true;
   mesh.userData.clickable = true;
 
   return mesh;
+}
+
+function createStickerMaterial(faceName, gridPosition) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  
+  // Fond noir avec dégradé
+  const gradient1 = ctx.createRadialGradient(
+    256, 256, 0,
+    256, 256, 256
+  );
+  gradient1.addColorStop(0, '#222');
+  gradient1.addColorStop(1, '#000');
+  ctx.fillStyle = gradient1;
+  ctx.fillRect(0, 0, 512, 512);
+
+  // Sticker avec dégradé subtil
+  const margin = 32;
+  const stickerSize = 448;
+  const radius = 35;
+  
+  const gradient = ctx.createLinearGradient(margin, margin, stickerSize + margin, stickerSize + margin);
+  gradient.addColorStop(0, stickerColors[faceName]); 
+  gradient.addColorStop(1, shadeColor(stickerColors[faceName], -10));
+  
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
+  ctx.fill();
+
+
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  texture.minFilter = THREE.LinearMipMapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  
+  return new THREE.MeshStandardMaterial({
+    map: texture,
+    metalness: 0.1,
+    roughness: 0.8
+  });
+}
+
+
+// Fonction utilitaire pour assombrir une couleur
+function shadeColor(color, percent) {
+  const num = parseInt(color.replace('#',''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = (num >> 8 & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+  return '#' + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
 }
 
 function createRubiksCube() {
@@ -506,6 +557,14 @@ function zoomToFace(face, normal, faceType) {
 
     if (progress < 1) {
       requestAnimationFrame(updateCamera);
+    } else {
+      // Animation terminée, mettre à jour les textures
+      isZoomed = true;
+      const faceCubies = getFaceCubies(faceType);
+      faceCubies.forEach(cubie => {
+        updateFaceTextures(cubie, faceType, true);
+      });
+      resetButton.style.display = 'block';
     }
   }
 
@@ -513,17 +572,31 @@ function zoomToFace(face, normal, faceType) {
 
   // Afficher le bouton retour
   resetButton.style.display = 'block';
-
-  // Mettre à jour tous les cubies de la face
-  const faceCubies = getFaceCubies(faceType);
-  faceCubies.forEach(cubie => {
-    updateFaceTextures(cubie, faceType, true);
-  });
 }
 
 // Nouvelle fonction de dézoom
 function dezoom() {
     if (!isZoomed || !lastCameraPosition) return;
+
+    isZoomed = false;
+
+    // Réinitialiser tous les cubies
+    cubies.forEach(cubie => {
+      // Réinitialiser l'échelle
+      cubie.scale.set(1, 1, 1);
+      
+      // Réinitialiser les matériaux
+      ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
+          updateFaceTextures(cubie, faceType, false);
+      });
+  });
+
+  // Réinitialiser les variables de hover
+  if (hoveredCubie) {
+      updateCubieHoverState(hoveredCubie, false);
+      hoveredCubie = null;
+  }
+  hidePreview();
 
     // Réactiver le scroll
     const body = document.querySelector('.container');
@@ -578,7 +651,6 @@ function dezoom() {
         requestAnimationFrame(updateCamera);
       } else {
         controls.enabled = true;
-        isZoomed = false;
         titleElement.style.opacity = '0';
       }
     }
@@ -628,6 +700,16 @@ function getCentralCubie(faceType) {
 // Fonction pour créer et afficher la carte d'information
 function showInfoCard(event, faceType, cubePosition) {
     if (!overlay) createOverlay();
+
+    // Nettoyer les effets hover avant d'ouvrir la carte
+    if (hoveredCubie) {
+      hoveredCubie.scale.set(1, 1, 1);
+      updateFaceTextures(hoveredCubie, hoveredCubie.userData.hoveredFace, true);
+      hoveredCubie.userData.hoveredFace = null;
+      hoveredCubie = null;
+    }
+    hidePreview();
+  
     
     isModalOpen = true;
     controls.enabled = false; // Désactiver les contrôles du cube
@@ -706,6 +788,71 @@ function showInfoCard(event, faceType, cubePosition) {
 
     activeInfoCard = card;
 }
+
+
+let hoveredCubie = null;
+
+function onMouseMove(event) {
+  if (!isZoomed || isModalOpen) return;
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(cubies);
+
+  const newHoveredCubie = intersects.length > 0 ? intersects[0].object : null;
+
+  if (hoveredCubie !== newHoveredCubie) {
+    if (hoveredCubie) {
+      updateCubieHoverState(hoveredCubie, false);
+    }
+    hoveredCubie = newHoveredCubie;
+    if (hoveredCubie) {
+      updateCubieHoverState(hoveredCubie, true);
+    }
+  }
+}
+
+
+
+
+let previewElement = null;
+
+function displayPreview(imageSrc, event) {
+  if (!previewElement) {
+    previewElement = document.createElement('div');
+    previewElement.className = 'preview-popup';
+    document.body.appendChild(previewElement);
+  }
+
+  const rect = document.querySelector('#cube-section').getBoundingClientRect();
+  previewElement.style.display = 'block';
+  
+  // Calculer la position centrée
+  const cubieCenterX = event.clientX;
+  const cubieCenterY = event.clientY;
+  
+  setTimeout(() => {
+    previewElement.classList.add('visible');
+    previewElement.style.left = `${cubieCenterX}px`;
+    previewElement.style.top = `${cubieCenterY}px`;
+    previewElement.style.backgroundImage = `url(${imageSrc})`;
+  }, 0);
+}
+
+function hidePreview() {
+  if (previewElement) {
+      previewElement.classList.remove('visible');
+
+  }
+}
+
+// Add event listener
+window.addEventListener('mousemove', onMouseMove);
+
+
+
 
 // Modifier handleClick
 function handleClick(event) {
@@ -849,102 +996,171 @@ function animate() {
   }
 }
 
-// Modifier la fonction updateFaceTextures
-function updateFaceTextures(cubie, faceType, showPreviews = false) {
-  if (!cubie) return;
-  
+function updateFaceTextures(cubie, faceType, isActive) {
   const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
   if (faceIndex === -1) return;
 
-  if (showPreviews && FACE_PREVIEWS[faceType]) {
-    const pos = cubie.userData.gridPos;
-    
-    // Calcul différent selon la face
-    let rowIndex, colIndex;
-    if (faceType === 'top' || faceType === 'bottom') {
-      // Pour les faces top/bottom, utiliser z pour les lignes et x pour les colonnes
-      rowIndex = 2 - Math.floor((pos.z + 1));
-      colIndex = Math.floor((pos.x + 1));
-    } else {
-      // Pour les autres faces, garder la logique existante
-      rowIndex = 2 - Math.floor((pos.y + 1));
-      colIndex = Math.floor((pos.x + 1));
-    }
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  
+  const margin = 32;
+  const stickerSize = 448;
+  const radius = 35;
+  const baseColor = stickerColors[faceType];
 
-    console.log(`Tentative de chargement image pour cubie à position: x=${pos.x}, y=${pos.y}, z=${pos.z}`);
-    console.log(`Indices calculés: row=${rowIndex}, col=${colIndex}`);
+  // Fond de base
+  ctx.fillStyle = baseColor;
+  ctx.beginPath();
+  ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
+  ctx.fill();
+
+  // Bande lumineuse pour les cubies avec contenu en mode zoom
+  const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
+  const content = CUBIE_CONTENT[faceType]?.[position];
+  
+  if (isZoomed && content?.preview) {
+    // Ajouter une bande lumineuse diagonale statique
+    const gradient = ctx.createLinearGradient(
+      margin, margin,
+      stickerSize + margin, stickerSize + margin
+    );
     
-    // Vérifier si l'image existe pour cette position
-    if (FACE_PREVIEWS[faceType].images[rowIndex] && 
-        FACE_PREVIEWS[faceType].images[rowIndex][colIndex]) {
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-      
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, 512, 512);
-      
-      const img = new Image();
-      
-      img.onerror = () => {
-        console.log(`Erreur de chargement pour l'image: ${FACE_PREVIEWS[faceType].images[rowIndex][colIndex]}`);
-        // Garder le sticker original en cas d'erreur
-        const originals = originalMaterials.get(cubie.uuid);
-        if (originals) {
-          cubie.material[faceIndex] = originals[faceIndex].clone();
-        }
-      };
-      
-      img.onload = () => {
-        // Créer le masque arrondi
-        ctx.beginPath();
-        const radius = 35;
-        const margin = 32;
-        const previewSize = 448;
-        ctx.roundRect(margin, margin, previewSize, previewSize, radius);
-        ctx.fillStyle = stickerColors[faceType];
-        ctx.globalAlpha = 0.6;
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-        
-        // Clip pour l'image
-        ctx.save();
-        ctx.beginPath();
-        ctx.roundRect(margin, margin, previewSize, previewSize, radius);
-        ctx.clip();
-        
-        // Dessiner l'image avec les nouvelles dimensions
-        ctx.drawImage(img, margin, margin, previewSize, previewSize);
-        ctx.restore();
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-        texture.minFilter = THREE.LinearMipMapLinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        texture.generateMipmaps = true;
-        
-        cubie.material[faceIndex].map = texture;
-        cubie.material[faceIndex].map.needsUpdate = true;
-      };
-      
-      img.src = FACE_PREVIEWS[faceType].images[rowIndex][colIndex];
-    } else {
-      console.log(`Pas d'image trouvée pour position row=${rowIndex}, col=${colIndex}`);
-      // Garder le sticker original si pas d'image
-      const originals = originalMaterials.get(cubie.uuid);
-      if (originals) {
-        cubie.material[faceIndex] = originals[faceIndex].clone();
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = gradient;
+    ctx.fillRect(margin, margin, stickerSize, stickerSize);
+    ctx.restore();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  cubie.material[faceIndex].map = texture;
+  cubie.material[faceIndex].needsUpdate = true;
+}
+
+function updateCubieHoverState(cubie, isHovered) {
+  if (!isZoomed) return;
+
+  const intersects = raycaster.intersectObject(cubie);
+  
+  if (intersects.length > 0 && isHovered) {
+    const normal = intersects[0].face.normal.clone();
+    normal.transformDirection(cubie.matrixWorld);
+    
+    let faceType;
+    const epsilon = 0.1;
+    if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
+    else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
+    else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
+    
+    const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
+    const content = CUBIE_CONTENT[faceType]?.[position];
+
+    if (content?.preview) {
+      cubie.userData.hoveredFace = faceType;
+      cubie.scale.lerp(new THREE.Vector3(1.1, 1.1, 1.1), 0.1);
+      applyHoverEffects(cubie, faceType, content);
+      if (content?.hasContent) {
+      renderer.domElement.style.cursor = 'pointer';
       }
     }
   } else {
-    // Restaurer le matériau original
-    const originals = originalMaterials.get(cubie.uuid);
-    if (originals) {
-      cubie.material[faceIndex] = originals[faceIndex].clone();
+    if (cubie.userData.hoveredFace) {
+      cubie.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+      updateFaceTextures(cubie, cubie.userData.hoveredFace, true);
+      cubie.userData.hoveredFace = null;
+      renderer.domElement.style.cursor = 'default';
     }
+    hidePreview();
   }
 }
 
+
+
+
+function applyHoverEffects(cubie, faceType, content) {
+  const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  
+  const margin = 32;
+  const stickerSize = 448;
+  const radius = 35;
+  const baseColor = stickerColors[faceType];
+
+  // Fond avec effet Minecraft
+  ctx.fillStyle = baseColor;
+  ctx.beginPath();
+  ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
+  ctx.fill();
+
+  // Affichage de la preview
+  if (content.preview) {
+    
+    // Application de la texture
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    cubie.material[faceIndex].map = texture;
+    cubie.material[faceIndex].needsUpdate = true;
+    
+    const vector = new THREE.Vector3();
+    cubie.getWorldPosition(vector);
+    vector.project(camera);
+    
+    const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+    
+    displayPreview(content.preview, {
+      clientX: x - 100,
+      clientY: y - 100
+    });
+  }
+
+  if (content.hasContent) {
+  // Ajout du "+"
+  const plusSize = 100;
+  const padding = 60;
+  
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.beginPath();
+  ctx.arc(stickerSize - padding, stickerSize - padding, plusSize/2, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = baseColor;
+  ctx.font = 'bold 72px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('+', stickerSize - padding, stickerSize - padding);
+
+  }
+
+}
+
+
+// Nouvelle fonction pour calculer la position selon la face
+function calculateCubiePosition(pos, faceType) {
+  switch(faceType) {
+    case 'right':
+      return (2 - Math.floor(pos.y + 1)) * 3 + (2 - Math.floor(pos.z + 1));
+    case 'left':
+      return (2 - Math.floor(pos.y + 1)) * 3 + Math.floor(pos.z + 1);
+    case 'back':
+      return (2 - Math.floor(pos.y + 1)) * 3 + (2 - Math.floor(pos.x + 1));
+    case 'front':
+      return (2 - Math.floor(pos.y + 1)) * 3 + Math.floor(pos.x + 1);
+    case 'top':
+    case 'bottom':
+      return (2 - Math.floor(pos.z + 1)) * 3 + Math.floor(pos.x + 1);
+    default:
+      return -1;
+  }
+}
 
 // Modifier la fonction setupNavigation
 function setupNavigation() {
