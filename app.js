@@ -46,14 +46,14 @@ const CATEGORIES = {
 const FACE_PREVIEWS = {
   front: {
     images: [
-      ['assets/previews/javascript.png', 'assets/previews/python.jpg', 'assets/previews/java.png'],
-      ['assets/previews/react.png', 'assets/previews/node.png', 'assets/previews/mysql.png'],
-      ['assets/previews/html.png', 'assets/previews/css.png', 'assets/previews/php.png']
+      ['assets/previews/python.jpg', 'assets/previews/javascript.png', 'assets/previews/java.png'],
+      ['assets/previews/c.png', 'assets/previews/data_b.png', 'assets/previews/html.svg'],
+      ['assets/previews/office.png', 'assets/previews/css.png', 'assets/previews/soft.avif']
     ]
   },
   back: {
     images: [
-      ['assets/previews/stage1.jpg', 'assets/previews/stage2.jpg', 'assets/previews/stage3.jpg'],
+      ['', 'assets/previews/siemens.jpg', 'assets/previews/prof.png'],
       ['assets/previews/exp1.jpg', 'assets/previews/exp2.jpg', 'assets/previews/exp3.jpg'],
       ['assets/previews/proj1.jpg', 'assets/previews/proj2.jpg', 'assets/previews/proj3.jpg']
     ]
@@ -70,38 +70,75 @@ const FACE_PREVIEWS = {
 const CUBE_CONTENT = {
   front: { // Compétences
     0: {
-      title: "JavaScript",
-      description: "Expertise en développement web moderne",
-      details: ["ES6+", "React", "Node.js", "Vue.js"],
-      icon: "fa-brands fa-js"
-    },
-    1: {
       title: "Python",
-      description: "Développement backend et data science",
-      details: ["Django", "Flask", "NumPy", "Pandas"],
+      description: "Maîtrise du langage et des bibliothèques liées à la data science et à l'IA",
+      details: ["NumPy", "Pandas", "TensorFlow", "Keras"],
       icon: "fa-brands fa-python"
     },
-    // ... autres positions
-  },
-  back: { // Expériences
-    0: {
-      title: "Stage - Entreprise X",
-      period: "2023",
-      description: "Développement full-stack",
-      details: ["Création d'une application web", "Optimisation des performances"],
-      icon: "fa-solid fa-briefcase"
+    1: {
+      title: "JavaScript", 
+      description: "Maîtrise en développement Web moderne et dynamique",
+      details: ["Javascipt", "React", "Node.js"],
+      icon: "fa-brands fa-js"
+    },
+    2: {
+      title: "Java",
+      description: "Développement par objets",
+      icon: "fa-brands fa-java"
+    },
+    3: {
+      title: "C",
+      icon: "fa-regular fa-file-code"
+    },
+    4: {
+      title: "Bases De Données",
+      description: "Maîtrise de la gestion des bases de données",
+      details: ["SQL", "MongoDB"],
+      icon: "fa-solid fa-database"
+    },
+    5: {
+      title: "Dévelopement Web",
+      description: "Maîtrise du dévelopement Web classique",
+      details: ["HTML", "CSS"],
+      icon: "fa-brands fa-html5"
+    },
+    6: {
+      title: "Pack Office",
+      description: "Maîtrise du Pack Office",
+      details: ["Word", "Excel", "PowerPoint"],
+      icon: "fa-regular fa-file-word"
+    },
+    8: {
+      title: "Soft Skills",
+      description: "Les qualités qui me décrivent le mieux", 
+      details: ["Curiosité", "Persévérance", "Résolution des problèmes", "Organisé", "Gestion de Projet"],
+      icon: "fa-regular fa-lightbulb"
+    }
+    },
+    back: { // Expériences
+      0: {
+        title: "Tutorat étudiant",
+        period: "02/2024 - 06/2024",
+        description: "Indépendant",
+        details: ["Accompagnement individuel d'une élève pour améliorer sa compréhension et ses résultats en mathématiques et en physico-chimie.","Développement de compétences pédagogiques et de communication pour rendre les notions scientifiques accessibles."],
+        icon: "fa-solid fa-chalkboard-user"
+      },
+    1: {
+      title: "Stage ouvrier chez Siemens Mobility France",
+      period: "07/2023",
+      description: "Assistant logistique",
+      details: ["Gestion du magasin.", "Réception physique des marchandises et inspection des colis.", "Préparation des commandes", "Bases en VBA et gestion de projets."],
+      icon: "fa-solid fa-industry"
     },
   },
-    bottom: {
-      4: {
-        title: "Mon CV",
-        details: [],
-        icon: "fa-solid fa-file-pdf card-icon",
-        file: true,
-      },
-    // ... autres positions
-  },
-  // ... autres faces
+  bottom: {
+    4: {
+      title: "Mon CV",
+      details: [],
+      icon: "fa-regular fa-file-pdf",
+      file: true,
+    },
+  }
 };
 
 
@@ -644,17 +681,17 @@ function showInfoCard(event, faceType, cubePosition) {
           </div>
           <div class="card-content">
         ${contentData.description ? `<p class="card-content">${contentData.description}</p>` : ''}
-        ${contentData.details.length > 0 
+        ${contentData.details && contentData.details.length > 0 
           ? `<ul class="details-list">
           ${contentData.details.map(detail => `<li>${detail}</li>`).join('')}
-            </ul>`
+        </ul>`
           : ''
         }
           </div>`;
     } else {
       content.innerHTML = `
           <h2>${CATEGORIES[faceType]}</h2>
-          <p>Position: ${cubePosition}</p>
+          <p>Bientôt...</p>
       `;
   }
 
@@ -705,26 +742,65 @@ function handleClick(event) {
             
             // Calcul différent selon la face
             let position;
-            if (faceType === 'top' || faceType === 'bottom') {
-                // Pour les faces top/bottom, on calcule la position de 0 à 8
-                const x = Math.floor(pos.x + 1); // 0 à 2
-                const z = Math.floor(pos.z + 1); // 0 à 2
-                position = z * 3 + x; // 0 à 8
-                console.log('Position calculée (top/bottom):', {
-                    x: pos.x,
-                    z: pos.z,
-                    position: position
+            switch(faceType) {
+                case 'right':
+                    // Inverser la colonne pour back
+                    const rowR = 2 - Math.floor(pos.y + 1); // 0,1,2 de haut en bas
+                    const colR = 2 - Math.floor(pos.z + 1); // Inverser l'ordre des colonnes
+                    position = rowR * 3 + colR;
+                    console.log('Position calculée (back):', {
+                        x: pos.y,
+                        z: pos.x,
+                        position: position
+              });
+                    break;
+                case 'left':
+                    // Pour right/left: y determine la ligne (haut en bas), z determine la colonne (gauche à droite)
+                    const row = 2 - Math.floor(pos.y + 1);  // 0,1,2 de haut en bas
+                    const col = Math.floor(pos.z + 1);      // 0,1,2 de gauche à droite
+                    position = row * 3 + col;
+                    console.log('Position calculée (right/left):', {
+                      x: pos.y,
+                      z: pos.x,
+                      position: position
+                  });
+                    break;
+                
+                case 'back':
+                      // Inverser la colonne pour back
+                      const rowB = 2 - Math.floor(pos.y + 1); // 0,1,2 de haut en bas
+                      const colB = 2 - Math.floor(pos.x + 1); // Inverser l'ordre des colonnes
+                      position = rowB * 3 + colB;
+                      console.log('Position calculée (back):', {
+                          x: pos.y,
+                          z: pos.x,
+                          position: position
                 });
-            } else {
-                // Pour les autres faces, on garde le calcul existant
-                const rowIndex = 2 - Math.floor((pos.y + 1));
-                const colIndex = Math.floor((pos.x + 1));
-                position = rowIndex * 3 + colIndex;
-                console.log('Position calculée (autres faces):', {
-                    y: pos.y,
-                    x: pos.x,
-                    position: position
-                });
+                      break;
+                case 'front':
+                    // Pour front/back: y determine la ligne (haut en bas), x determine la colonne (gauche à droite)
+                    const rowFB = 2 - Math.floor(pos.y + 1); // 0,1,2 de haut en bas
+                    const colFB = Math.floor(pos.x + 1);     // 0,1,2 de gauche à droite
+                    position = rowFB * 3 + colFB;
+                    console.log('Position calculée (front/back):', {
+                      x: pos.y,
+                      z: pos.x,
+                      position: position
+                  });
+                    break;
+                    
+                case 'top':
+                case 'bottom':
+                    // Pour top/bottom: z determine la ligne (haut en bas), x determine la colonne (gauche à droite)
+                    const rowTB = 2 - Math.floor(pos.z + 1); // 0,1,2 de haut en bas
+                    const colTB = Math.floor(pos.x + 1);     // 0,1,2 de gauche à droite
+                    position = rowTB * 3 + colTB;
+                    console.log('Position calculée (top/bottom):', {
+                      x: pos.z,
+                      z: pos.x,
+                      position: position
+                  });
+                    break;
             }
             
             showInfoCard(event, faceType, position);
@@ -827,11 +903,20 @@ function updateFaceTextures(cubie, faceType, showPreviews = false) {
         const margin = 32;
         const previewSize = 448;
         ctx.roundRect(margin, margin, previewSize, previewSize, radius);
+        ctx.fillStyle = stickerColors[faceType];
+        ctx.globalAlpha = 0.6;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+        
+        // Clip pour l'image
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(margin, margin, previewSize, previewSize, radius);
         ctx.clip();
         
         // Dessiner l'image avec les nouvelles dimensions
         ctx.drawImage(img, margin, margin, previewSize, previewSize);
-        
+        ctx.restore();
         const texture = new THREE.CanvasTexture(canvas);
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
         texture.minFilter = THREE.LinearMipMapLinearFilter;
