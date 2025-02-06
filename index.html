@@ -14,12 +14,34 @@
     </script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-      <button class="theme-btn">
+    <!--
+    <div class="language-btn">
+      <button class="selected-lang">FR</button>
+      <div class="lang-dropdown">
+      <button data-lang="fr">Français</button>
+      <button data-lang="en">English</button>
+      </div>
+    </div>
+    -->
+    <button class="theme-btn">
         <i class="theme-icon fa-solid fa-sun"></i>
       </button>
     </div>
   </head>
   <body>
+    <div class="loading-screen">
+      <div class="loader">
+        <div class="cube-loader">
+          <div class="cube-face front"></div>
+          <div class="cube-face back"></div>
+          <div class="cube-face right"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face top"></div>
+          <div class="cube-face bottom"></div>
+        </div>
+      </div>
+      <p class="loading-text">Chargement...</p>
+    </div>
     <!-- Boutons de navigation -->
     <div class="nav-buttons">
         <button class="nav-button" data-section="0"></button>

@@ -40,169 +40,266 @@ const CATEGORIES = {
   left: 'Projets'
 };
 
-
-
-// Modifier le format de FACE_PREVIEWS
-const FACE_PREVIEWS = {
-  front: {
-    images: [
-      ['assets/previews/python.jpg', 'assets/previews/javascript.png', 'assets/previews/java.png'],
-      ['assets/previews/c.png', 'assets/previews/data_b.png', 'assets/previews/html.svg'],
-      ['assets/previews/office.png', '', 'assets/previews/soft.avif']
-    ]
-  },
-  back: {
-    images: [
-      ['', 'assets/previews/siemens.jpg', 'assets/previews/prof.png'],
-      ['assets/previews/exp1.jpg', 'assets/previews/exp2.jpg', 'assets/previews/exp3.jpg'],
-      ['assets/previews/proj1.jpg', 'assets/previews/proj2.jpg', 'assets/previews/proj3.jpg']
-    ]
-  },
-  bottom: {
-    images: [
-      ['', '', ''],
-      ['', 'assets/previews/cv_pr.png', ''],
-      ['', '', '']
-    ]
-  }
-};
-
 const CUBE_CONTENT = {
   front: { // Compétences
     0: {
       title: "Python",
       description: "Maîtrise du langage et des bibliothèques liées à la data science et à l'IA",
       details: ["NumPy", "Pandas", "TensorFlow", "Keras"],
-      icon: "fa-brands fa-python"
+      icon: "fa-brands fa-python",
+      preview: 'assets/previews/skills/python.jpg',
+      hasContent: true
     },
     1: {
       title: "JavaScript", 
-      description: "Maîtrise en développement Web moderne et dynamique",
-      details: ["Javascipt", "React", "Node.js"],
-      icon: "fa-brands fa-js"
+      icon: "fa-brands fa-js",
+      preview: 'assets/previews/skills/javascript.png',
+      hasContent: false
     },
     2: {
-      title: "Java",
-      description: "Développement par objets",
-      icon: "fa-brands fa-java"
+      title: "React", 
+      icon: "fa-brands fa-react",
+      preview: 'assets/previews/skills/react.svg',
+      hasContent: false
     },
     3: {
-      title: "C",
-      icon: "fa-regular fa-file-code"
+      title: "Node.js", 
+      icon: "fa-brands fa-node-js",
+      preview: 'assets/previews/skills/node.png',
+      hasContent: false
     },
     4: {
+      title: "Java",
+      icon: "fa-brands fa-java",
+      preview: 'assets/previews/skills/java.png',
+      hasContent: false
+    },
+    5: {
+      title: "C",
+      icon: "fa-regular fa-file-code",
+      preview: 'assets/previews/skills/c.png',
+      hasContent: false
+    },
+    6: {
+      title: "HTML/CSS",
+      icon: "fa-brands fa-html5",
+      preview: 'assets/previews/skills/html.png',
+      hasContent: false
+    },
+    7: {
       title: "Bases De Données",
       description: "Maîtrise de la gestion des bases de données",
       details: ["SQL", "MongoDB"],
-      icon: "fa-solid fa-database"
-    },
-    5: {
-      title: "Dévelopement Web",
-      description: "Maîtrise du dévelopement Web classique",
-      details: ["HTML", "CSS"],
-      icon: "fa-brands fa-html5"
-    },
-    6: {
-      title: "Pack Office",
-      description: "Maîtrise du Pack Office",
-      details: ["Word", "Excel", "PowerPoint"],
-      icon: "fa-regular fa-file-word"
+      icon: "fa-solid fa-database",
+      preview: 'assets/previews/skills/data_b.png',
+      hasContent: true
     },
     8: {
-      title: "Soft Skills",
-      description: "Les qualités qui me décrivent le mieux", 
-      details: ["Curiosité", "Persévérance", "Résolution des problèmes", "Organisé", "Gestion de Projet"],
-      icon: "fa-regular fa-lightbulb"
-    }
+      title: "Pack Office",
+      icon: "fa-regular fa-file-word",
+      description: "Maîtrise du Pack Office",
+      details: ["Word", "Excel", "PowerPoint"],
+      preview: 'assets/previews/skills/office.png',
+      hasContent: true
     },
-    back: { // Expériences
-      0: {
-        title: "Tutorat étudiant",
-        period: "02/2024 - 06/2024",
-        description: "Indépendant",
-        details: ["Accompagnement individuel d'une élève pour améliorer sa compréhension et ses résultats en mathématiques et en physico-chimie.","Développement de compétences pédagogiques et de communication pour rendre les notions scientifiques accessibles."],
-        icon: "fa-solid fa-chalkboard-user"
-      },
+  },
+  back: { // Expériences
+    0: {
+      title: "Tutorat étudiant",
+      period: "02/2024 - 06/2024",
+      description: "Indépendant",
+      details: ["Accompagnement individuel d'une élève pour améliorer sa compréhension et ses résultats en mathématiques et en physico-chimie.","Développement de compétences pédagogiques et de communication pour rendre les notions scientifiques accessibles."],
+      icon: "fa-solid fa-chalkboard-user",
+      preview: 'assets/previews/exp/prof.png',
+      hasContent: true
+    },
     1: {
       title: "Stage ouvrier chez Siemens Mobility France",
       period: "07/2023",
       description: "Assistant logistique",
       details: ["Gestion du magasin.", "Réception physique des marchandises et inspection des colis.", "Préparation des commandes", "Bases en VBA et gestion de projets."],
-      icon: "fa-solid fa-industry"
+      icon: "fa-solid fa-industry",
+      preview: 'assets/previews/exp/siemens.jpg',
+      hasContent: true
+    }
     },
-  },
-  bottom: {
+    top : {
+    6: {
+      title: "Moi",
+      description: "A propos de moi", 
+      details: ["20 ans", "Ecole d'ingénieur"],
+      icon: "fa-regular fa-user",
+      preview: 'assets/previews/about/person.jpg',
+      hasContent: true
+    },
+    7: {
+      title: "Mes passions",
+      description: "Les qualités qui me décrivent le mieux", 
+      details: ["Echecs", "Danse", "Concours de mémoire", "Musculation"],
+      icon: "fa-regular fa-heart",
+      preview: 'assets/previews/about/hobbies.png',
+      hasContent: true
+    },
+    8: {
+      title: "Soft Skills",
+      description: "Les qualités qui me décrivent le mieux", 
+      details: ["Curiosité", "Persévérance", "Résolution des problèmes", "Organisé", "Gestion de Projet"],
+      icon: "fa-regular fa-lightbulb",
+      preview: 'assets/previews/about/soft.avif',
+      hasContent: true
+    },
+    3: {
+      title: "GitHub",
+      description: "Mon profil GitHub",
+      icon: "fa-brands fa-github",
+      preview: 'assets/previews/about/github.png',
+      hasContent: false,
+      link: "https://github.com/Kiyogen24"
+    },
+    5: {
+      title: "LinkedIn",
+      description: "Mon profil LinkedIn",
+      icon: "fa-brands fa-linkedin",
+      preview: 'assets/previews/about/linkedin.png',
+      hasContent: false,
+      link: "https://www.linkedin.com/in/romain-goldenchtein/"
+    }
+    },
+    bottom: {
     4: {
       title: "Mon CV",
       details: [],
       icon: "fa-regular fa-file-pdf",
       file: true,
-    },
-  }
-};
-
-const CUBIE_CONTENT = {
-  front: {
-    0: {
-      preview: 'assets/previews/python.jpg',
-      icon: 'fa-brands fa-python',
+      preview: 'assets/previews/cv_pr.png',
       hasContent: true
+    }
+    },
+    left: { // Projets
+    0: {
+      title: "Portfolio",
+      icon: "fa-solid fa-cube",
+      preview: 'assets/previews/projects/portfolio.png',
+      hasContent: true,
+      htmlContent: `
+      <div class="card-header">
+      <i class="fa-solid fa-cube card-icon"></i>
+      <h2>Portfolio</h2>
+      </div>
+      <div class="card-content">
+      <p>Ce projet a pour objectif de...</p>
+      <img src="assets/previews/projects/portfolio.png" alt="Aperçu du Porfolio" class="project-image" style="width: 90%; height: auto;">
+        <h3>Détails :</h3>
+        <ul>
+          <li>Technologie utilisée : JavaScript, Three.js</li>
+          <li>Durée : 1 mois</li>
+          <li>Fonctionnalités : 3D, interactive, responsive</li>
+        </ul>
+      </div>
+      <a href="link: https://github.com/Kiyogen24" target="_blank" class="project-link">Voir le Projet</a>
+    </div>
+      `
     },
     1: {
-      preview: 'assets/previews/javascript.png', 
-      icon: 'fa-brands fa-js',
-      hasContent: true
+      title: "Prédiction de défauts de paiement",
+      icon: "fa-solid fa-chart-simple",
+      preview: 'assets/previews/projects/ia01.png',
+      hasContent: true,
+      htmlContent: `
+      <div class="card-header">
+      <i class="fa-solid fa-chart-simple"></i>
+      <h2>Prédiction de défauts de paiement</h2>
+      </div>
+      <div class="card-content">
+      <p>Développement de modèles de classification pour
+          prédire les risques de défaut de paiement.</p>
+      <img src="assets/previews/projects/ia01.png" alt="Aperçu du projet Prédiction de défault de paiement" class="project-image" style="width: 90%; height: auto;">
+        <h3>Détails :</h3>
+        <ul>
+          <li>Technologie utilisée : Python, TensorFlow, Keras</li>
+          <li>Durée : 3 mois</li>
+          <li>Fonctionnalités : Data Science, Machine Learning, Deep learning</li>
+        </ul>
+      </div>
+      <a href="link: https://github.com/Kiyogen24" target="_blank" class="project-link">Voir le Projet</a>
+    </div>
+      `
     },
     2: {
-      preview: 'assets/previews/java.png',
-      icon: 'fa-brands fa-java',
-      hasContent: true
+      title: "Jeu de société en Java",
+      icon: "fa-brands fa-space-awesome",
+      preview: 'assets/previews/projects/lo02.png',
+      hasContent: true,
+      htmlContent: `
+      <div class="card-header">
+      <i class="fa-brands fa-space-awesome"></i>
+      <h2>Jeu de société en Java</h2>
+      </div>
+      <div class="card-content">
+      <p>Développement d'une version logicielle du jeu
+Pocket Imperium.</p>
+      <img src="assets/previews/projects/lo02.png" alt="Aperçu du projet PocketImperium" class="project-image" style="width: 90%; height: auto;">
+        <h3>Détails :</h3>
+        <ul>
+          <li>Technologie utilisée : Java, JavaFX</li>
+          <li>Durée : 5 mois</li>
+          <li>Fonctionnalités : Interface graphique, Joueurs virtuels avec stratégies intelligentes, Sauvegarde des Parties</li>
+        </ul>
+      </div>
+      <a href="link: https://github.com/Kiyogen24" target="_blank" class="project-link">Voir le Projet</a>
+    </div>
+      `
     },
     3: {
-      preview: 'assets/previews/c.png',
-      icon: 'fa-regular fa-file-code',
-      hasContent: false
+      title: "Messagerie Web sécurisée : Neutrino",
+      icon: "fa-solid fa-comments",
+      preview: 'assets/previews/projects/pe2.png',
+      hasContent: true,
+      htmlContent: `
+      <div class="card-header">
+      <i class="fa-solid fa-comments"></i>
+      <h2>Messagerie Web sécurisée : Neutrino</h2>
+      </div>
+      <div class="card-content">
+      <p>Création d'une messagerie Web sécurisée.</p>
+      <img src="assets/previews/projects/pe2.png" alt="Aperçu du projet Neutrino" class="project-image" style="width: 90%; height: auto;">
+        <h3>Détails :</h3>
+        <ul>
+          <li>Technologie utilisée : ReactJS, Node.js</li>
+          <li>Durée : 6 mois</li>
+          <li>Fonctionnalités : Chiffrement bout à bout, Page Web Dynamique, Proxy pour chiffrement des communications</li>
+        </ul>
+      </div>
+      <a href="link: https://github.com/Kiyogen24" target="_blank" class="project-link">Voir le Projet</a>
+    </div>
+      `
     },
     4: {
-      preview: 'assets/previews/data_b.png',
-      icon: 'fa-solid fa-database',
-      hasContent: true
+      title: "Recherhce d'algorithmes pour jouer aux échecs",
+      icon: "fa-solid fa-chesss",
+      preview: 'assets/previews/projects/pe1.png',
+      hasContent: true,
+      htmlContent: `
+      <div class="card-header">
+      <i class="fa-solid fa-chess"></i>
+      <h2>Recherhce d'algorithmes pour jouer aux échecs</h2>
+      </div>
+      <div class="card-content">
+      <p>Recherche et développement de méthodes basées sur le Minimax et l'algoriyhme de Monte-Carlo pour jouer aux échecs </p>
+      <img src="assets/previews/projects/pe1.png" alt="Aperçu du projet Neutrino" class="project-image" style="width: 90%; height: auto;">
+        <h3>Détails :</h3>
+        <ul>
+          <li>Technologie utilisée : ReactJS, Node.js</li>
+          <li>Durée : 6 mois</li>
+          <li>Fonctionnalités : Chiffrement bout à bout, Page Web Dynamique, Proxy pour chiffrement des communications</li>
+        </ul>
+      </div>
+      <a href="link: https://github.com/Kiyogen24" target="_blank" class="project-link">Voir le Projet</a>
+    </div>
+      `
     },
-    5: {
-      preview: 'assets/previews/html.svg',
-      icon: 'fa-brands fa-html5',
-      hasContent: true
-    },
-    6: {
-      preview: 'assets/previews/office.png',
-      icon: 'fa-regular fa-file-word',
-      hasContent: true
-    },
-    8: {
-      preview: 'assets/previews/soft.avif',
-      icon: 'fa-regular fa-lightbulb',
-      hasContent: true
-    }
   },
-  back: {
-    0: {
-      preview: 'assets/previews/prof.png',
-      icon: 'fa-solid fa-chalkboard-user',
-      hasContent: true
-    },
-    1: {
-      preview: 'assets/previews/siemens.jpg',
-      icon: 'fa-solid fa-industry', 
-      hasContent: true
-    }
-  },
-  bottom: {
-    4: {
-      preview: 'assets/previews/cv_pr.png',
-      icon: 'fa-regular fa-file-pdf',
-      hasContent: true
-    }
-  }
+  
 };
 
 // Créez un élément pour afficher le titre
@@ -255,6 +352,25 @@ themeBtn.addEventListener('click', function() {
 
 // Fonction d'initialisation
 function init() {
+
+    // Cacher le contenu pendant le chargement
+    document.querySelector('.container').style.visibility = 'hidden';
+  
+    // Fonction pour masquer l'écran de chargement
+    function hideLoadingScreen() {
+      const loadingScreen = document.querySelector('.loading-screen');
+      loadingScreen.classList.add('fade-out');
+      document.querySelector('.container').style.visibility = 'visible';
+      
+      // Supprimer l'écran de chargement après l'animation
+      setTimeout(() => {
+        loadingScreen.remove();
+      }, 500);
+    }
+  
+    // Simulation d'un délai de chargement (à ajuster selon vos besoins)
+    setTimeout(hideLoadingScreen, 3000);
+  
   // Création de la scène
   scene = new THREE.Scene();
 
@@ -292,6 +408,7 @@ function init() {
   controls.minDistance = 5;   // Distance minimale
   controls.maxDistance = 15;  // Distance maximale
 
+  
   // Éclairage
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
@@ -363,6 +480,7 @@ function createCubie(size, gridPosition) {
   for (let i = 0; i < 6; i++) {
     const faceName = faceNames[i];
     const material = createStickerMaterial(faceName, gridPosition);
+       
     materials.push(material);
   }
 
@@ -384,20 +502,17 @@ function createStickerMaterial(faceName, gridPosition) {
   const ctx = canvas.getContext('2d');
   
   // Fond noir avec dégradé
-  const gradient1 = ctx.createRadialGradient(
-    256, 256, 0,
-    256, 256, 256
-  );
+  const gradient1 = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
   gradient1.addColorStop(0, '#222');
   gradient1.addColorStop(1, '#000');
   ctx.fillStyle = gradient1;
   ctx.fillRect(0, 0, 512, 512);
 
-  // Sticker avec dégradé subtil
   const margin = 32;
   const stickerSize = 448;
   const radius = 35;
-  
+
+  // Sticker avec dégradé subtil
   const gradient = ctx.createLinearGradient(margin, margin, stickerSize + margin, stickerSize + margin);
   gradient.addColorStop(0, stickerColors[faceName]); 
   gradient.addColorStop(1, shadeColor(stickerColors[faceName], -10));
@@ -407,7 +522,39 @@ function createStickerMaterial(faceName, gridPosition) {
   ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
   ctx.fill();
 
+  // Si c'est la face supérieure du cubie central, ajouter la photo de profil
+  if (faceName === 'top' && 
+      gridPosition && 
+      gridPosition.x === 0 && 
+      gridPosition.y === 1 && 
+      gridPosition.z === 0) {
+    
+    const material = new THREE.MeshStandardMaterial({
+      metalness: 0.1,
+      roughness: 0.8
+    });
 
+    const img = new Image();
+    img.onload = () => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
+      ctx.clip();
+      ctx.drawImage(img, margin, margin, stickerSize, stickerSize);
+      ctx.restore();
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      texture.minFilter = THREE.LinearMipMapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      
+      material.map = texture;
+      material.needsUpdate = true;
+    };
+    img.src = 'assets/pp.png';
+    
+    return material;
+  }
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -493,8 +640,10 @@ function getFaceCubies(faceType) {
 
 // Modifier la fonction zoomToFace
 function zoomToFace(face, normal, faceType) {
-  lastCameraPosition = camera.position.clone();
-  lastCameraRotation = camera.quaternion.clone();
+  if(!isZoomed){
+    lastCameraPosition = camera.position.clone();
+    lastCameraRotation = camera.quaternion.clone();
+  }
   
   const targetPosition = face.position.clone();
   const distance = 6;
@@ -526,13 +675,13 @@ function zoomToFace(face, normal, faceType) {
       break;
   }
 
+        // Désactiver les boutons de navigation
+        document.querySelectorAll('.nav-button').forEach(btn => {
+          btn.classList.add('disabled');
+        });
+
   const targetCameraPos = targetPosition.clone().add(cameraOffset);
 
-
-  // Animation fluide
-  controls.enabled = false;
-  const duration = 1000;
-  const startTime = Date.now();
   const startPos = camera.position.clone();
   const lookDirection = targetPosition.clone().sub(targetCameraPos).normalize();
   const rightVector = new THREE.Vector3().crossVectors(upVector, lookDirection).normalize();
@@ -545,8 +694,13 @@ function zoomToFace(face, normal, faceType) {
   );
   const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(targetMatrix);
   const startQuaternion = camera.quaternion.clone();
+  
 
-
+  // Animation fluide
+  controls.enabled = false;
+  const duration = 1000;
+  const startTime = Date.now();
+  
   function updateCamera() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
@@ -565,6 +719,7 @@ function zoomToFace(face, normal, faceType) {
         updateFaceTextures(cubie, faceType, true);
       });
       resetButton.style.display = 'block';
+
     }
   }
 
@@ -574,72 +729,55 @@ function zoomToFace(face, normal, faceType) {
   resetButton.style.display = 'block';
 }
 
-// Nouvelle fonction de dézoom
+
 function dezoom() {
-    if (!isZoomed || !lastCameraPosition) return;
+  if (!isZoomed || !lastCameraPosition) return;
 
-    isZoomed = false;
+  isZoomed = false;
 
-    // Réinitialiser tous les cubies
-    cubies.forEach(cubie => {
-      // Réinitialiser l'échelle
-      cubie.scale.set(1, 1, 1);
-      
-      // Réinitialiser les matériaux
-      ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
-          updateFaceTextures(cubie, faceType, false);
-      });
+  // Réactiver les boutons de navigation
+  document.querySelectorAll('.nav-button').forEach(btn => {
+    btn.classList.remove('disabled');
   });
 
-  // Réinitialiser les variables de hover
-  if (hoveredCubie) {
-      updateCubieHoverState(hoveredCubie, false);
-      hoveredCubie = null;
-  }
-  hidePreview();
+  // Nettoyer l'interface
+  const body = document.querySelector('.container');
+  body.style.overflow = 'auto';
+  menuBtn.classList.remove('open');
+  menu.classList.remove('active');
+  menuOpen = false;
+  resetButton.style.display = 'none';
+  titleElement.style.opacity = '0';
 
-    // Réactiver le scroll
-    const body = document.querySelector('.container');
-    body.style.overflow = 'auto';
+  const container = document.getElementById('face-content');
+  if (container) container.remove();
 
-    menuBtn.classList.remove('open');
-    menu.classList.remove('active');
-    menuOpen = false;
-
-    resetButton.style.display = 'none';
-    
-
-    // Cacher le menu et réinitialiser son état
-    menuBtn.classList.remove('open');
-    menu.classList.remove('active');
-    menuOpen = false;
-
-    // Cacher le bouton retour
-    resetButton.style.display = 'none';
-    
-    // Supprimer les éléments de la face
-    const container = document.getElementById('face-content');
-    if (container) {
-      container.remove();
+  requestAnimationFrame(() => {
+    cubies.forEach(cubie => {
+      cubie.scale.set(1, 1, 1);
+      // Ne pas réinitialiser le cubie central top
+      if (cubie.userData.gridPos &&
+        cubie.userData.gridPos.x === 0 && 
+        cubie.userData.gridPos.y === 1 && 
+        cubie.userData.gridPos.z === 0) {
+      return;
     }
+      ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
+        const texture = createFaceTexture(faceType, false);
+        const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
+        cubie.material[faceIndex].map = texture;
+        cubie.material[faceIndex].needsUpdate = true;
+      });
+    });
+
+    const startPos = camera.position.clone();
+    const endPos = lastCameraPosition.clone();
+    if (endPos.length() < 7) endPos.normalize().multiplyScalar(7);
 
     const duration = 1000;
     const startTime = Date.now();
-    const startPos = camera.position.clone();
-    let endPos = lastCameraPosition.clone();
 
-    // Vérifier si la caméra est trop proche
-    const minDistance = 7;
-    const distanceFromCenter = endPos.length();
-    
-    if (distanceFromCenter < minDistance) {
-      // Calculer la direction normalisée depuis l'origine
-      const direction = endPos.clone().normalize();
-      // Appliquer la distance minimale dans cette direction
-      endPos = direction.multiplyScalar(minDistance);
-    }
-
-    function updateCamera() {
+    function update() {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeProgress = 1 - Math.pow(1 - progress, 3);
@@ -648,19 +786,24 @@ function dezoom() {
       camera.lookAt(0, 0, 0);
 
       if (progress < 1) {
-        requestAnimationFrame(updateCamera);
+        requestAnimationFrame(update);
       } else {
+        camera.position.copy(endPos);
+        camera.lookAt(0, 0, 0);
         controls.enabled = true;
-        titleElement.style.opacity = '0';
       }
     }
-    updateCamera();
 
-    cubies.forEach(cubie => {
-      ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
-        updateFaceTextures(cubie, faceType, false);
-      });
-    });
+    requestAnimationFrame(update);
+  });
+
+  // Nettoyer les effets hover
+  if (hoveredCubie) {
+    updateCubieHoverState(hoveredCubie, false);
+    hoveredCubie = null;
+  }
+  hidePreview();
+
 }
 
 // Ajouter les autres éléments DOM
@@ -735,6 +878,7 @@ function showInfoCard(event, faceType, cubePosition) {
         controls.enabled = true;
         card.classList.remove('active');
         overlay.classList.remove('active');
+        renderer.domElement.style.cursor = 'default';
         setTimeout(() => card.remove(), 300);
         activeInfoCard = null;
     };
@@ -742,19 +886,21 @@ function showInfoCard(event, faceType, cubePosition) {
     const content = document.createElement('div');
     const contentData = CUBE_CONTENT[faceType]?.[cubePosition];
 
-
-    if (contentData) {
+    if (faceType === 'left' && contentData && contentData.htmlContent) {
+      // Affichage d'un contenu HTML personnalisé pour la catégorie projets
+      content.innerHTML = contentData.htmlContent;
+    }
+    else if (contentData.hasContent) {
       content.innerHTML = contentData.file 
         ? `<div class="pdf-view">
-         <object 
-           data="assets/previews/cv.pdf" 
+        <iframe 
+           src="assets/previews/cv.pdf" 
            type="application/pdf" 
            width="100%" 
            height="90%">
-           <p>Impossible d'afficher le PDF. <a href="assets/previews/cv.pdf" target="_blank">Cliquez ici pour le télécharger</a></p>
-         </object>
-         <a href="assets/previews/cv.pdf" class="pdf-download-link" download>
-           <i class="fas fa-download"></i> Télécharger le CV
+         </iframe>
+         <a href="assets/previews/cv.pdf" target="_blank" class="pdf-download-link">
+          <i class="fa-regular fa-folder-open"></i> Ouvrir le CV
          </a>
        </div>`
         : `<div class="card-header">
@@ -853,8 +999,6 @@ window.addEventListener('mousemove', onMouseMove);
 
 
 
-
-// Modifier handleClick
 function handleClick(event) {
     // Vérifier si nous sommes dans la section cube
     const cubeSection = document.getElementById('cube-section');
@@ -950,7 +1094,11 @@ function handleClick(event) {
                     break;
             }
             
-            showInfoCard(event, faceType, position);
+            if (CUBE_CONTENT[faceType][position].hasContent){
+              showInfoCard(event, faceType, position);
+            } else if (CUBE_CONTENT[faceType][position].link) {
+              window.open(CUBE_CONTENT[faceType][position].link, "_blank");
+            }
           } else {
               // Sinon, on zoome sur la face
               const container = document.querySelector('.container');
@@ -996,38 +1144,51 @@ function animate() {
   }
 }
 
-function updateFaceTextures(cubie, faceType, isActive) {
-  const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
-  if (faceIndex === -1) return;
+const textureCache = new Map();
+
+function createFaceTexture(faceType, hasContent = false) {
+  const cacheKey = `${faceType}-${hasContent}`;
+  
+  if (textureCache.has(cacheKey)) {
+    return textureCache.get(cacheKey);
+  }
 
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = 512;
   const ctx = canvas.getContext('2d');
   
+  // Fond noir avec dégradé
+  const gradient1 = ctx.createRadialGradient(
+    256, 256, 0,
+    256, 256, 256
+  );
+  gradient1.addColorStop(0, '#222');
+  gradient1.addColorStop(1, '#000');
+  ctx.fillStyle = gradient1;
+  ctx.fillRect(0, 0, 512, 512);
+
+  // Sticker avec dégradé subtil
   const margin = 32;
   const stickerSize = 448;
   const radius = 35;
-  const baseColor = stickerColors[faceType];
-
-  // Fond de base
-  ctx.fillStyle = baseColor;
+  
+  const gradient = ctx.createLinearGradient(margin, margin, stickerSize + margin, stickerSize + margin);
+  gradient.addColorStop(0, stickerColors[faceType]); 
+  gradient.addColorStop(1, shadeColor(stickerColors[faceType], -10));
+  
+  ctx.fillStyle = gradient;
   ctx.beginPath();
   ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
   ctx.fill();
 
-  // Bande lumineuse pour les cubies avec contenu en mode zoom
-  const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
-  const content = CUBIE_CONTENT[faceType]?.[position];
-  
-  if (isZoomed && content?.preview) {
-    // Ajouter une bande lumineuse diagonale statique
+  if (hasContent) {
+    // Ajouter l'effet lumineux
     const gradient = ctx.createLinearGradient(
       margin, margin,
       stickerSize + margin, stickerSize + margin
     );
-    
     gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
-    gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)');
+    gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
     
     ctx.save();
@@ -1039,6 +1200,30 @@ function updateFaceTextures(cubie, faceType, isActive) {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  textureCache.set(cacheKey, texture);
+  
+  return texture;
+}  
+
+function updateFaceTextures(cubie, faceType, isActive) {
+  // Vérifier si c'est le cubie central de la face top
+  if (cubie.userData.gridPos &&
+    cubie.userData.gridPos.x === 0 && 
+    cubie.userData.gridPos.y === 1 && 
+    cubie.userData.gridPos.z === 0 &&
+    faceType === 'top') {
+  return; // Ne pas mettre à jour la texture
+}
+
+const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
+  if (faceIndex === -1) return;
+
+  const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
+  const content = CUBE_CONTENT[faceType]?.[position];
+  
+  const hasContent = isZoomed && content?.preview;
+  const texture = createFaceTexture(faceType, hasContent);
+  
   cubie.material[faceIndex].map = texture;
   cubie.material[faceIndex].needsUpdate = true;
 }
@@ -1059,11 +1244,10 @@ function updateCubieHoverState(cubie, isHovered) {
     else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
     
     const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
-    const content = CUBIE_CONTENT[faceType]?.[position];
+    const content = CUBE_CONTENT[faceType]?.[position];
 
     if (content?.preview) {
       cubie.userData.hoveredFace = faceType;
-      cubie.scale.lerp(new THREE.Vector3(1.1, 1.1, 1.1), 0.1);
       applyHoverEffects(cubie, faceType, content);
       if (content?.hasContent) {
       renderer.domElement.style.cursor = 'pointer';
@@ -1071,7 +1255,6 @@ function updateCubieHoverState(cubie, isHovered) {
     }
   } else {
     if (cubie.userData.hoveredFace) {
-      cubie.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
       updateFaceTextures(cubie, cubie.userData.hoveredFace, true);
       cubie.userData.hoveredFace = null;
       renderer.domElement.style.cursor = 'default';
@@ -1094,12 +1277,28 @@ function applyHoverEffects(cubie, faceType, content) {
   const radius = 35;
   const baseColor = stickerColors[faceType];
 
-  // Fond avec effet Minecraft
   ctx.fillStyle = baseColor;
   ctx.beginPath();
   ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
   ctx.fill();
 
+
+      // Ajouter l'effet lumineux
+      const gradient = ctx.createLinearGradient(
+        margin, margin,
+        stickerSize + margin, stickerSize + margin
+      );
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+      gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+      gradient.addColorStop(1, 'rgba(255, 255, 255, 0.15)');
+      
+      ctx.save();
+      ctx.clip();
+      ctx.fillStyle = gradient;
+      ctx.fillRect(margin, margin, stickerSize, stickerSize);
+      ctx.restore();
+
+ 
   // Affichage de la preview
   if (content.preview) {
     
@@ -1108,7 +1307,7 @@ function applyHoverEffects(cubie, faceType, content) {
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     cubie.material[faceIndex].map = texture;
     cubie.material[faceIndex].needsUpdate = true;
-    
+
     const vector = new THREE.Vector3();
     cubie.getWorldPosition(vector);
     vector.project(camera);
@@ -1117,8 +1316,8 @@ function applyHoverEffects(cubie, faceType, content) {
     const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
     
     displayPreview(content.preview, {
-      clientX: x - 100,
-      clientY: y - 100
+      clientX: x - 80,
+      clientY: y - 80
     });
   }
 
@@ -1126,19 +1325,21 @@ function applyHoverEffects(cubie, faceType, content) {
   // Ajout du "+"
   const plusSize = 100;
   const padding = 60;
+  const centerX = stickerSize - padding;
+  const centerY = stickerSize - padding;
   
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 1)';
   ctx.beginPath();
-  ctx.arc(stickerSize - padding, stickerSize - padding, plusSize/2, 0, Math.PI * 2);
+  ctx.arc(centerX, centerY, plusSize/2, 0, Math.PI * 2);
   ctx.fill();
 
+  // Ajout du +
   ctx.fillStyle = baseColor;
-  ctx.font = 'bold 72px Arial';
+  ctx.font = 'bold 72px Arial'; 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('+', stickerSize - padding, stickerSize - padding);
-
-  }
+  ctx.fillText('+', centerX, centerY+5); // Utiliser les mêmes coordonnées que le cercle
+}
 
 }
 
@@ -1307,4 +1508,20 @@ menuBtn.addEventListener('click', () => {
   menuBtn.classList.toggle('open');
   menu.classList.toggle('active');
   menuOpen = !menuOpen;
+});
+
+// Sélecteur de langue
+const langBtn = document.querySelector('.selected-lang');
+const langDropdown = document.querySelector('.lang-dropdown');
+const langOptions = document.querySelectorAll('.lang-dropdown button');
+
+langBtn.addEventListener('click', () => {
+  langBtn.parentElement.classList.toggle('active');
+});
+
+// Fermer le dropdown quand on clique ailleurs
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.language-btn')) {
+    document.querySelector('.language-btn').classList.remove('active');
+  }
 });
