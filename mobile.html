@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -31,6 +30,8 @@ html
             text-align: center;
             position: relative;
             overflow: hidden;
+            overflow-y: auto;
+            scrollbar-width: none;
         }
         
         .container {
@@ -49,7 +50,7 @@ html
             width: 80px;
             height: 80px;
             margin-bottom: 1.5rem;
-            animation: float 3s ease-in-out infinite;
+            animation: float 2s ease-in-out infinite;
         }
         
         h1 {
@@ -96,52 +97,14 @@ html
             0% {
                 transform: translateY(0px) rotate(0deg);
             }
-            50% {
-                transform: translateY(-10px) rotate(180deg);
-            }
             100% {
                 transform: translateY(0px) rotate(360deg);
             }
         }
-
-        /* Cercles décoratifs en arrière-plan */
-        .background-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--light-secondary);
-            opacity: 0.3;
-        }
-
-        .shape:nth-child(1) {
-            width: 200px;
-            height: 200px;
-            top: -100px;
-            left: -100px;
-        }
-
-        .shape:nth-child(2) {
-            width: 150px;
-            height: 150px;
-            bottom: -75px;
-            right: -75px;
-        }
     </style>
 </head>
 <body>
-    <div class="background-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
+
     <div class="container">
         <img src="assets/previews/rubik.png" alt="Rubik's Cube" class="rubiks-cube">
         <h1>Version Mobile en Développement</h1>
