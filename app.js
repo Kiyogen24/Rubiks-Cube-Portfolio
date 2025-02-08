@@ -495,20 +495,19 @@ resetButton.addEventListener('click', dezoom);
 document.body.appendChild(resetButton);
 
 const themeBtn = document.querySelector('.theme-btn');
-const themeIcon = document.querySelector('.theme-icon');
-const currentTheme = localStorage.getItem('theme');
 const cubeSection = document.getElementById('cube-section');
 
 
 themeBtn.addEventListener('click', function() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  const newTheme = isDark ? 'light' : 'dark';
   
-  // Changer l'icône
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme); // Stocke la préférence explicite de l'utilisateur
+  
   const themeIcon = document.querySelector('.theme-icon');
-  themeIcon.classList.remove(isDark ? 'fa-moon' : 'fa-sun');
-  themeIcon.classList.add(isDark ? 'fa-sun' : 'fa-moon');
+  themeIcon.classList.remove('fa-moon', 'fa-sun');
+  themeIcon.classList.add(newTheme === 'dark' ? 'fa-moon' : 'fa-sun');
 });
 
 
@@ -544,19 +543,30 @@ function preloadImages() {
 function init() {
   preloadImages();
 
-  // Appliquer le thème enregistré par l'utilisateur ou le thème par défaut (light)
-  const storedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', storedTheme);
+  // Récupérer le thème système ou utiliser celui stocké
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const storedTheme = localStorage.getItem('theme');
+  const initialTheme = storedTheme || systemTheme;
 
-  // Mettre à jour l'icône du thème en fonction du thème actuel
+  // Appliquer le thème initial
+  document.documentElement.setAttribute('data-theme', initialTheme);
+  localStorage.setItem('theme', initialTheme);
+
+  
+  // Mettre à jour l'icône du thème
   const themeIcon = document.querySelector('.theme-icon');
-  if (storedTheme === 'dark') {
-      themeIcon.classList.remove('fa-sun');
-      themeIcon.classList.add('fa-moon');
-  } else {
-      themeIcon.classList.remove('fa-moon');
-      themeIcon.classList.add('fa-sun');
-  }
+  themeIcon.classList.remove('fa-sun', 'fa-moon');
+  themeIcon.classList.add(initialTheme === 'dark' ? 'fa-moon' : 'fa-sun');
+
+  // Ajouter un écouteur pour les changements de thème système
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('theme')) { // Ne changer que si l'utilisateur n'a pas de préférence explicite
+      const newTheme = e.matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      themeIcon.classList.remove('fa-sun', 'fa-moon');
+      themeIcon.classList.add(newTheme === 'dark' ? 'fa-moon' : 'fa-sun');
+    }
+  });
 
     // Cacher le contenu pendant le chargement
     document.querySelector('.container').style.visibility = 'hidden';
@@ -581,7 +591,11 @@ function init() {
 
   // Configuration de la caméra
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-  camera.position.set(5, 5, 7);
+  if (window.innerWidth < 768) {
+    camera.position.set(9, 9, 12); // Position initiale plus éloignée pour mobile
+  } else {
+    camera.position.set(5, 5, 7); // Position normale pour desktop
+  }
   camera.lookAt(0, 0, 0);
 
   // Configuration du rendu avec meilleure qualité
@@ -689,6 +703,8 @@ function init() {
 
   createOverlay(); // Ajouter à init()
   setupNavigation();
+  optimizeForMobile();
+  setupMobileInteractions();
 }
 
 // Fonctions de base
@@ -827,9 +843,23 @@ function createRubiksCube() {
 }
 
 function onWindowResize() {
+  // Ajuster la caméra
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  
+  // Ajuster le rendu
   renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  // Ajuster la position de la caméra selon la taille d'écran
+  if (window.innerWidth < 768) {
+    if (!isZoomed) {
+      camera.position.set(7, 7, 10); // Position plus proche pour mobile
+    }
+  } else {
+    if (!isZoomed) {
+      camera.position.set(5, 5, 7); // Position normale pour desktop
+    }
+  }
 }
 
 // Ajouter cette fonction pour obtenir tous les cubies d'une face
@@ -866,7 +896,8 @@ function zoomToFace(face, normal, faceType) {
   }
   
   const targetPosition = face.position.clone();
-  const distance = 6;
+  const distance = window.innerWidth < 768 ? 8 : 6; // Distance plus grande sur mobile
+
   
   // Calculer l'orientation finale avec des vecteurs normalisés
   let cameraOffset;
@@ -1034,6 +1065,7 @@ function createOverlay() {
   overlay = document.createElement('div');
   overlay.className = 'overlay';
   overlay.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (e.target === overlay && activeInfoCard) {
       activeInfoCard.querySelector('.close-button').click();
     }
@@ -1067,6 +1099,11 @@ function getCentralCubie(faceType) {
 function showInfoCard(event, faceType, cubePosition) {
     if (!overlay) createOverlay();
 
+    // Empêcher la propagation de l'événement
+    if (event && event.stopPropagation) {
+      event.stopPropagation();
+    }
+
     // Nettoyer les effets hover avant d'ouvrir la carte
     if (hoveredCubie) {
       hoveredCubie.scale.set(1, 1, 1);
@@ -1089,14 +1126,29 @@ function showInfoCard(event, faceType, cubePosition) {
         activeInfoCard.remove();
     }
 
+    const isMobile = window.innerWidth < 768;
+  
     const card = document.createElement('div');
+    card.className = 'info-card';
+    
+    if (isMobile) {
+      card.style.width = '95vw';
+      card.style.margin = '10px';
+      // Ajuster le contenu pour mobile
+      if (contentData && contentData.htmlContent) {
+        // Simplifier le contenu pour mobile
+        const mobileContent = simplifyContentForMobile(contentData.htmlContent);
+        content.innerHTML = mobileContent;
+      }
+    }
     card.className = 'info-card';
     card.setAttribute('data-face', faceType);
     
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-button';
     closeBtn.innerHTML = '<i class="fas fa-times"></i>';
-    closeBtn.onclick = () => {
+    closeBtn.onclick = (e) => {
+      e.stopPropagation();
         isModalOpen = false;
         controls.enabled = true;
         card.classList.remove('active');
@@ -1105,6 +1157,11 @@ function showInfoCard(event, faceType, cubePosition) {
         setTimeout(() => card.remove(), 300);
         activeInfoCard = null;
     };
+
+    // Empêcher la fermeture au clic sur la carte
+    card.addEventListener('click', (e) => {
+      e.stopPropagation();
+  });
 
     const content = document.createElement('div');
     const contentData = CUBE_CONTENT[faceType]?.[cubePosition];
@@ -1179,6 +1236,33 @@ function showInfoCard(event, faceType, cubePosition) {
     });
 
     activeInfoCard = card;
+}
+
+function simplifyContentForMobile(content) {
+  // Réduire la taille des images
+  content = content.replace(/<img.*?>/g, (img) => {
+    return img.replace(/width=".*?"/, 'width="100%"')
+              .replace(/height=".*?"/, '');
+  });
+  return content;
+}
+
+function optimizeForMobile() {
+  if (window.innerWidth < 768) {
+    // Réduire la qualité du rendu
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    
+    // Désactiver les ombres sur mobile
+    renderer.shadowMap.enabled = false;
+    
+    // Réduire la taille des textures
+    textureCache.clear(); // Vider le cache existant
+    
+    // Ajuster les contrôles
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.rotateSpeed = 0.5;
+  }
 }
 
 
@@ -1278,6 +1362,7 @@ function handleClick(event) {
             const clickedCubie = intersection.object;
             const pos = clickedCubie.userData.gridPos;
             
+
             // Calcul différent selon la face
             let position;
             switch(faceType) {
@@ -1726,6 +1811,12 @@ document.querySelectorAll('.menu-item').forEach(item => {
       if (faceType) {
           const centralCubie = getCentralCubie(faceType);
           if (centralCubie) {
+              // Fermer le menu sur mobile
+              if (window.innerWidth < 768) {
+                menuBtn.classList.remove('open');
+                menu.classList.remove('active');
+                menuOpen = false;
+              }
               // Créer un vecteur normal pour la face
               let normal = new THREE.Vector3();
               switch(faceType) {
@@ -1750,6 +1841,146 @@ document.querySelectorAll('.menu-item').forEach(item => {
   });
 });
 
+
+// Ajouter ces variables globales au début du fichier
+let lastTappedCubie = null;
+let lastTappedTime = 0;
+
+// Modifier la fonction setupMobileInteractions
+function setupMobileInteractions() {
+  let touchStartX, touchStartY;
+  let touchEndX, touchEndY;
+  
+  renderer.domElement.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: false });
+
+  renderer.domElement.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].clientX;
+    touchEndY = e.changedTouches[0].clientY;
+
+    // Détecter si c'est un tap (et non un swipe)
+    const deltaX = Math.abs(touchEndX - touchStartX);
+    const deltaY = Math.abs(touchEndY - touchStartY);
+
+    if (deltaX < 10 && deltaY < 10) {
+      const customEvent = {
+        clientX: touchEndX,
+        clientY: touchEndY,
+        stopPropagation: () => {},
+        preventDefault: () => {}
+      };
+
+        handleMobileClick(customEvent);
+
+    }
+  }, { passive: false });
+
+    // Empêcher le zoom sur double tap
+    let lastTapTime = 0;
+    renderer.domElement.addEventListener('touchend', (e) => {
+      const currentTime = Date.now();
+      const tapLength = currentTime - lastTapTime;
+      if (tapLength < 300 && tapLength > 0) {
+        e.preventDefault();
+      }
+      lastTapTime = currentTime;
+    }, { passive: false });
+
+  // Optimiser la rotation sur mobile
+  if (window.innerWidth < 768) {
+    controls.rotateSpeed = 0.5;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+  }
+}
+function handleMobileClick(event) {
+  if (!isZoomed || isModalOpen) return;
+
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(cubies);
+
+  if (intersects.length > 0) {
+    const currentTime = Date.now();
+    const clickedCubie = intersects[0].object;
+    const normal = intersects[0].face.normal.clone();
+    normal.transformDirection(clickedCubie.matrixWorld);
+    
+    let faceType;
+    const epsilon = 0.1;
+    if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
+    else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
+    else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
+
+    const position = calculateCubiePosition(clickedCubie.userData.gridPos, faceType);
+    const content = CUBE_CONTENT[faceType]?.[position];
+
+    // Si c'est le même cubie
+    if (lastTappedCubie === clickedCubie) {
+      if (currentTime - lastTappedTime < 500) {
+        // Deuxième tap rapide - ouvrir l'info card
+        if (content?.hasContent) {
+          showInfoCard(event, faceType, position);
+        } else if (content?.link) {
+          window.open(content.link, "_blank");
+        }
+        
+        // Réinitialiser
+        lastTappedCubie = null;
+        lastTappedTime = 0;
+        hidePreview(); // Cacher l'aperçu lors de l'ouverture de la carte
+      }
+    } else {
+      // Premier tap sur un nouveau cubie - afficher l'aperçu
+      if (hoveredCubie) {
+        updateCubieHoverState(hoveredCubie, false);
+      }
+      updateCubieHoverState(clickedCubie, true);
+      hoveredCubie = clickedCubie;
+      
+      // Mettre à jour le dernier tap
+      lastTappedCubie = clickedCubie;
+      lastTappedTime = currentTime;
+
+      // Empêcher la fermeture immédiate de l'aperçu
+      event.stopPropagation();
+    }
+  } else {
+    // Clic en dehors d'un cubie - nettoyer l'état
+    if (hoveredCubie) {
+      updateCubieHoverState(hoveredCubie, false);
+      hoveredCubie = null;
+    }
+    lastTappedCubie = null;
+    lastTappedTime = 0;
+    hidePreview();
+  }
+}
+
+function adaptNavigation() {
+  if (window.innerWidth < 768) {
+    controls.enableZoom = false; // Désactiver le zoom sur mobile
+    controls.rotateSpeed = 0.7; // Ralentir la rotation
+    controls.enablePan = false; // Désactiver le pan
+  } else {
+    controls.enableZoom = true;
+    controls.rotateSpeed = 0.5;
+    controls.enablePan = true;
+  }
+}
+
+// Appeler dans init() et onWindowResize()
+window.addEventListener('resize', () => {
+  onWindowResize();
+  adaptNavigation();
+});
+
+
 // Modification de l'événement du menu hamburger
 menuBtn.addEventListener('click', () => {
   menuBtn.classList.toggle('open');
@@ -1757,6 +1988,7 @@ menuBtn.addEventListener('click', () => {
   menuOpen = !menuOpen;
 });
 
+/*
 // Sélecteur de langue
 const langBtn = document.querySelector('.selected-lang');
 const langDropdown = document.querySelector('.lang-dropdown');
@@ -1765,7 +1997,6 @@ const langOptions = document.querySelectorAll('.lang-dropdown button');
 langBtn.addEventListener('click', () => {
   langBtn.parentElement.classList.toggle('active');
 });
-/*
 // Fermer le dropdown quand on clique ailleurs
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.language-btn')) {
