@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoundedBoxGeometry } from './node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 // Variables globales de base
 let scene, camera, renderer, controls;
@@ -36,8 +35,8 @@ const CATEGORIES = {
   back: 'Expériences',
   top: 'À propos', 
   bottom: 'Mon CV', 
-  right: 'Formation',
-  left: 'Projets'
+  right: 'Projets',
+  left: 'Formation'
 };
 
 const CUBE_CONTENT = {
@@ -107,16 +106,16 @@ const CUBE_CONTENT = {
     0: {
       title: "Tutorat étudiant",
       period: "02/2024 - 06/2024",
-      description: "Indépendant",
+      description: "Tutorat indépendant d'une élève de l'UTT",
       details: ["Accompagnement individuel d'une élève pour améliorer sa compréhension et ses résultats en mathématiques et en physico-chimie.","Développement de compétences pédagogiques et de communication pour rendre les notions scientifiques accessibles."],
       icon: "fa-solid fa-chalkboard-user",
-      preview: 'assets/previews/exp/prof.png',
+      preview: 'assets/previews/exp/tutorat.jpg',
       hasContent: true
     },
     1: {
-      title: "Stage ouvrier chez Siemens Mobility France",
+      title: "Stage ouvrier",
       period: "07/2023",
-      description: "Assistant logistique",
+      description: "Assistant logistique chez <a href='https://www.mobility.siemens.com/fr/fr.html' style='color: inherit; text-decoration: underline;'> <strong>Siemens Mobility France</strong></a>",
       details: ["Gestion du magasin.", "Réception physique des marchandises et inspection des colis.", "Préparation des commandes", "Bases en VBA et gestion de projets."],
       icon: "fa-solid fa-industry",
       preview: 'assets/previews/exp/siemens.jpg',
@@ -145,7 +144,7 @@ const CUBE_CONTENT = {
       description: "Les qualités qui me décrivent le mieux", 
       details: ["Curiosité", "Persévérance", "Résolution des problèmes", "Organisé", "Gestion de Projet"],
       icon: "fa-regular fa-lightbulb",
-      preview: 'assets/previews/about/soft.avif',
+      preview: 'assets/previews/about/soft.jpg',
       hasContent: true
     },
     3: {
@@ -175,10 +174,11 @@ const CUBE_CONTENT = {
       hasContent: true
     }
     },
-    left: { // **Projets**
+    right: { // **Projets**
     0: {
       title: "Portfolio",
       icon: "fa-solid fa-cube",
+      period: "02/2025",
       preview: 'assets/previews/projects/portfolio.png',
       hasContent: true,
       htmlContent: `
@@ -218,6 +218,7 @@ const CUBE_CONTENT = {
     1: {
       title: "Prédiction de défauts de paiement",
       icon: "fa-solid fa-chart-simple",
+      period: "11/2024 - 01/2025",
       preview: 'assets/previews/projects/ia01_1.png',
       hasContent: true,
       htmlContent: `
@@ -249,8 +250,6 @@ const CUBE_CONTENT = {
             <li><strong>Bibliothèques :</strong> Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn</li>
           </ul>
 
-          <p><strong>Durée :</strong> 1 mois</p>
-
           <img src="assets/previews/projects/ia01_2.png" alt="Comparaison des modèles" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Comparaison des modèles</p>
 
@@ -264,6 +263,7 @@ const CUBE_CONTENT = {
     2: {
       title: "Pocket Imperium",
       icon: "fa-brands fa-space-awesome",
+      period: "09/2024 - 01/2025",
       preview: 'assets/previews/projects/lo02_1.png',
       hasContent: true,
       htmlContent: `
@@ -280,7 +280,6 @@ const CUBE_CONTENT = {
         <p>Un jeu de stratégie spatiale où trois factions s’affrontent pour dominer la galaxie. Inspiré des jeux 3X (eXploration, eXpansion, eXtermination), il propose un gameplay tactique sur une grille hexagonale, des combats dynamiques et trois styles de stratégies distinctes : offensif, défensif et aléatoire.</p>
         <ul>
         <li><strong>Technologies utilisées :</strong> Java 21, JavaFX 21, Maven 3.13+</li>
-        <li><strong>Durée :</strong> 5 mois</li>
         </ul>
         <img src="assets/previews/projects/lo02_1.png" alt="Aperçu du projet PocketImperium" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
         <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu du menu du jeu</p>
@@ -295,11 +294,12 @@ const CUBE_CONTENT = {
     3: {
       title: "Messagerie Web sécurisée : Neutrino",
       icon: "fa-solid fa-comments",
+      period: "02/2024 - 07/2024",
       preview: 'assets/previews/projects/pe2_0.png',
       hasContent: true,
       htmlContent: `
     <div class="card-header">
-      <i class="fa-brands fa-space-awesome"></i>
+      <i class="fa-solid fa-comments"></i>
       <h2>Neutrino Chat</h2>
       </div>
       <section class="project-summary">
@@ -310,11 +310,11 @@ const CUBE_CONTENT = {
       <article class="project-content">
       <h3>Fonctionnalités principales :</h3>
         <ul>
-        <li><strong>Création de compte sécurisée :</strong> inscription avec un nom d'utilisateur unique et un mot de passe. L'adresse email est facultative, prévue pour de futures implémentations.</li>
+        <li><strong>Création de compte sécurisée :</strong> inscription avec un nom d'utilisateur unique et un mot de passe. L'adresse email est facultative.</li>
         <li><strong>Messagerie en temps réel :</strong> utilisation de WebSockets pour des communications instantanées.</li>
         <li><strong>Chiffrement de bout en bout :</strong> les messages sont sécurisés grâce à la méthode RSA-OAEP.</li>
         <li><strong>Discussions de groupe :</strong> participation à des discussions de groupe avec des noms et photos de profil affichés en couleurs différentes.</li>
-        <li><strong>Personnalisation du profil :</strong> possibilité de changer sa photo de profil, visible après rechargement de la page.</li>
+        <li><strong>Personnalisation du profil :</strong> possibilité de changer sa photo de profil.</li>
         </ul>
         <img src="assets/previews/projects/pe2_1.png" alt="Aperçu de la page de connexion" class="project-image" style="width: 90%; height: auto;">
         <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page de connexion</p>
@@ -325,7 +325,6 @@ const CUBE_CONTENT = {
         <li><strong>Base de données :</strong> MongoDB</li>
         <li><strong>Sécurité :</strong> chiffrement RSA-OAEP, gestion sécurisée des sessions</li>
         </ul>
-        <p><strong>Durée :</strong> 6 mois</p>
         <img src="assets/previews/projects/pe2_2.png" alt="Aperçu d'une discussion de groupe" class="project-image" style="width: 90%; height: auto;">
         <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une discussion de groupe</p>
         <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">Voir le Projet</a>
@@ -336,6 +335,7 @@ const CUBE_CONTENT = {
     4: {
       title: "Tracé d’un Réseau Ferroviaire",
       icon: "fa-solid fa-train",
+      period: "11/2023 - 01/2024",
       preview: 'assets/previews/projects/nf06_0.png',
       hasContent: true,
       htmlContent: `
@@ -366,8 +366,7 @@ const CUBE_CONTENT = {
             <li><strong>Langages :</strong> C pour les algorithmes de graphes, Python pour l'interface et la visualisation</li>
             <li><strong>Bibliothèques :</strong> Utilisation de ctypes pour l'interfaçage entre C et Python, Tkinter pour l'interface graphique et Folium pour la carte interactive</li>
           </ul>
-    
-          <p><strong>Durée :</strong> 3 mois</p>
+  
     
           <img src="assets/previews/projects/nf06_2.png" alt="Illustration de la distance entre 2 chemins" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Illustration de la distance entre 2 chemins</p>
@@ -382,6 +381,7 @@ const CUBE_CONTENT = {
     5: {
       title: "Recherhce d'algorithmes pour jouer aux échecs",
       icon: "fa-solid fa-chesss",
+      period: "02/2023 - 06/2023",
       preview: 'assets/previews/projects/pe1_0.png',
       hasContent: true,
       htmlContent: `
@@ -416,8 +416,6 @@ const CUBE_CONTENT = {
             <li><strong>Moteur d’échecs :</strong> Stockfish</li>
           </ul>
 
-          <p><strong>Durée :</strong> 5 mois</p>
-
           <img src="assets/previews/projects/pe1_1.png" alt="Illustration de l'algorithme MCTS" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Simulations de l'algorithme MCTS</p>
 
@@ -429,6 +427,37 @@ const CUBE_CONTENT = {
       `
     },
     },
+    left : {
+      0: {
+        title: "Certifications",
+        infos : "Liste de mes certifications",
+        details: [
+          `<a class="info-list-link" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank">Deep Learning Specialization</a>`, 
+          `<a class="info-list-link" href="https://course.elementsofai.com/" target="_blank">Introduction to AI</a>`, 
+          `<a class="info-list-link" href="https://pix.fr/" target="_blank">PIX</a>`
+        ],
+        icon: "fa-solid fa-certificate",
+        preview: 'assets/previews/formation/certif.avif',
+        hasContent: true
+        },
+      1: {
+      title: "Université technologique de Troyes - UTT",
+      description: "Ecole d'ingénieur généraliste",
+      details: ["Cursus en 5 ans", "Cycle généraliste pendant 2 ans", " Spécialisation actuelle dans les systèmes numériques (IA, Data et IOT)"],
+      icon: "fa-solid fa-graduation-cap",
+      preview: 'assets/previews/formation/utt.jpg',
+      hasContent: true
+      },
+      2: {
+      title: "Institut Saint-Pierre",
+      description: "Baccalauréat Scientifique | Mention <strong>Très Bien</strong>",
+      infos : "Spécialités",
+      details: ["Mathématiques", " Numérique et sciences de l'informatique"],
+      icon: "fa-solid fa-school",
+      preview: 'assets/previews/formation/lycee.png',
+      hasContent: true
+      },
+    }
     
   };
 
@@ -544,6 +573,7 @@ function init() {
   cubeSection.appendChild(renderer.domElement);
   renderer.domElement.style.position = 'absolute';
 
+  /*
   cubeSection.addEventListener('mousedown', () => {
       if (!isZoomed) {
           cubeSection.classList.add('grabbing');
@@ -557,6 +587,7 @@ function init() {
   cubeSection.addEventListener('mouseleave', () => {
       cubeSection.classList.remove('grabbing');
   });
+*/
 
   // Contrôles
   controls = new OrbitControls(camera, renderer.domElement);
@@ -872,12 +903,12 @@ function zoomToFace(face, normal, faceType) {
       requestAnimationFrame(updateCamera);
     } else {
       // Animation terminée, mettre à jour les textures
-      isZoomed = true;
       cubeSection.classList.add('zoomed');
       const faceCubies = getFaceCubies(faceType);
       faceCubies.forEach(cubie => {
         updateFaceTextures(cubie, faceType, true);
       });
+      isZoomed = true;
       resetButton.style.display = 'block';
 
     }
@@ -1048,7 +1079,7 @@ function showInfoCard(event, faceType, cubePosition) {
     const content = document.createElement('div');
     const contentData = CUBE_CONTENT[faceType]?.[cubePosition];
 
-    if (faceType === 'left' && contentData && contentData.htmlContent) {
+    if (faceType === 'right' && contentData && contentData.htmlContent) {
       // Affichage d'un contenu HTML personnalisé pour la catégorie projets
       content.innerHTML = contentData.htmlContent;
     }
@@ -1065,18 +1096,41 @@ function showInfoCard(event, faceType, cubePosition) {
           <i class="fa-regular fa-folder-open"></i> Ouvrir le CV
          </a>
        </div>`
-        : `<div class="card-header">
-        <i class="${contentData.icon} card-icon"></i>
-        <h2>${contentData.title}</h2>
-          </div>
-          <div class="card-content">
-        ${contentData.description ? `<p class="card-content">${contentData.description}</p>` : ''}
-        ${contentData.details && contentData.details.length > 0 
-          ? `<ul class="details-list">
-          ${contentData.details.map(detail => `<li>${detail}</li>`).join('')}
-        </ul>`
-          : ''
-        }
+        : `<div class="standard-card">
+            <div class="card-header">
+              <div class="header-main">
+                <i class="${contentData.icon} card-icon"></i>
+                <h2>${contentData.title}</h2>
+              </div>
+              ${contentData.period ? 
+                `<div class="period-badge">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>${contentData.period}</span>
+                </div>` : ''
+              }
+            </div>
+
+            <div class="card-content">
+                            ${contentData.description ? 
+                `<div class="description-section">
+                  <h3><i class="fas fa-info-circle"></i> Description</h3>
+                  <p class="description">${contentData.description}</p>
+                </div>` : ''
+              }
+
+              ${contentData.details && contentData.details.length > 0 ? 
+                `<div class="details-section">
+                  <h3><i class="fas fa-list-ul"></i> ${contentData.infos ? contentData.infos : "Détails"}</h3>
+                  <ul class="details-list">                   ${contentData.details.map(detail => 
+                      `<li>
+                        <i class="fas fa-check"></i>
+                        <span>${detail}</span>
+                      </li>`
+                    ).join('')}
+                  </ul>
+                </div>` : ''
+              }
+            </div>
           </div>`;
     } else {
       content.innerHTML = `
@@ -1101,19 +1155,13 @@ function showInfoCard(event, faceType, cubePosition) {
 let hoveredCubie = null;
 
 function onMouseMove(event) {
+  if (!isZoomed || isModalOpen) return;
+
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(cubies);
-
-    // Vérifier si on survole le cube
-    const isOverCube = intersects.length > 0;
-  
-    // Mettre à jour le style du curseur
-    cubeSection.style.cursor = isOverCube ? 'pointer' : '';
-    
-  if (!isZoomed || isModalOpen) return;
 
   const newHoveredCubie = intersects.length > 0 ? intersects[0].object : null;
 
