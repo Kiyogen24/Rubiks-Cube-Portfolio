@@ -409,13 +409,14 @@ const CUBE_CONTENT = {
       htmlContent: `
       <div class="card-header">
         <i class="fa-solid fa-chess"></i>
-        <h2>IA appliquée aux échecs : recherche de l'algorithmes le plus performant</h2>
+        <h2>IA appliquée aux échecs</h2>
         <div class="period-badge">
                   <i class="fas fa-calendar-alt"></i>
                   <span>02/2023 - 06/2023</span>
                 </div>
         </div>
       <section class="project-summary">
+      <p><strong>Recherche de l'algorithmes le plus performant</strong></p>
         <p>Ce projet en binôme explore et compare deux algorithmes d’intelligence artificielle jouant aux échecs : <strong>Minimax</strong> et <strong>Monte Carlo Tree Search (MCTS)</strong>.</p>
       </section>
       <hr>
@@ -617,11 +618,7 @@ function init() {
 
   // Configuration de la caméra
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-  if (window.innerWidth < 768) {
-    camera.position.set(9, 9, 12); // Position initiale plus éloignée pour mobile
-  } else {
-    camera.position.set(5, 5, 7); // Position normale pour desktop
-  }
+  camera.position.set(5, 5, 7);
   camera.lookAt(0, 0, 0);
 
   // Configuration du rendu avec meilleure qualité
@@ -729,8 +726,6 @@ function init() {
 
   createOverlay(); // Ajouter à init()
   setupNavigation();
-  optimizeForMobile();
-  setupMobileInteractions();
 }
 
 // Fonctions de base
@@ -922,8 +917,7 @@ function zoomToFace(face, normal, faceType) {
   }
   
   const targetPosition = face.position.clone();
-  const distance = window.innerWidth < 768 ? 8 : 6; // Distance plus grande sur mobile
-
+  const distance = 6;
   
   // Calculer l'orientation finale avec des vecteurs normalisés
   let cameraOffset;
@@ -1867,137 +1861,10 @@ document.querySelectorAll('.menu-item').forEach(item => {
   });
 });
 
-
-// Ajouter ces variables globales au début du fichier
-let lastTappedCubie = null;
-let lastTappedTime = 0;
-
-// Modifier la fonction setupMobileInteractions
-function setupMobileInteractions() {
-  let touchStartX, touchStartY;
-  let touchEndX, touchEndY;
-  
-  renderer.domElement.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: false });
-
-  renderer.domElement.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].clientX;
-    touchEndY = e.changedTouches[0].clientY;
-
-    // Détecter si c'est un tap (et non un swipe)
-    const deltaX = Math.abs(touchEndX - touchStartX);
-    const deltaY = Math.abs(touchEndY - touchStartY);
-
-    if (deltaX < 10 && deltaY < 10) {
-      const customEvent = {
-        clientX: touchEndX,
-        clientY: touchEndY,
-        stopPropagation: () => {},
-        preventDefault: () => {}
-      };
-
-        handleMobileClick(customEvent);
-
-    }
-  }, { passive: false });
-
-    // Empêcher le zoom sur double tap
-    let lastTapTime = 0;
-    renderer.domElement.addEventListener('touchend', (e) => {
-      const currentTime = Date.now();
-      const tapLength = currentTime - lastTapTime;
-      if (tapLength < 300 && tapLength > 0) {
-        e.preventDefault();
-      }
-      lastTapTime = currentTime;
-    }, { passive: false });
-
-  // Optimiser la rotation sur mobile
-  if (window.innerWidth < 768) {
-    controls.rotateSpeed = 0.5;
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
-  }
-}
-function handleMobileClick(event) {
-  if (!isZoomed || isModalOpen) return;
-
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(cubies);
-
-  if (intersects.length > 0) {
-    const currentTime = Date.now();
-    const clickedCubie = intersects[0].object;
-    const normal = intersects[0].face.normal.clone();
-    normal.transformDirection(clickedCubie.matrixWorld);
-    
-    let faceType;
-    const epsilon = 0.1;
-    if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
-    else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
-    else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
-
-    const position = calculateCubiePosition(clickedCubie.userData.gridPos, faceType);
-    const content = CUBE_CONTENT[faceType]?.[position];
-
-    // Si c'est le même cubie
-    if (lastTappedCubie === clickedCubie) {
-      if (currentTime - lastTappedTime < 500) {
-        // Deuxième tap rapide - ouvrir l'info card
-        if (content?.hasContent) {
-          showInfoCard(event, faceType, position);
-        } else if (content?.link) {
-          window.open(content.link, "_blank");
-        }
-        
-        // Réinitialiser
-        lastTappedCubie = null;
-        lastTappedTime = 0;
-        hidePreview(); // Cacher l'aperçu lors de l'ouverture de la carte
-      }
-    } else {
-      // Premier tap sur un nouveau cubie - afficher l'aperçu
-      if (hoveredCubie) {
-        updateCubieHoverState(hoveredCubie, false);
-      }
-      updateCubieHoverState(clickedCubie, true);
-      hoveredCubie = clickedCubie;
-      
-      // Mettre à jour le dernier tap
-      lastTappedCubie = clickedCubie;
-      lastTappedTime = currentTime;
-
-      // Empêcher la fermeture immédiate de l'aperçu
-      event.stopPropagation();
-    }
-  } else {
-    // Clic en dehors d'un cubie - nettoyer l'état
-    if (hoveredCubie) {
-      updateCubieHoverState(hoveredCubie, false);
-      hoveredCubie = null;
-    }
-    lastTappedCubie = null;
-    lastTappedTime = 0;
-    hidePreview();
-  }
-}
-
 function adaptNavigation() {
-  if (window.innerWidth < 768) {
-    controls.enableZoom = false; // Désactiver le zoom sur mobile
-    controls.rotateSpeed = 0.7; // Ralentir la rotation
-    controls.enablePan = false; // Désactiver le pan
-  } else {
     controls.enableZoom = true;
     controls.rotateSpeed = 0.5;
     controls.enablePan = true;
-  }
 }
 
 // Appeler dans init() et onWindowResize()

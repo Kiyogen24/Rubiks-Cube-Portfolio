@@ -30,6 +30,16 @@
     </div>
   </head>
   <body>
+    
+    <script>
+      (function() {
+        if (!localStorage.getItem('forceDesktop') && 
+            (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+          window.location.href = 'mobile.html';
+        }
+      })();
+    </script>
+
     <div class="loading-screen">
       <div class="loader">
         <div class="cube-loader">
@@ -183,8 +193,8 @@
                       <a href="#intro" class="quick-link">Accueil</a>
                       <a href="#cube-section" class="quick-link" data-face="front">Compétences</a>
                       <a href="#cube-section" class="quick-link" data-face="back">Expériences</a>
-                      <a href="#cube-section" class="quick-link" data-face="left">Projets</a>
-                      <a href="#cube-section" class="quick-link" data-face="right">Formation</a>
+                      <a href="#cube-section" class="quick-link" data-face="right">Projets</a>
+                      <a href="#cube-section" class="quick-link" data-face="left">Formation</a>
                       <a href="#cube-section" class="quick-link" data-face="top">À propos</a>
                     </div>
                   </div>

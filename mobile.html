@@ -1,0 +1,164 @@
+html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version Mobile en Développement</title>
+    <link rel="icon" type="image/png" href="assets/previews/rubik.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --light-bg: #fbfbfe;
+            --light-primary: #2f27ce;
+            --light-secondary: #dedcff;
+            --light-accent: #433bff;
+            --light-text: #050315;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(135deg, var(--light-secondary), var(--light-bg));
+            color: var(--light-text);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container {
+            position: relative;
+            max-width: 600px;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            z-index: 1;
+        }
+
+        .rubiks-cube {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        h1 {
+            color: var(--light-primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        p {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .desktop-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--light-accent);
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 2px solid var(--light-accent);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .desktop-link:hover {
+            background: var(--light-accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 59, 255, 0.2);
+        }
+
+        .desktop-link i {
+            font-size: 1.2rem;
+        }
+
+        /* Animation flottante pour le Rubik's Cube */
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0px) rotate(360deg);
+            }
+        }
+
+        /* Cercles décoratifs en arrière-plan */
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--light-secondary);
+            opacity: 0.3;
+        }
+
+        .shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            bottom: -75px;
+            right: -75px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="container">
+        <img src="assets/previews/rubik.png" alt="Rubik's Cube" class="rubiks-cube">
+        <h1>Version Mobile en Développement</h1>
+        <p>Je travaille actuellement sur l'optimisation de ce portfolio pour les appareils mobiles. Pour une meilleure expérience, veuillez consulter le site sur un <strong>ordinateur</strong>.</p>
+        <p>La version mobile sera bientôt disponible...</p>
+        <a href="#" class="desktop-link" id="forceDesktop">
+            <i class="fas fa-desktop"></i>
+            Continuer vers la version desktop
+        </a>
+    </div>
+
+    <script>
+        document.getElementById('forceDesktop').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.setItem('forceDesktop', 'true');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

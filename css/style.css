@@ -1581,3 +1581,37 @@ canvas {
     width: 350px;
   }
 }
+
+
+.mobile-version-btn {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 188px;
+  width: 68px;
+  height: 68px;
+  background: var(--light-secondary);
+  border: 2px solid var(--light-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 101;
+  font-size: 24px;
+  color: var(--light-primary);
+  transition: all 0.3s ease;
+}
+
+.mobile-version-btn:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .mobile-version-btn {
+      display: block;
+  }
+}
+
+[data-theme="dark"] .mobile-version-btn {
+  background: var(--dark-secondary);
+  border-color: var(--dark-primary);
+  color: var(--dark-primary);
+}
