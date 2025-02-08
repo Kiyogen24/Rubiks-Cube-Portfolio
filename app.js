@@ -511,8 +511,38 @@ themeBtn.addEventListener('click', function() {
   themeIcon.classList.add(isDark ? 'fa-sun' : 'fa-moon');
 });
 
+
+function preloadImages() {
+  const imagesToPreload = new Set();
+  
+  // Parcourir CUBE_CONTENT pour collecter toutes les URLs d'images
+  Object.values(CUBE_CONTENT).forEach(face => {
+    Object.values(face).forEach(content => {
+      if (content.preview) {
+        imagesToPreload.add(content.preview);
+      }
+    });
+  });
+
+  // Créer une promesse pour chaque image à précharger
+  const preloadPromises = Array.from(imagesToPreload).map(url => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = () => reject(url);
+      img.src = url;
+    });
+  });
+
+  // Attendre que toutes les images soient chargées
+  return Promise.all(preloadPromises)
+    .then(() => console.log('Toutes les images sont préchargées'))
+    .catch(failed => console.warn('Certaines images n\'ont pas pu être chargées:', failed));
+}
+
 // Fonction d'initialisation
 function init() {
+  preloadImages();
 
   // Appliquer le thème enregistré par l'utilisateur ou le thème par défaut (light)
   const storedTheme = localStorage.getItem('theme') || 'light';
@@ -1190,17 +1220,18 @@ function displayPreview(imageSrc, event) {
 
   const rect = document.querySelector('#cube-section').getBoundingClientRect();
   previewElement.style.display = 'block';
-  
+  previewElement.style.backgroundImage = `url(${imageSrc})`; 
+   
   // Calculer la position centrée
   const cubieCenterX = event.clientX;
   const cubieCenterY = event.clientY;
   
-  setTimeout(() => {
+  // Ajouter la classe visible au prochain frame pour l'animation
+  requestAnimationFrame(() => {
     previewElement.classList.add('visible');
     previewElement.style.left = `${cubieCenterX}px`;
     previewElement.style.top = `${cubieCenterY}px`;
-    previewElement.style.backgroundImage = `url(${imageSrc})`;
-  }, 0);
+  });
 }
 
 function hidePreview() {
