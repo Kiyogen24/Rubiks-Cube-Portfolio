@@ -1567,6 +1567,12 @@ canvas {
   .footer-content {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  .device-note {
+    display: block;
+    font-size: 0.8rem;
+    margin: 0.5rem 1rem 1rem;
+  }
 }
 
 /* Pour les écrans plus grands que 992px (ordinateurs de bureau) */

@@ -185,6 +185,10 @@ const CUBE_CONTENT = {
     <div class="card-header">
       <i class="fa-solid fa-cube"></i>
       <h2>Portfolio</h2>
+        <div class="period-badge">
+          <i class="fas fa-calendar-alt"></i>
+          <span>02/2025</span>
+          </div>
       </div>
       <section class="project-summary">
       <p>Ce <strong>Rubik's Cube</strong> est une application web interactive qui présente mon portfolio sous la forme d'un Rubik's Cube en 3D.</p>
@@ -225,6 +229,11 @@ const CUBE_CONTENT = {
       <div class="card-header">
         <i class="fa-solid fa-chart-line"></i>
         <h2>Prédiction de défauts de paiement</h2>
+        <div class="period-badge">
+          <i class="fas fa-calendar-alt"></i>
+          <span>11/2024 - 01/2025</span>
+          </div>
+      </div>
       </div>
       <section class="project-summary">
         <p>Ce projet vise à analyser un dataset de crédit et à développer des modèles de machine learning capables de prédire la solvabilité des emprunteurs.</p>
@@ -270,6 +279,11 @@ const CUBE_CONTENT = {
     <div class="card-header">
       <i class="fa-brands fa-space-awesome"></i>
       <h2>Pocket Imperium</h2>
+      <div class="period-badge">
+          <i class="fas fa-calendar-alt"></i>
+          <span>09/2024 - 01/2025</span>
+          </div>
+      </div>
       </div>
       <section class="project-summary">
       <p>Développement d'une version logicielle du jeu <strong>Pocket Imperium</strong>.</p>
@@ -301,6 +315,10 @@ const CUBE_CONTENT = {
     <div class="card-header">
       <i class="fa-solid fa-comments"></i>
       <h2>Neutrino Chat</h2>
+      <div class="period-badge">
+          <i class="fas fa-calendar-alt"></i>
+          <span>02/2024 - 07/2024</span>
+          </div>
       </div>
       <section class="project-summary">
       <p><strong>Neutrino Chat</strong> est une application de messagerie web sécurisée développée en binôme dans le cadre de mes études à l'Université de Technologie de Troyes (UTT). Elle vise à offrir une communication fluide et privée entre utilisateurs.</p>
@@ -342,6 +360,10 @@ const CUBE_CONTENT = {
       <div class="card-header">
         <i class="fa-solid fa-train"></i>
         <h2>Tracé d’un Réseau Ferroviaire</h2>
+                <div class="period-badge">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>11/2023 - 01/2024</span>
+                </div>
       </div>
       <section class="project-summary">
         <p>Ce projet consiste en la conception et l'implémentation d'un réseau ferroviaire optimal en utilisant des algorithmes de graphes pour déterminer les trajets les plus efficaces.</p>
@@ -388,7 +410,11 @@ const CUBE_CONTENT = {
       <div class="card-header">
         <i class="fa-solid fa-chess"></i>
         <h2>IA appliquée aux échecs : recherche de l'algorithmes le plus performant</h2>
-      </div>
+        <div class="period-badge">
+                  <i class="fas fa-calendar-alt"></i>
+                  <span>02/2023 - 06/2023</span>
+                </div>
+        </div>
       <section class="project-summary">
         <p>Ce projet en binôme explore et compare deux algorithmes d’intelligence artificielle jouant aux échecs : <strong>Minimax</strong> et <strong>Monte Carlo Tree Search (MCTS)</strong>.</p>
       </section>
