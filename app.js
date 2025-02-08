@@ -909,98 +909,144 @@ function getFaceCubies(faceType) {
   return cubiesOnFace;
 }
 
-// Modifier la fonction zoomToFace
 function zoomToFace(face, normal, faceType) {
-  if(!isZoomed){
+  if(!isZoomed) {
     lastCameraPosition = camera.position.clone();
     lastCameraRotation = camera.quaternion.clone();
   }
   
   const targetPosition = face.position.clone();
   const distance = 6;
-  
-  // Calculer l'orientation finale avec des vecteurs normalisés
-  let cameraOffset;
-  let upVector = new THREE.Vector3(0, 1, 0);
-  
-  switch(faceType) {
-    case 'front':  
-      cameraOffset = new THREE.Vector3(0, 0, distance);
-      break;
-    case 'back':   
-      cameraOffset = new THREE.Vector3(0, 0, -distance);
-      break;
-    case 'right':  
-      cameraOffset = new THREE.Vector3(distance, 0, 0);
-      break;
-    case 'left':   
-      cameraOffset = new THREE.Vector3(-distance, 0, 0);
-      break;
-    case 'top':    
-      cameraOffset = new THREE.Vector3(0, distance, 0);
-      upVector = new THREE.Vector3(0, 0, -1);
-      break;
-    case 'bottom': 
-      cameraOffset = new THREE.Vector3(0, -distance, 0);
-      upVector = new THREE.Vector3(0, 0, 1);
-      break;
-  }
-
-        // Désactiver les boutons de navigation
-        document.querySelectorAll('.nav-button').forEach(btn => {
-          btn.classList.add('disabled');
-        });
-
-  const targetCameraPos = targetPosition.clone().add(cameraOffset);
-
-  const startPos = camera.position.clone();
-  const lookDirection = targetPosition.clone().sub(targetCameraPos).normalize();
-  const rightVector = new THREE.Vector3().crossVectors(upVector, lookDirection).normalize();
-  const adjustedUpVector = new THREE.Vector3().crossVectors(lookDirection, rightVector).normalize();
-
-  const targetMatrix = new THREE.Matrix4().makeBasis(
-    rightVector,
-    adjustedUpVector,
-    lookDirection.negate()
-  );
-  const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(targetMatrix);
-  const startQuaternion = camera.quaternion.clone();
-  
-
-  // Animation fluide
   controls.enabled = false;
-  const duration = 1000;
-  const startTime = Date.now();
-  
-  function updateCamera() {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const easeProgress = 1 - Math.pow(1 - progress, 3);
 
-    camera.position.lerpVectors(startPos, targetCameraPos, easeProgress);
-    camera.quaternion.slerpQuaternions(startQuaternion, targetQuaternion, easeProgress);
+  document.querySelectorAll('.nav-button').forEach(btn => {
+    btn.classList.add('disabled');
+  });
 
-    if (progress < 1) {
-      requestAnimationFrame(updateCamera);
-    } else {
-      // Animation terminée, mettre à jour les textures
-      cubeSection.classList.add('zoomed');
-      const faceCubies = getFaceCubies(faceType);
-      faceCubies.forEach(cubie => {
-        updateFaceTextures(cubie, faceType, true);
-      });
-      isZoomed = true;
-      resetButton.style.display = 'block';
+  if (faceType === 'top' || faceType === 'bottom') {
+    const startPos = camera.position.clone();
+    const startQuat = camera.quaternion.clone();
 
+    // Calculer l'angle entre la caméra et les quatre côtés du cube
+    const angles = [
+      { x: distance, z: 0 },      // droite
+      { x: -distance, z: 0 },     // gauche
+      { x: 0, z: distance },      // avant
+      { x: 0, z: -distance }      // arrière
+    ].map(pos => ({
+      position: pos,
+      angle: new THREE.Vector3(pos.x, 0, pos.z)
+        .angleTo(new THREE.Vector3(
+          camera.position.x - targetPosition.x,
+          0,
+          camera.position.z - targetPosition.z
+        ))
+    }));
+
+    // Trouver la position la plus proche de la caméra actuelle
+    const closestSide = angles.reduce((prev, current) => 
+      prev.angle < current.angle ? prev : current
+    );
+
+    // Créer la position intermédiaire en utilisant le côté le plus proche
+    const intermediatePos = new THREE.Vector3(
+      targetPosition.x + closestSide.position.x,
+      camera.position.y,
+      targetPosition.z + closestSide.position.z
+    );
+
+    const finalPos = new THREE.Vector3(
+      targetPosition.x,
+      targetPosition.y + (faceType === 'top' ? distance : -distance),
+      targetPosition.z
+    );
+
+    // Animation en deux étapes
+    const step1Duration = 500;
+    const step2Duration = 1000;
+    let startTime = Date.now();
+
+    function animateStep1() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / step1Duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+      camera.position.lerpVectors(startPos, intermediatePos, easeProgress);
+      camera.lookAt(targetPosition);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateStep1);
+      } else {
+        startTime = Date.now();
+        animateStep2();
+      }
     }
+
+    function animateStep2() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / step2Duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+      camera.position.lerpVectors(intermediatePos, finalPos, easeProgress);
+      
+      const upVector = faceType === 'top' ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 0, 1);
+      const lookMatrix = new THREE.Matrix4().lookAt(finalPos, targetPosition, upVector);
+      const targetQuat = new THREE.Quaternion().setFromRotationMatrix(lookMatrix);
+      camera.quaternion.slerpQuaternions(camera.quaternion, targetQuat, easeProgress);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateStep2);
+      } else {
+        finishZoom(faceType);
+      }
+    }
+
+    animateStep1();
+  } else {
+    // Code pour les autres faces
+    let cameraOffset;
+    let upVector = new THREE.Vector3(0, 1, 0);
+    
+    switch(faceType) {
+      case 'front':  cameraOffset = new THREE.Vector3(0, 0, distance); break;
+      case 'back':   cameraOffset = new THREE.Vector3(0, 0, -distance); break;
+      case 'right':  cameraOffset = new THREE.Vector3(distance, 0, 0); break;
+      case 'left':   cameraOffset = new THREE.Vector3(-distance, 0, 0); break;
+    }
+
+    const targetCameraPos = targetPosition.clone().add(cameraOffset);
+    const startPos = camera.position.clone();
+    const duration = 1000;
+    const startTime = Date.now();
+
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+      camera.position.lerpVectors(startPos, targetCameraPos, easeProgress);
+      camera.lookAt(targetPosition);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        finishZoom(faceType);
+      }
+    }
+
+    animate();
   }
-
-  updateCamera();
-
-  // Afficher le bouton retour
-  resetButton.style.display = 'block';
 }
 
+function finishZoom(faceType) {
+  cubeSection.classList.add('zoomed');
+  const faceCubies = getFaceCubies(faceType);
+  faceCubies.forEach(cubie => {
+    updateFaceTextures(cubie, faceType, true);
+  });
+  isZoomed = true;
+  resetButton.style.display = 'block';
+}
 
 function dezoom() {
   if (!isZoomed || !lastCameraPosition) return;
