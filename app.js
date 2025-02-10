@@ -43,8 +43,9 @@ const CUBE_CONTENT = {
   front: { // **Compétences**
     0: {
       title: "Python",
+      infos : "Bibliothèques",
       description: "Maîtrise du langage et des bibliothèques liées à la data science et à l'IA",
-      details: ["NumPy", "Pandas", "TensorFlow", "Keras"],
+      details: ["NumPy", "Pandas", "Scikit-Learn", "TensorFlow", "Keras"],
       icon: "fa-brands fa-python",
       preview: 'assets/previews/skills/python.jpg',
       hasContent: true
@@ -88,6 +89,7 @@ const CUBE_CONTENT = {
     7: {
       title: "Bases De Données",
       description: "Maîtrise de la gestion des bases de données",
+      infos : "Liste",
       details: ["SQL", "MongoDB"],
       icon: "fa-solid fa-database",
       preview: 'assets/previews/skills/data_b.png',
@@ -124,24 +126,22 @@ const CUBE_CONTENT = {
     },
     top : {
     6: {
-      title: "Moi",
-      description: "A propos de moi", 
-      details: ["20 ans", "Ecole d'ingénieur"],
+      title: " A propos de Moi",
+      details: ["Prénom : <strong>Romain</strong>", "Nom : <strong>Goldenchtein</strong>", "Nationalité : <strong>Français</strong>", "Âge : <strong>20 ans</strong>", "Adresse : <strong>Yerres</strong>", "Ville d'études : <strong>Troyes</strong>","Mail : <strong>r.goldenchtein@proton.me</strong>"],
       icon: "fa-regular fa-user",
       preview: 'assets/previews/about/person.jpg',
       hasContent: true
     },
     7: {
       title: "Mes passions",
-      description: "Les qualités qui me décrivent le mieux", 
-      details: ["Echecs", "Danse", "Concours de mémoire", "Musculation"],
+      description: "Ce que j'aime faire de mon temps libre", 
+      details: ["<strong>Echecs :</strong> J'ai appris de manière autodidacte et ait participé à quelques compétitions. Au meilleure de ma forme, j'ai pu attendre les 1600 elo sur chess.com !", "<strong>Danse :</strong> J'ai pratiqué pendant 12 ans le Hip-Hop et c'est une activité que j'adore !", "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. Actuellement, j'en connnais 400 :)", "<strong>Sport :</strong> J'essaye d'aller à la salle 3 fois par semaine et de courir et nager au moins une fois par semaine. La santé, c'est important !"],
       icon: "fa-regular fa-heart",
       preview: 'assets/previews/about/hobbies.png',
       hasContent: true
     },
     8: {
       title: "Soft Skills",
-      description: "Les qualités qui me décrivent le mieux", 
       details: ["Curiosité", "Persévérance", "Résolution des problèmes", "Organisé", "Gestion de Projet"],
       icon: "fa-regular fa-lightbulb",
       preview: 'assets/previews/about/soft.jpg',
@@ -191,7 +191,7 @@ const CUBE_CONTENT = {
           </div>
       </div>
       <section class="project-summary">
-      <p>Ce <strong>Rubik's Cube</strong> est une application web interactive qui présente mon portfolio sous la forme d'un Rubik's Cube en 3D.</p>
+      <p>Ce <em>Rubik's Cube</em> est une application web interactive qui présente mon portfolio sous la forme d'un Rubik's Cube en 3D.</p>
       </section>
       <hr>
       <div class="card-content">
@@ -201,7 +201,7 @@ const CUBE_CONTENT = {
         <ul>
         <li><strong>Interface 3D interactive :</strong> Utilisation de Three.js pour créer et manipuler le Rubik's Cube en trois dimensions, offrant une expérience utilisateur immersive.</li>
         <li><strong>Navigation intuitive :</strong> Les utilisateurs peuvent interagir avec le cube pour explorer différentes sections du portfolio, chaque face fournissant des informations spécifiques.</li>
-        <li><strong>Design responsive :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
+        <li><strong>Design responsive <em>(en développement)</em> :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
         </ul>
         <img src="assets/previews/projects/portfolio_2.png" alt="Aperçu du Rubik's Cube en 3D" class="project-image" style="width: 90%; height: auto;">
         <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page du Rubik's Cube en 3D</p>
@@ -210,7 +210,6 @@ const CUBE_CONTENT = {
         <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
         <li><strong>Bibliothèque 3D :</strong> Three.js</li>
         </ul>
-        <p><strong>Durée :</strong> 6 mois</p>
         <img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
         <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une des faces avec effet de survolement</p>
         <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
@@ -286,7 +285,7 @@ const CUBE_CONTENT = {
       </div>
       </div>
       <section class="project-summary">
-      <p>Développement d'une version logicielle du jeu <strong>Pocket Imperium</strong>.</p>
+      <p>Développement d'une version logicielle du jeu <em>Pocket Imperium</em>.</p>
       </section>
       <hr>
       <div class="card-content">
@@ -321,7 +320,7 @@ const CUBE_CONTENT = {
           </div>
       </div>
       <section class="project-summary">
-      <p><strong>Neutrino Chat</strong> est une application de messagerie web sécurisée développée en binôme dans le cadre de mes études à l'Université de Technologie de Troyes (UTT). Elle vise à offrir une communication fluide et privée entre utilisateurs.</p>
+      <p><em>Neutrino Chat</em> est une application de messagerie web sécurisée développée
       </section>
       <hr>
       <div class="card-content">
