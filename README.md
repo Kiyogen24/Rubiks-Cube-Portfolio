@@ -1,46 +1,117 @@
-# README.md
+# Portfolio Rubik's Cube 3D
 
-# Portfolio 3D Cube
+Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube en 3D. Chaque face représente une catégorie différente (compétences, projets, expériences, etc.) avec des éléments interactifs.
 
-Ce projet est un portfolio interactif en 3D qui présente un Rubik's Cube flottant. Chaque face du cube représente une catégorie : expériences, projets, passions et compétences. Les carrés de chaque face représentent des éléments spécifiques de ces catégories.
-
-## Structure du projet
-
-- **index.html** : Contient la structure de base de la page web, incluant les références aux scripts et styles nécessaires, ainsi qu'un bouton pour activer ou désactiver l'interaction avec le cube.
-- **app.js** : Cœur de l'application, initialise la scène 3D avec Three.js, crée le Rubik's Cube, configure les lumières et les ombres, et gère les interactions de l'utilisateur. Inclut la logique pour recalibrer les faces du cube lors d'un clic.
-- **css/style.css** : Contient les styles CSS pour le projet, y compris le style du bouton et la mise en page générale de la page.
-- **package.json** : Configuration pour npm, liste les dépendances nécessaires pour le projet, comme Three.js, et inclut des scripts pour démarrer le projet.
-
-## Installation
-
-1. Clonez le dépôt :
-   ```
-   git clone <URL_DU_DEPOT>
-   ```
-2. Accédez au répertoire du projet :
-   ```
-   cd portfolio-3d-cube
-   ```
-3. Installez les dépendances :
-   ```
-   npm install
-   ```
-
-## Exécution
-
-Pour exécuter le projet, ouvrez `index.html` dans un navigateur web. Vous pouvez également utiliser un serveur local pour une meilleure expérience.
+[Lien du projet](goldenrom.vercel.app)
 
 ## Fonctionnalités
 
-- Rubik's Cube flottant avec des faces interactives.
-- Chaque face représente une catégorie de votre portfolio.
-- Possibilité de recalibrer les faces du cube en cliquant dessus.
-- Bouton pour activer ou désactiver l'interaction avec le cube.
+### Interface 3D Interactive
 
-## Auteurs
+- Rubik's Cube manipulable en 3D grâce à Three.js
+- Animation fluide de rotation et zoom
+- Effets de survol et textures dynamiques
+- Navigation intuitive entre les faces
 
-- Votre nom ici
+### Navigation par Catégories
 
-## License
+- **Compétences** (Face avant) : Technologies et outils maîtrisés
+- **Expériences** (Face arrière) : Parcours professionnel  
+- **À propos** (Face supérieure) : Informations personnelles et passions
+- **CV** (Face inférieure) : CV téléchargeable au format PDF
+- **Projets** (Face droite) : Portfolio de projets réalisés
+- **Formation** (Face gauche) : Parcours académique
+
+### Fonctionnalités Avancées  
+
+- Mode sombre/clair avec sauvegarde des préférences
+- Menu de navigation responsive
+- Aperçus des contenus au survol
+- Cartes d'information détaillées
+- Design responsive avec optimisations mobiles
+
+## Technologies Utilisées
+
+### Frontend
+
+- HTML5
+- CSS3 (Animations, Flexbox, Grid)
+- JavaScript (ES6+)
+
+### Bibliothèques
+
+- Three.js pour les graphiques 3D
+- Font Awesome pour les icônes
+
+## Installation
+
+1. Cloner le dépôt :
+
+```bash
+git clone https://github.com/Kiyogen24/Rubiks-Cube-Portfolio.git
+```
+
+2. Installer les dépendances :
+
+```bash
+npm install
+```
+
+3. Lancer le serveur de développement :
+
+```bash
+npm start
+```
+
+## Structure du Projet
+
+```plaintext
+├── app.js                # Logique principale et rendu 3D
+├── css/                  
+│   └── style.css        # Styles CSS
+├── assets/              # Images et ressources
+├── index.html           # Page principale
+├── mobile.html          # Version mobile
+├── translations.js      # Traductions i18n
+├── logic.js            # Logique supplémentaire
+└── package.json         # Configuration npm
+```
+
+## Architecture du Code
+
+### Composants Principaux
+
+#### Initialisation Three.js
+
+- Configuration de la scène 3D
+- Mise en place de la caméra et des contrôles
+- Gestion de l'éclairage et des ombres
+
+#### Gestion du Cube
+
+- Création dynamique des faces et textures
+- Animation et interaction avec le cube
+- Système de zoom et navigation 
+
+#### Interface Utilisateur
+
+- Menu de navigation responsive
+- Cartes d'information dynamiques
+- Prévisualisation du contenu
+
+## Performances
+
+### Optimisations
+
+- Mise en cache des textures
+- Gestion optimisée des ressources 3D
+- Chargement asynchrone des assets
+- Adaptation automatique selon le device
+
+## Licence
 
 Ce projet est sous licence MIT.
+
+## Contact
+
+Romain Goldenchtein - [r.goldenchtein@proton.me](mailto:r.goldenchtein@proton.me)
