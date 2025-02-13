@@ -104,11 +104,7 @@ npm start
 │   ├── main.js
 │   └── utils/
 │       └── constants.js
-├── language-manager.js  # Gestion multilingue
-├── logic.js             # Logique supplémentaire
-├── package.json         # Configuration npm
-├── ramos_cube.js        # Script supplémentaire du Rubik's Cube
-└── translations.js      # Traductions
+└── package.json         # Configuration npm
 ```
 
 ## Architecture du Code
