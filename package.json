@@ -1,8 +1,8 @@
 {
-  "name": "portfolio-3d-cube",
+  "name": "rubiks-cube",
   "version": "1.0.0",
   "description": "Un portfolio en 3D avec un Rubik's Cube flottant représentant différentes catégories.",
-  "main": "app.js",
+  "main": "main.js",
   "scripts": {
     "start": "live-server"
   },

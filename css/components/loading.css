@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Raleway:wght@400;600&display=swap');
+
+
+:root {
+  --light-bg: #fbfbfe;
+  --light-primary: #2f27ce;
+  --light-secondary: #dedcff;
+  --light-accent: #433bff;
+  --light-text: #050315;
+  --border-light: rgba(255, 248, 222, 0.5);
+
+  --dark-bg: #010104;
+  --dark-primary: #3a31d8;
+  --dark-secondary: #020024;
+  --dark-accent: #0600c2;
+  --dark-text: #ebe9fc;
+  --border-dark: rgba(255, 248, 222, 0.5);
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--light-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+    padding: 1rem;
+  }
+
+  
+.loading-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .cube-loader {
+    width: clamp(40px, 8vw, 60px);
+    height: clamp(40px, 8vw, 60px);
+    transform-style: preserve-3d;
+    animation: rotate 2s infinite linear;
+  }
+  
+  .cube-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--light-primary);
+  }
+  
+.cube-face.front  { transform: translateZ(30px); background: #B90000; }
+.cube-face.back   { transform: translateZ(-30px) rotateY(180deg); background: #ff8000; }
+.cube-face.right  { transform: rotateY(90deg) translateZ(30px); background: #000FFF; }
+.cube-face.left   { transform: rotateY(-90deg) translateZ(30px); background: #00994C; }
+.cube-face.top    { transform: rotateX(90deg) translateZ(30px); background: #FFFFFF; }
+.cube-face.bottom { transform: rotateX(-90deg) translateZ(30px); background: #ffff00; }
+
+.loading-text {
+    margin-top: 2rem;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: var(--light-text);
+    font-family: 'Raleway', sans-serif;
+    text-align: center;
+  }
+
+
+
+[data-theme="dark"] .loading-screen {
+    background: var(--dark-bg);
+  }
+  [data-theme="dark"] .cube-face {
+    border-color: var(--dark-primary);
+  }
+  [data-theme="dark"] .loading-text {
+    color: var(--dark-text);
+  }
+  
+
+@keyframes rotate {
+    from { transform: rotateX(0deg) rotateY(0deg); }
+    to { transform: rotateX(360deg) rotateY(360deg); }
+}
+  

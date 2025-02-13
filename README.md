@@ -66,15 +66,49 @@ npm start
 ## Structure du Projet
 
 ```plaintext
-├── app.js                # Logique principale et rendu 3D
-├── css/                  
-│   └── style.css        # Styles CSS
 ├── assets/              # Images et ressources
+│   ├── pp.png
+│   ├── pp2.png
+│   └── previews/
+│       ├── about/
+│       │   ├── github.png
+│       │   ├── hobbies.png
+│       │   └── … 
+│       ├── cv_pr.png
+│       ├── cv.pdf
+│       ├── exp/
+│       ├── formation/
+│       ├── projects/
+│       ├── rubik.png
+│       └── skills/
+├── css/                 
+│   ├── components/      # Composants CSS spécifiques
+│   │   ├── cube.css
+│   │   ├── footer.css
+│   │   ├── intro.css
+│   │   ├── loading.css
+│   │   ├── modal.css
+│   │   ├── navigation.css
+│   │   └── theme.css
+│   └── main.css
 ├── index.html           # Page principale
 ├── mobile.html          # Version mobile
-├── translations.js      # Traductions i18n
-├── logic.js            # Logique supplémentaire
-└── package.json         # Configuration npm
+├── js/
+│   ├── cards/
+│   │   ├── overlay.js
+│   │   └── preview.js
+│   ├── cube/
+│   │   ├── cube.js
+│   │   └── navigation.js
+│   ├── globals.js
+│   ├── main.js
+│   └── utils/
+│       └── constants.js
+├── language-manager.js  # Gestion multilingue
+├── logic.js             # Logique supplémentaire
+├── package.json         # Configuration npm
+├── ramos_cube.js        # Script supplémentaire du Rubik's Cube
+└── translations.js      # Traductions
 ```
 
 ## Architecture du Code
@@ -91,7 +125,7 @@ npm start
 
 - Création dynamique des faces et textures
 - Animation et interaction avec le cube
-- Système de zoom et navigation 
+- Système de zoom et navigation
 
 #### Interface Utilisateur
 

@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Raleway:wght@400;600&display=swap');
+
+
+:root {
+  --light-bg: #fbfbfe;
+  --light-primary: #2f27ce;
+  --light-secondary: #dedcff;
+  --light-accent: #433bff;
+  --light-text: #050315;
+  --border-light: rgba(255, 248, 222, 0.5);
+
+  --dark-bg: #010104;
+  --dark-primary: #3a31d8;
+  --dark-secondary: #020024;
+  --dark-accent: #0600c2;
+  --dark-text: #ebe9fc;
+  --border-dark: rgba(255, 248, 222, 0.5);
+}
+
+
+#cube-section {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    /*cursor: grab; */
+  }
+  
+  /*
+  #cube-section.grabbing {
+    cursor: grabbing; 
+  }
+  #cube-section {
+    cursor: grab;
+  }
+  
+  #cube-section:active {
+    cursor: grabbing;
+  }
+  
+  #cube-section.zoomed {
+    cursor: default;
+  }
+  */
+  
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.preview-popup {
+    position: fixed;
+    z-index: 1000;
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.95) translate(-50%, -50%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    backdrop-filter: blur(12px); 
+  }
+  
+  .preview-popup.visible {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+
+  [data-theme="dark"] {
+
+    #cube-section {
+        background: var(--dark-bg);
+    }
+}

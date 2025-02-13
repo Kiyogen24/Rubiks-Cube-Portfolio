@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Raleway:wght@400;600&display=swap');
+
+
+:root {
+    --light-bg: #fbfbfe;
+    --light-primary: #2f27ce;
+    --light-secondary: #dedcff;
+    --light-accent: #433bff;
+    --light-text: #050315;
+    --border-light: rgba(255, 248, 222, 0.5);
+
+    --dark-bg: #010104;
+    --dark-primary: #3a31d8;
+    --dark-secondary: #020024;
+    --dark-accent: #0600c2;
+    --dark-text: #ebe9fc;
+    --border-dark: rgba(255, 248, 222, 0.5);
+}
+
+#intro {
+        min-height: 100vh;
+        width: 100%;
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(to bottom, var(--light-secondary), var(--light-bg));
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        overflow-y: auto; 
+        scrollbar-width: none;
+}
+
+.intro-content {
+    text-align: left;
+    padding: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+    height: auto;
+    padding-bottom: 15vh;
+    animation: fadeIn 1s ease-out;
+}
+
+
+.intro-text {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2em;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    transition: transform 0.6s ease, box-shadow 0.6s ease;
+}
+
+.intro-text:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+}
+
+.intro-text p {
+    font-size: 1.2em;
+    line-height: 1.8;
+    color: var(--light-text);
+    margin: 0;
+    text-align: justify;
+    font-weight: 400;
+}
+
+.typing-text {
+    font-size: 2.5em;
+    margin: 0;
+    font-family: 'Raleway', sans-serif;
+    color: var(--light-text);
+    padding: 0.5em 0;
+    display: inline-block;
+    border-right: 2px solid var(--light-text);
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: typing 3s steps(30, end) forwards,
+                     blink-caret 0.75s step-end infinite;
+    animation-delay: 3s;
+}
+
+.scroll-indicator {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: var(--light-text);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10;
+}
+
+.scroll-indicator.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.mouse {
+    width: 30px;
+    height: 50px;
+    border: 2px solid var(--light-text);
+    border-radius: 20px;
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    background: var(--light-secondary);
+}
+
+.mouse::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 10px;
+    background: var(--light-text);
+    border-radius: 2px;
+    animation: scroll 2s infinite;
+}
+.device-note {
+    display: none;
+    font-size: 0.9rem;
+    color: var(--light-text);
+    text-align: center;
+    margin: 0.5rem 0 1.5rem;
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+
+[data-theme="dark"] {
+        #intro {
+            background: linear-gradient(to bottom, var(--dark-secondary), var(--dark-bg));
+        }
+    
+        .intro-text {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    
+        .intro-text p {
+            color: var(--dark-text);
+        }
+    
+        .typing-text {
+            color: var(--dark-text);
+            border-right: 2px solid var(--dark-text);
+        }
+        .mouse {
+                border-color: var(--dark-text);
+                background: var(--dark-secondary);
+        }
+    
+        .mouse::before {
+                background-color: var(--dark-text);
+        }
+    
+        .scroll-indicator {
+                color: var(--dark-text);
+        }
+        .device-note {
+            color: var(--dark-text);
+          }
+}
+
+/* Animations */
+@keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+}
+
+@keyframes scroll {
+        0% { transform: translate(-50%, 0); opacity: 1; }
+        100% { transform: translate(-50%, 15px); opacity: 0; }
+}
+
+@keyframes blink-caret {
+        from, to { border-color: transparent }
+        50% { border-color: currentColor }
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+  }
