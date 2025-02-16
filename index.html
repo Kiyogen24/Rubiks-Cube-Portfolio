@@ -53,7 +53,7 @@
       </div>
       <p class="loading-text">Chargement...</p>
       <br><br>
-      <p class="device-note">Ce site est optimisé pour PC - Il est fortement recommandé de le consulter sur ordinateur pour une meilleure expérience.</p>
+      <p id="device-note" class="device-note">Ce site est optimisé pour PC - Il est fortement recommandé de le consulter sur ordinateur pour une meilleure expérience.</p>
     </div>
     <!-- Boutons de navigation -->
     <div class="nav-buttons">
@@ -141,7 +141,6 @@
         </section>
 
         <!-- Section Footer -->
-        <section id="footer-section">
           <section id="footer-section">
             <footer>
               <div class="footer-content">
@@ -203,7 +202,14 @@
             </footer>
           </section>
     </div>
-
+    <script>
+      const deviceNote = document.getElementById('device-note');
+      if (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        deviceNote.style.display = 'block';
+      } else {
+        deviceNote.style.display = 'none';
+      }
+    </script>
     <script type="module" src="js/main.js"></script>
   </body>
 </html>

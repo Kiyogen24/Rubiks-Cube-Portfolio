@@ -123,7 +123,6 @@
     animation: scroll 2s infinite;
 }
 .device-note {
-    display: none;
     font-size: 0.9rem;
     color: var(--light-text);
     text-align: center;
@@ -193,3 +192,27 @@
         transform: translateY(0);
     }
   }
+
+
+
+  @media screen and (max-width: 768px) {
+    .typing-text {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        margin: 20px 0;
+        white-space: normal;
+        overflow: visible;
+        width: auto;
+        border-right: none;
+        animation: none;
+    }
+    
+    .intro-content {
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .intro-text {
+        font-size: clamp(14px, 4vw, 16px);
+        padding: 15px;
+    }
+}
