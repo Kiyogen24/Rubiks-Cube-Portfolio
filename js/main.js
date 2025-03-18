@@ -261,6 +261,9 @@ function init() {
   createOverlay();
   // Initialisation de la navigation du Rubik's Cube
   setupNavigation();
+
+  // Gestion des indicateurs d'aide
+  setupHints();
 }
 
 // Ajustement de la scène lors du redimensionnement de la fenêtre
@@ -460,6 +463,59 @@ document.querySelectorAll('.menu-item').forEach(item => {
     }
   });
 });
+
+
+// Fonction pour gérer les indicateurs d'aide
+function setupHints() {
+  const clickHint = document.getElementById('click-hint');
+  const navHint = document.getElementById('nav-hint');
+  const container = document.querySelector('.container');
+  
+  // Vérifier si c'est la première visite
+  const hasSeenHints = localStorage.getItem('hasSeenCubeHints');
+  
+  if (!hasSeenHints) {
+    // Détecter quand l'utilisateur arrive sur la section du cube
+    container.addEventListener('scroll', function() {
+      const cubeSection = document.getElementById('cube-section');
+      const rect = cubeSection.getBoundingClientRect();
+      
+      // Si la section du cube est visible à l'écran
+      if (rect.top === 0 && rect.bottom === window.innerHeight) {
+        // Afficher les indicateurs après un court délai
+        setTimeout(() => {
+          clickHint.classList.add('visible');
+          navHint.classList.add('visible');
+          
+          // Masquer les indicateurs après 6 secondes
+          setTimeout(() => {
+            clickHint.classList.remove('visible');
+            navHint.classList.remove('visible');
+            
+            // Marquer comme vu
+            localStorage.setItem('hasSeenCubeHints', 'true');
+          }, 6000);
+        }, 1000);
+      }
+    }, { passive: true });
+    
+    // Masquer les indicateurs si l'utilisateur interagit avec le cube
+    document.getElementById('cube-section').addEventListener('click', () => {
+      clickHint.classList.remove('visible');
+      navHint.classList.remove('visible');
+      localStorage.setItem('hasSeenCubeHints', 'true');
+    });
+    
+    // Masquer les indicateurs si l'utilisateur utilise la navigation
+    document.querySelectorAll('.nav-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        clickHint.classList.remove('visible');
+        navHint.classList.remove('visible');
+        localStorage.setItem('hasSeenCubeHints', 'true');
+      });
+    });
+  }
+}
 
 // Gestion du clic sur le menu hamburger pour l'ouverture/fermeture du menu
 app.menuBtn.addEventListener('click', () => {

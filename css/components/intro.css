@@ -123,13 +123,18 @@
     animation: scroll 2s infinite;
 }
 .device-note {
-    font-size: 0.9rem;
-    color: var(--light-text);
-    text-align: center;
-    margin: 0.5rem 0 1.5rem;
-    font-style: italic;
-    opacity: 0.8;
-  }
+    display: none;
+}
+@media screen and (max-width: 768px) {
+    .device-note {
+        font-size: 0.9rem;
+        color: var(--light-text);
+        text-align: center;
+        margin: 0.5rem 0 1.5rem;
+        font-style: italic;
+        opacity: 0.8;
+    }
+}
 
 
 [data-theme="dark"] {

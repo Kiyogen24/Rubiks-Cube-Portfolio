@@ -1,0 +1,87 @@
+/* Styles pour les indicateurs d'aide */
+.cube-hint,
+.nav-hint {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+/* Indicateur pour le clic sur le cube */
+.cube-hint {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  text-align: center;
+  gap: 10px;
+  animation: pulse 2s infinite;
+  max-width: 220px;
+}
+
+/* Indicateur pour les boutons de navigation */
+.nav-hint {
+  left: 80px; 
+  top: 40%; 
+  transform: translateY(-50%);
+  flex-direction: column;
+  gap: 10px;
+  max-width: 180px; 
+  text-align: center; 
+}
+
+/* Icône d'indicateur */
+.hint-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+/* Texte d'indicateur */
+.hint-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Flèche pointant vers les boutons */
+.hint-arrow {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  animation: bounce-horizontal 1s infinite; /* Animation horizontale */
+}
+
+/* Animation de pulsation */
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Animation de rebondissement horizontale */
+@keyframes bounce-horizontal {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-10px); }
+}
+
+/* État visible des indicateurs */
+.cube-hint.visible,
+.nav-hint.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Adaptation au mode sombre/clair */
+[data-theme="light"] .cube-hint,
+[data-theme="light"] .nav-hint {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
