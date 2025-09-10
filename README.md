@@ -29,6 +29,8 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 - Aperçus des contenus au survol
 - Cartes d'information détaillées
 - Design responsive avec optimisations mobiles
+- Changement de langue dynamique (FR/EN) via le bouton de langue
+- Contrôles interactifs pour "jouer" avec le cube (mélange, résolution et rotations de faces)
 
 ## Technologies Utilisées
 
@@ -99,6 +101,7 @@ npm start
 │   │   └── preview.js
 │   ├── cube/
 │   │   ├── cube.js
+│   │   ├── animator.js
 │   │   └── navigation.js
 │   ├── globals.js
 │   ├── main.js
