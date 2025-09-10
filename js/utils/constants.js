@@ -408,9 +408,8 @@ export const CUBE_CONTENT = {
             </div>
           </div>
           <section class="project-summary">
-            <p>Ce projet académique a été réalisé dans le cadre du module IA02 à l’UTT. Il comporte deux volets : 
-            la <strong>classification d’images avec CIFAR-10</strong> et la <strong>détection de chutes</strong> à partir de signaux multidimensionnels. 
-            L’objectif global était d’explorer différentes approches d’IA pour des cas concrets de vision et de reconnaissance de motifs.</p>
+            <p>Ce projet comporte deux volets : 
+            la <strong>classification d’images avec CIFAR-10</strong> et la <strong>détection de chutes</strong> à partir de signaux multidimensionnels.</p>
           </section>
           <hr>
           <div class="card-content">
@@ -467,9 +466,8 @@ export const CUBE_CONTENT = {
                 </div>
               </div>
               <section class="project-summary">
-                <p>This academic project, carried out at UTT in the IA02 module, consisted of two parts: 
-                <strong>image classification with CIFAR-10</strong> and <strong>fall detection</strong> from multidimensional signals. 
-                The global objective was to explore and compare different AI methods for vision and pattern recognition problems.</p>
+                <p>This academic project consisted of two parts: 
+                <strong>image classification with CIFAR-10</strong> and <strong>fall detection</strong> from multidimensional signals.</p>
               </section>
               <hr>
               <div class="card-content">
@@ -550,8 +548,9 @@ export const CUBE_CONTENT = {
             <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page du Rubik's Cube en 3D</p>
 
             <img src="assets/previews/projects/portfolio_3.png" alt="Cube mélangé et mode jeu" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu du cube mélangé en mode jeu</p>
-            
+            <p style="font-style: italic; font-size: 
+            0.8em; text-align: center;">Aperçu du cube mélangé en mode jeu</p>
+
             <h3>Technologie utilisée :</h3>
             <ul>
               <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
