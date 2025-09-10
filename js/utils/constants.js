@@ -516,88 +516,104 @@ export const CUBE_CONTENT = {
       },
 
       2: {
-        title: "Portfolio",
-        icon: "fa-solid fa-cube",
-        period: "02/2025 - 09/2025",
-        preview: 'assets/previews/projects/portfolio_0.png',
-        hasContent: true,
-        htmlContent: `
-      <div class="card-header">
-        <i class="fa-solid fa-cube"></i>
-        <h2>Portfolio</h2>
+      title: "Portfolio",
+      icon: "fa-solid fa-cube",
+      period: "02/2025 - 09/2025",
+      preview: 'assets/previews/projects/portfolio_0.png',
+      hasContent: true,
+      htmlContent: `
+        <div class="card-header">
+          <i class="fa-solid fa-cube"></i>
+          <h2>Portfolio</h2>
           <div class="period-badge">
             <i class="fas fa-calendar-alt"></i>
             <span>02/2025 - 09/2025</span>
-            </div>
+          </div>
         </div>
         <section class="project-summary">
-        <p>Ce <em>Rubik's Cube</em> est une application web interactive qui présente mon portfolio sous la forme d'un Rubik's Cube en 3D.</p>
+          <p>Ce <em>Rubik's Cube</em> est une application web interactive qui présente mon portfolio sous la forme d'un Rubik's Cube en 3D.</p>
         </section>
         <hr>
         <div class="card-content">
-        <article class="project-content">
-        <p>Chaque face du cube du Rubik's Cube est dédiée à une catégorie spécifique : expériences, projets, passions et compétences. Les carrés individuels sur chaque face représentent des éléments détaillés de ces catégories.</p>
-          <h3>Fonctionnalités principales :</h3>
-          <ul>
-          <li><strong>Interface 3D interactive :</strong> Utilisation de Three.js pour créer et manipuler le Rubik's Cube en trois dimensions, offrant une expérience utilisateur immersive.</li>
-          <li><strong>Navigation intuitive :</strong> Les utilisateurs peuvent interagir avec le cube pour explorer différentes sections du portfolio, chaque face fournissant des informations spécifiques.</li>
-          <li><strong>Design responsive <em>(en développement)</em> :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
-          </ul>
-          <img src="assets/previews/projects/portfolio_2.png" alt="Aperçu du Rubik's Cube en 3D" class="project-image" style="width: 90%; height: auto;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page du Rubik's Cube en 3D</p>
-          <h3>Technologie utilisée :</h3>
-          <ul>
-          <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
-          <li><strong>Bibliothèque 3D :</strong> Three.js</li>
-          </ul>
-          <img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une des faces avec effet de survolement</p>
-          <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
-          <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le Projet</a>
-        </article>
+          <article class="project-content">
+            <p>Chaque face du cube du Rubik's Cube est dédiée à une catégorie spécifique : expériences, projets, passions et compétences. Les carrés individuels sur chaque face représentent des éléments détaillés de ces catégories.</p>
+            <h3>Fonctionnalités principales :</h3>
+            <ul>
+              <li><strong>Interface 3D interactive :</strong> Utilisation de Three.js pour créer et manipuler le Rubik's Cube en trois dimensions, offrant une expérience utilisateur immersive.</li>
+              <li><strong>Navigation intuitive :</strong> Les utilisateurs peuvent interagir avec le cube pour explorer différentes sections du portfolio, chaque face fournissant des informations spécifiques.</li>
+              <li><strong>Mélange et mode jeu :</strong> Possibilité de mélanger le cube et de jouer avec, ajoutant une dimension ludique à la navigation.</li>
+              <li><strong>Bouton EN/FR :</strong> Changement de langue dynamique pour une expérience bilingue.</li>
+              <li><strong>Design responsive <em>(en développement)</em> :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
+            </ul>
+
+            <img src="assets/previews/projects/portfolio_2.png" alt="Aperçu du Rubik's Cube en 3D" class="project-image" style="width: 90%; height: auto;">
+            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page du Rubik's Cube en 3D</p>
+
+            <img src="assets/previews/projects/portfolio_3.png" alt="Cube mélangé et mode jeu" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu du cube mélangé en mode jeu</p>
+            
+            <h3>Technologie utilisée :</h3>
+            <ul>
+              <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
+              <li><strong>Bibliothèque 3D :</strong> Three.js</li>
+            </ul>
+
+            <img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une des faces avec effet de survolement</p>
+            <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
+            <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le Projet</a>
+          </article>
         </div>
       `,
       i18n: {
         en: {
           htmlContent: `
-      <div class="card-header">
-        <i class="fa-solid fa-cube"></i>
-        <h2>Portfolio</h2>
-          <div class="period-badge">
-            <i class="fas fa-calendar-alt"></i>
-            <span>02/2025 - 09/2025</span>
+            <div class="card-header">
+              <i class="fa-solid fa-cube"></i>
+              <h2>Portfolio</h2>
+              <div class="period-badge">
+                <i class="fas fa-calendar-alt"></i>
+                <span>02/2025 - 09/2025</span>
+              </div>
             </div>
-        </div>
-        <section class="project-summary">
-        <p>This <em>Rubik's Cube</em> is an interactive web application that presents my portfolio as a 3D Rubik's Cube.</p>
-        </section>
-        <hr>
-        <div class="card-content">
-        <article class="project-content">
-        <p>Each face of the Rubik's Cube is dedicated to a specific category: experiences, projects, passions and skills. Individual squares on each face represent detailed items of these categories.</p>
-          <h3>Main features:</h3>
-          <ul>
-          <li><strong>Interactive 3D interface:</strong> Uses Three.js to create and manipulate the Rubik's Cube in three dimensions for an immersive user experience.</li>
-          <li><strong>Intuitive navigation:</strong> Users can interact with the cube to explore different sections of the portfolio, each face providing specific information.</li>
-          <li><strong>Responsive design <em>(in progress)</em>:</strong> Adapts the display for an optimal experience across devices and screen sizes.</li>
-          </ul>
-          <img src="assets/previews/projects/portfolio_2.png" alt="Rubik's Cube 3D preview" class="project-image" style="width: 90%; height: auto;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of the 3D Rubik's Cube page</p>
-          <h3>Technology used:</h3>
-          <ul>
-          <li><strong>Frontend:</strong> HTML, CSS, JavaScript</li>
-          <li><strong>3D library:</strong> Three.js</li>
-          </ul>
-          <img src="assets/previews/projects/portfolio_1.png" alt="Preview of a face" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of one face with hover effect</p>
-          <p>The site is built with a 3D-first approach, offering an immersive user experience and intuitive navigation through my various projects and skills.</p>
-          <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">See Project</a>
-        </article>
-        </div>
-      `
+            <section class="project-summary">
+              <p>This <em>Rubik's Cube</em> is an interactive web application that presents my portfolio as a 3D Rubik's Cube.</p>
+            </section>
+            <hr>
+            <div class="card-content">
+              <article class="project-content">
+                <p>Each face of the Rubik's Cube is dedicated to a specific category: experiences, projects, passions and skills. Individual squares on each face represent detailed items of these categories.</p>
+                <h3>Main features:</h3>
+                <ul>
+                  <li><strong>Interactive 3D interface:</strong> Uses Three.js to create and manipulate the Rubik's Cube in three dimensions for an immersive user experience.</li>
+                  <li><strong>Intuitive navigation:</strong> Users can interact with the cube to explore different sections of the portfolio, each face providing specific information.</li>
+                  <li><strong>Shuffle and play mode:</strong> Ability to shuffle the cube and play with it, adding a playful dimension to navigation.</li>
+                  <li><strong>EN/FR toggle button:</strong> Dynamic language switch for a bilingual experience.</li>
+                  <li><strong>Responsive design <em>(in progress)</em>:</strong> Adapts the display for an optimal experience across devices and screen sizes.</li>
+                </ul>
+                <img src="assets/previews/projects/portfolio_mix.png" alt="Shuffled cube in play mode" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+                <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of the shuffled cube in play mode</p>
+
+                <img src="assets/previews/projects/portfolio_2.png" alt="Rubik's Cube 3D preview" class="project-image" style="width: 90%; height: auto;">
+                <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of the 3D Rubik's Cube page</p>
+
+                <h3>Technology used:</h3>
+                <ul>
+                  <li><strong>Frontend:</strong> HTML, CSS, JavaScript</li>
+                  <li><strong>3D library:</strong> Three.js</li>
+                </ul>
+
+                <img src="assets/previews/projects/portfolio_1.png" alt="Preview of a face" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+                <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of one face with hover effect</p>
+                <p>The site is built with a 3D-first approach, offering an immersive user experience and intuitive navigation through my various projects and skills.</p>
+                <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">See Project</a>
+              </article>
+            </div>
+          `
         }
       }
-      },
+    },
+
       3: {
         title: "Prédiction de défauts de paiement",
         icon: "fa-solid fa-chart-simple",
