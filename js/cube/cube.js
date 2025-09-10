@@ -125,6 +125,7 @@ export function createRubiksCube() {
           z * (app.cubeSize + app.gap)
         );
         cubie.userData.gridPos = gridPosition;
+        cubie.userData.homePos = gridPosition.clone(); // conserve la position d'origine pour la détection "solved"
         app.rubiksCube.add(cubie);
         app.cubies.push(cubie);
         // Log de création pour le cubie

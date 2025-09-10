@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Romain Goldenchtein</title>
+    <link rel="icon" type="image/png" href="assets/previews/rubik.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.152.2/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.152.2/examples/jsm/"
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Section Introduction - Garde la même structure que la version desktop -->
+        <section id="intro">
+            <div class="intro-content">
+  
+              <p class="typing-text">Bienvenue sur ce <strong>Rubik-folio</strong> !</p>
+
+              <div class="intro-text">
+                <p>Salut ! Je m'appelle <strong>Romain Goldenchtein</strong> et ceci est mon portfolio.</p>
+                <br>
+                <p>
+                    Ce qui me motive avant tout, c’est <strong>l’innovation</strong> et la recherche de nouvelles approches pour résoudre 
+                    des problèmes complexes. Passionné par l’<strong>intelligence artificielle</strong>, je m’intéresse particulièrement 
+                    au <strong>deep learning</strong> et à ses applications. Mais au-delà des algorithmes, c’est <em>l’impact des technologies</em> 
+                    qui me fascine : comment elles transforment notre manière de comprendre, d’optimiser et de créer.
+                </p>
+                <br>
+                <p>
+                    Curieux et toujours en quête de nouveaux défis, j’explore divers domaines liés à la <strong>data</strong>, à l’<strong>IA</strong> 
+                    et au <strong>développement logiciel</strong>. Que ce soit en construisant des modèles de <strong>machine learning</strong>, 
+                    en concevant des architectures logicielles ou en expérimentant de nouvelles technologies, j’aime apprendre en faisant et 
+                    repousser les limites du possible.
+                </p>
+                <br>
+                <p>
+                    Ce portfolio est un aperçu de mon parcours et de mes projets, pensés pour être à la fois <strong>techniques</strong> et 
+                    <strong>innovants</strong>. <br><br>
+                    
+                    Il est néanomois fortement conseillé de le <strong>consulter sur un ordinateur</strong> pour profiter de toutes ses fonctionnalités. <br><br>
+                </p>
+                <br>
+                <p><strong>Bonne navigation !</strong></p>
+  
+                </div>
+            </div>
+          </section>
+
+        <!-- Section Cube modifiée pour mobile -->
+        <section id="cube-section">
+
+            <nav class="cube-nav">
+                <div class="cube-nav-scroll">
+                    <button class="cube-nav-item active" data-face="front">Compétences</button>
+                    <button class="cube-nav-item" data-face="right">Projets</button>
+                    <button class="cube-nav-item" data-face="back">Expériences</button>
+                    <button class="cube-nav-item" data-face="left">Formation</button>
+                    <button class="cube-nav-item" data-face="top">À propos</button>
+                    <button class="cube-nav-item" data-face="bottom">CV</button>
+                </div>
+            </nav>
+
+            <div class="face-nav">
+                <button class="prev-face"><i class="fas fa-chevron-left"></i></button>
+                <button class="next-face"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div class="cube-face-mobile" data-face="front">
+                <div class="cubie-mobile" data-position="0"></div>
+                <div class="cubie-mobile" data-position="1"></div>
+                <div class="cubie-mobile" data-position="2"></div>
+                <div class="cubie-mobile" data-position="3"></div>
+                <div class="cubie-mobile" data-position="4"></div>
+                <div class="cubie-mobile" data-position="5"></div>
+                <div class="cubie-mobile" data-position="6"></div>
+                <div class="cubie-mobile" data-position="7"></div>
+                <div class="cubie-mobile" data-position="8"></div>
+            </div>
+        </section>
+
+        <!-- Section Footer - Garde la même structure que la version desktop -->
+        <section id="footer-section">
+            <footer>
+                <div class="footer-content">
+                  <!-- Colonne Contact -->
+                  <div class="footer-column">
+                    <div class="footer-card">
+                      <h3 class="footer-title">Contact</h3>
+                      <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>r.goldenchtein@proton.me</span>
+                      </div>
+                      <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+33 7 83 23 23 70</span>
+                      </div>
+                      <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Troyes, France</span>
+                      </div>
+                    </div>
+                  </div>
+            
+                  <!-- Colonne Réseaux Sociaux -->
+                  <div class="footer-column">
+                    <div class="footer-card">
+                      <h3 class="footer-title">Réseaux Sociaux</h3>
+                      <div class="social-links">
+                        <a href="ttps://github.com/Kiyogen24" class="social-link" target="_blank">
+                          <i class="fab fa-github"></i>
+                          <span>GitHub</span>
+                        </a>
+                        <a href="https://www.linkedin.com/in/romain-goldenchtein/" class="social-link" target="_blank">
+                          <i class="fab fa-linkedin"></i>
+                          <span>LinkedIn</span>
+                        </a>
+                        <a href="assets/previews/cv.pdf" class="social-link" target="_blank" download>
+                          <i class="fas fa-file-pdf"></i>
+                          <span>Télécharger CV</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+            
+                  <!-- Colonne Navigation Rapide -->
+                  <div class="footer-column">
+                    <div class="footer-card">
+                      <h3 class="footer-title">Navigation</h3>
+                      <div class="quick-links">
+                        <a href="#intro" class="quick-link">Accueil</a>
+                        <a href="#cube-section" class="quick-link" data-face="front">Compétences</a>
+                        <a href="#cube-section" class="quick-link" data-face="back">Expériences</a>
+                        <a href="#cube-section" class="quick-link" data-face="right">Projets</a>
+                        <a href="#cube-section" class="quick-link" data-face="left">Formation</a>
+                        <a href="#cube-section" class="quick-link" data-face="top">À propos</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </footer>
+        </section>
+    </div>
+
+    <script type="module" src="js/mobile.js"></script>
+</body>
+</html>

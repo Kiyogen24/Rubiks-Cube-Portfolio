@@ -76,3 +76,33 @@ canvas {
         background: var(--dark-bg);
     }
 }
+
+/* Bouton Mélanger / Assembler centré en bas */
+.shuffle-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1001;
+  padding: 12px 22px;
+  background: linear-gradient(90deg, var(--dark-accent, #0600c2), var(--dark-primary, #3a31d8));
+  color: #ffffff;
+  border: none;
+  border-radius: 28px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  transition: transform 0.12s ease, opacity 0.2s ease;
+}
+
+.shuffle-btn:active { transform: translateX(-50%) scale(0.98); }
+.shuffle-btn[disabled] { opacity: 0.6; cursor: progress; }
+
+/* Adaptation pour le thème clair */
+[data-theme="light"] .shuffle-btn {
+  background: linear-gradient(90deg, var(--light-accent, #433bff), var(--light-primary, #2f27ce));
+}
+
+/* Masquer lorsque la section est zoomée via JS (display:none) */

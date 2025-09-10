@@ -41,6 +41,15 @@ export function onMouseMove(event) {
 
 // Zoom sur une face du cube en fonction de son type : top, bottom, front, back, right ou left
 export function zoomToFace(face, normal, faceType) {
+  // Prevent zoom when game mode is active
+  if (app.isPlayable) return;
+
+  // Hide the shuffle/solve button immediately to avoid interactions during zoom
+  try {
+    const btn = document.querySelector('.shuffle-btn');
+    if (btn) btn.style.display = 'none';
+  } catch (e) {}
+
   // Sauvegarde la position et rotation initiale de la caméra lors du premier zoom
   if (!app.isZoomed) {
     app.lastCameraPosition = app.camera.position.clone();
@@ -191,6 +200,12 @@ export function finishZoom(faceType) {
     
     app.isZoomed = true;
     app.resetButton.style.display = 'block';
+
+    // Masquer le bouton Mélanger/Résoudre quand on est en zoom
+    try {
+      const btn = document.querySelector('.shuffle-btn');
+      if (btn) btn.style.display = 'none';
+    } catch (e) {}
 }
 
 // Réinitialise la scène en sortant du mode zoom
@@ -200,12 +215,12 @@ export function dezoom() {
     app.isZoomed = false;
     app.isDragging = false;
     cubeSection.classList.remove('zoomed');
-  
+
     // Réactivation des boutons de navigation
     document.querySelectorAll('.nav-button').forEach(btn => {
       btn.classList.remove('disabled');
     });
-  
+
     // Nettoyage de l'interface utilisateur
     const body = document.querySelector('.container');
     body.style.overflow = 'auto';
@@ -214,11 +229,17 @@ export function dezoom() {
     app.menuOpen = false;
     app.resetButton.style.display = 'none';
     titleElement.style.opacity = '0';
-  
+
     // Suppression du contenu de la face s'il existe
     const container = document.getElementById('face-content');
     if (container) container.remove();
-  
+
+    // Restaurer le bouton Mélanger/Résoudre
+    try {
+      const btn = document.querySelector('.shuffle-btn');
+      if (btn) btn.style.display = '';
+    } catch (e) {}
+    
     // Réinitialisation progressive des cubies et de la caméra
     requestAnimationFrame(() => {
       app.cubies.forEach(cubie => {
@@ -364,8 +385,15 @@ export function setupNavigation() {
         
         // Affiche ou cache le menu et le bouton thème suivant la section active
         const isCubeSection = currentIndex === 1;
-        app.menuBtn.style.display = isCubeSection ? 'flex' : 'none';
+        // Hide menu button when game mode active
+        app.menuBtn.style.display = (isCubeSection && !app.isPlayable) ? 'flex' : 'none';
         themeBtn.classList.toggle('hidden', isCubeSection);
+        
+        // Show shuffle button only on cube section and only when not zoomed
+        try {
+          const shuffleBtn = document.querySelector('.shuffle-btn');
+          if (shuffleBtn) shuffleBtn.style.display = (isCubeSection && !app.isZoomed) ? '' : 'none';
+        } catch (e) {}
         
         // Ferme le menu si on quitte la section du cube
         if (!isCubeSection && app.menu.classList.contains('active')) {

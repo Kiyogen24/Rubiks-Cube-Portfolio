@@ -37,7 +37,8 @@
     max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* Ensure each column has a sensible minimum so long texts don't collapse the layout */
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
     gap: 4rem;
     padding: 2rem;
   }
@@ -108,7 +109,10 @@
   
   .info-item span {
     flex: 1; /* Permet au texte d'occuper l'espace restant */
-    white-space: nowrap; /* Empêche le retour à la ligne */
+    /* Allow wrapping for longer texts (English translations) */
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   
   .social-links {

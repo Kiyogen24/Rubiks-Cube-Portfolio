@@ -114,6 +114,32 @@ body {
         transform: scale(1.05);
       }
 
+      .lang-btn {
+        position: fixed;
+        top: 20px;
+        right: 98px; /* placé à gauche du theme-btn (20px + 68px + 10px gap = 98) */
+        width: 68px;
+        height: 68px;
+        cursor: pointer;
+        z-index: 101;
+        padding: 12px;
+        background: var(--light-secondary);
+        border-radius: 8px;
+        border: 2px solid var(--light-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        font-size: 16px;
+      }
+      
+      .lang-btn .lang-code {
+        font-weight: 600;
+        color: var(--light-primary);
+      }
+      
+      .lang-btn:hover { transform: scale(1.05); }
+
     
 
 
@@ -133,6 +159,11 @@ body {
     border-color: var(--dark-primary);
     color: var(--dark-primary);
   }
+
+.lang-btn {
+  background: var(--dark-secondary);
+  border-color: var(--dark-primary);
+}
 
 .selected-lang,
 .lang-dropdown {
