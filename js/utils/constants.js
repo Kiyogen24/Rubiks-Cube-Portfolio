@@ -560,7 +560,7 @@ export const CUBE_CONTENT = {
             <img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
             <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une des faces avec effet de survolement</p>
             <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
-            <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le Projet</a>
+            <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le Projet sur Github</a>
           </article>
         </div>
       `,
@@ -605,7 +605,7 @@ export const CUBE_CONTENT = {
                 <img src="assets/previews/projects/portfolio_1.png" alt="Preview of a face" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
                 <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of one face with hover effect</p>
                 <p>The site is built with a 3D-first approach, offering an immersive user experience and intuitive navigation through my various projects and skills.</p>
-                <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">See Project</a>
+                <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View Project on GitHub</a>
               </article>
             </div>
           `
@@ -658,7 +658,7 @@ export const CUBE_CONTENT = {
   
             <p>Ce projet met en œuvre une approche complète du machine learning appliqué à la finance, de l’analyse exploratoire des données à l’optimisation des modèles.</p>
             
-            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">Voir le Projet</a>
+            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">Voir le Projet sur Github</a>
           </article>
         </div>
       `,
@@ -702,7 +702,7 @@ export const CUBE_CONTENT = {
   
             <p>This project implements a complete ML workflow applied to finance, from exploratory data analysis to model optimization.</p>
             
-            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">See Project</a>
+            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">View Project on GitHub</a>
           </article>
         </div>
       `
@@ -740,7 +740,7 @@ export const CUBE_CONTENT = {
           <p>Le jeu intègre une interface graphique complète, un journal des actions pour suivre chaque événement, ainsi qu’un système de sauvegarde et chargement des parties. Les effets sonores et musiques ajoutent une immersion supplémentaire.</p>
           <img src="assets/previews/projects/lo02_2.png" alt="Aperçu du projet PocketImperium" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Plateau de PocketImperium, historiques des coups et choix des actions</p>
-          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">Voir le Projet</a>
+          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">Voir le Projet sur Github</a>
         </article>
         </div>
       `,
@@ -771,7 +771,7 @@ export const CUBE_CONTENT = {
           <p>The game includes a full GUI, an action log to track events, and a save/load system. Sound effects and music add immersion.</p>
           <img src="assets/previews/projects/lo02_2.png" alt="PocketImperium preview" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Board of PocketImperium, move history and action choices</p>
-          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">See Project</a>
+          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">View Project on GitHub</a>
         </article>
         </div>
       `
@@ -818,7 +818,7 @@ export const CUBE_CONTENT = {
           </ul>
           <img src="assets/previews/projects/pe2_2.png" alt="Aperçu d'une discussion de groupe" class="project-image" style="width: 90%; height: auto;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une discussion de groupe</p>
-          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">Voir le Projet</a>
+          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">Voir le Projet sur Github</a>
         </article>
         </div>
         `,
@@ -858,7 +858,7 @@ export const CUBE_CONTENT = {
           </ul>
           <img src="assets/previews/projects/pe2_2.png" alt="Group chat preview" class="project-image" style="width: 90%; height: auto;">
           <p style="font-style: italic; font-size: 0.8em; text-align: center;">Group chat preview</p>
-          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">See Project</a>
+          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">View Project on GitHub</a>
         </article>
         </div>
         `
@@ -910,7 +910,7 @@ export const CUBE_CONTENT = {
       
             <p>Ce projet met en œuvre des concepts avancés de théorie des graphes et démontre l'intégration efficace entre des modules C performants et une interface Python conviviale pour la modélisation de réseaux complexes.</p>
             
-            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">Voir le Projet</a>
+            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">Voir le Projet sur Github</a>
           </article>
         </div>
         `,
@@ -954,7 +954,7 @@ export const CUBE_CONTENT = {
 
             <p>This project applies advanced graph theory concepts and demonstrates efficient integration between high-performance C modules and a user-friendly Python interface for modeling complex networks.</p>
 
-            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">See Project</a>
+            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">View Project on GitHub</a>
           </article>
         </div>
         `
