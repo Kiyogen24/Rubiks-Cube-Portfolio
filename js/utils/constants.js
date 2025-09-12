@@ -401,7 +401,7 @@ export const CUBE_CONTENT = {
         htmlContent: `
           <div class="card-header">
             <i class="fa-solid fa-brain"></i>
-            <h2>Classification d’images et détection de chutes (IA02)</h2>
+            <h2>Classification d’images et détection de chutes</h2>
             <div class="period-badge">
               <i class="fas fa-calendar-alt"></i>
               <span>05/2025 - 06/2025</span>
