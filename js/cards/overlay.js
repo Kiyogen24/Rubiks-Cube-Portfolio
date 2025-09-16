@@ -32,13 +32,13 @@ export function createOverlay() {
 export function showInfoCard(event, faceType, cubePosition) {
     // Debug d'entrée pour confirmer l'appel et tracer l'origine
     // Utiliser des logs de niveau supérieur pour s'assurer qu'ils apparaissent même si console.debug est filtré
-    console.info('[overlay] enter showInfoCard', { faceType, cubePosition, eventType: event && event.type });
-    console.trace('[overlay] call stack');
+    console.info('enter showInfoCard', { faceType, cubePosition, eventType: event && event.type });
+    console.trace('call stack');
     // Montrer un aperçu du contenu disponible pour vérifier le mapping des faces
     try {
-        console.info('[overlay] available CUBE_CONTENT faces', Object.keys(CUBE_CONTENT || {}));
+    console.info('available CUBE_CONTENT faces', Object.keys(CUBE_CONTENT || {}));
     } catch (err) {
-        console.warn('[overlay] cannot read CUBE_CONTENT keys', err);
+    console.warn('cannot read CUBE_CONTENT keys', err);
     }
 
     // Création de l'overlay si il n'existe pas encore
@@ -62,7 +62,7 @@ export function showInfoCard(event, faceType, cubePosition) {
     app.isModalOpen = true;
     app.controls.enabled = false;
     overlay.classList.add('active');
-    console.debug('[overlay] overlay activated', { overlayExists: !!overlay });
+    console.debug('overlay activated', { overlayExists: !!overlay });
 
     // Fermer la carte précédente si elle existe
     if (activeInfoCard) {
@@ -82,17 +82,17 @@ export function showInfoCard(event, faceType, cubePosition) {
     // Recherche plus robuste avec logs pour diagnostiquer les cas où rien n'est trouvé
     let contentData = null;
     try {
-        console.info('[overlay] resolving content', { faceType, cubePosition, typeOfCubePos: typeof cubePosition, hasCUBE_CONTENT: !!CUBE_CONTENT });
+    console.info('resolving content', { faceType, cubePosition, typeOfCubePos: typeof cubePosition, hasCUBE_CONTENT: !!CUBE_CONTENT });
         if (CUBE_CONTENT && CUBE_CONTENT[faceType]) {
             const faceContent = CUBE_CONTENT[faceType];
-            console.info('[overlay] face keys', Object.keys(faceContent));
+            console.info('face keys', Object.keys(faceContent));
 
             // Essayer les correspondances directes avec différents types de clés
             const tryKeys = [cubePosition, String(cubePosition), Number(cubePosition)];
             for (const k of tryKeys) {
                 if (k !== undefined && faceContent[k] !== undefined) {
                     contentData = faceContent[k];
-                    console.info('[overlay] matched with key on requested face', { key: k, faceType });
+                    console.info('matched with key on requested face', { key: k, faceType });
                     break;
                 }
             }
@@ -108,18 +108,18 @@ export function showInfoCard(event, faceType, cubePosition) {
                         || String(entry.position) === String(cubePosition)
                         || (entry.title && String(entry.title).toLowerCase() === String(cubePosition).toLowerCase())) {
                         contentData = entry;
-                        console.info('[overlay] fuzzy matched entry on requested face', { key: k, entry });
+                        console.info('fuzzy matched entry on requested face', { key: k, entry });
                         break;
                     }
                 }
             }
         } else {
-            console.warn('[overlay] no CUBE_CONTENT for faceType', faceType);
+            console.warn('no CUBE_CONTENT for faceType', faceType);
         }
 
         // Si toujours rien, tenter de chercher sur toutes les faces (parfois le mapping est erroné)
         if (!contentData && CUBE_CONTENT) {
-            console.warn('[overlay] content not found on requested face, searching other faces...');
+            console.warn('content not found on requested face, searching other faces...');
             for (const f of Object.keys(CUBE_CONTENT)) {
                 const fc = CUBE_CONTENT[f];
                 if (!fc) continue;
@@ -132,7 +132,7 @@ export function showInfoCard(event, faceType, cubePosition) {
                         || String(entry.position) === String(cubePosition)
                         || (entry.title && String(entry.title).toLowerCase() === String(cubePosition).toLowerCase())) {
                         contentData = entry;
-                        console.warn('[overlay] found content on different face', { foundOn: f, key: k, entry });
+                        console.warn('found content on different face', { foundOn: f, key: k, entry });
                         faceType = f; // corriger la face utilisée pour affichage
                         break;
                     }
@@ -151,7 +151,7 @@ export function showInfoCard(event, faceType, cubePosition) {
     }
 
     // Log final d'aide au diagnostic (niveau info pour visibilité)
-    console.info('[overlay] showInfoCard', { faceType, cubePosition, resolved: contentData ? 'found' : 'not found', contentData, langState: app && app.langManager ? app.langManager.currentLang : null });
+    console.info('showInfoCard', { faceType, cubePosition, resolved: contentData ? 'found' : 'not found', contentData, langState: app && app.langManager ? app.langManager.currentLang : null });
 
     // Choisir la langue courante et fusionner avec les champs i18n si présents
     const lang = (app.langManager && app.langManager.currentLang) ? app.langManager.currentLang : 'fr';

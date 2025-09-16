@@ -161,7 +161,7 @@ async function processQueue() {
     if (move.recordMove) {
       completedMoves.push({ layer: move.layer, number: move.number, orientation: move.orientation, isShuffle: !!move.isShuffle, timestamp: Date.now() });
     }
-  } catch(e) { console.warn('[animator] failed to record completed move', e); }
+  } catch(e) { console.warn('failed to record completed move', e); }
 
   // continuer
   processQueue();
@@ -230,7 +230,7 @@ export function shuffle(nMoves = 25) {
 export async function solve() {
   // si aucun mouvement enregistré et pas de lastShuffleAlg, le cube est déjà résolu
   if (completedMoves.length === 0 && !lastShuffleAlg) {
-    console.log('[animator] solve() appelé mais completedMoves vide et pas de lastShuffleAlg -> cube déjà résolu');
+    console.log('solve() appelé mais completedMoves vide et pas de lastShuffleAlg -> cube déjà résolu');
     if (onSolvedCallback) onSolvedCallback();
     return;
   }
@@ -239,7 +239,7 @@ export async function solve() {
     const cubejs = await import('cubejs');
     // préférer lastShuffleAlg si présent (plus rapide / fiable)
     const scrambleAlg = lastShuffleAlg || completedMoves.filter(m => m.isShuffle).map(m => moveToAlg(m)).join(' ').trim();
-    console.log('[animator] scramble courant (from lastShuffleAlg/completedMoves):', scrambleAlg);
+    console.log('scramble courant (from lastShuffleAlg/completedMoves):', scrambleAlg);
     // construire une représentation compacte de l'état du cube à partir des cubies (positions de grille)
     try {
       const state = app.cubies ? app.cubies.map((c, i) => {
@@ -247,8 +247,8 @@ export async function solve() {
         const h = c.userData.homePos || {x:'?',y:'?',z:'?'};
         return `${i}:home(${h.x},${h.y},${h.z})->pos(${g.x},${g.y},${g.z})`;
       }).slice(0,24).join(' | ') : 'no-cubies';
-      console.log('[animator] sample cube state (indices):', state);
-    } catch(e) { console.warn('[animator] failed to build cube state debug:', e); }
+    console.log('sample cube state (indices):', state);
+  } catch(e) { console.warn('failed to build cube state debug:', e); }
     let solutionAlg = '';
     if (scrambleAlg.length > 0) {
       // cubejs.solve accepte une chaîne scramble et retourne un algorithme solution
@@ -260,7 +260,7 @@ export async function solve() {
     }
 
     if (solutionAlg && solutionAlg.length) {
-      console.log('[animator] cubejs a retourné une solution:', solutionAlg);
+  console.log('cubejs a retourné une solution:', solutionAlg);
       // parser solutionAlg en mouvements et les mettre en file
       const moves = solutionAlg.split(/\s+/).filter(Boolean);
       moves.forEach(mv => {
@@ -295,7 +295,7 @@ export async function solve() {
       return;
     }
   } catch (e) {
-    console.warn('[animator] cubejs non disponible ou a échoué :', e);
+  console.warn('cubejs non disponible ou a échoué :', e);
   }
 
   // Repli : pousser l'inverse des completedMoves dans l'ordre inverse
