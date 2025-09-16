@@ -326,7 +326,9 @@ function init() {
     const cubeSection = document.getElementById('cube-section');
     const rect = cubeSection.getBoundingClientRect();
     // Vérifier si la section cube occupe toute la hauteur de la fenêtre
-    const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+  const _eps = 2; // tolérance en pixels
+  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
 
     if (!isCubeVisible) return;
 
@@ -367,7 +369,9 @@ function init() {
   window.addEventListener('mousemove', (e) => {
     const cubeSection = document.getElementById('cube-section');
     const rect = cubeSection.getBoundingClientRect();
-    const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+  const _eps = 2; // tolérance en pixels
+  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
 
     if (!isCubeVisible) return;
 
@@ -389,7 +393,9 @@ function init() {
   window.addEventListener('mouseup', (e) => {
     const cubeSection = document.getElementById('cube-section');
     const rect = cubeSection.getBoundingClientRect();
-    const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+  const _eps = 2; // tolérance en pixels
+  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
 
     if (!isCubeVisible) return;
 
@@ -602,7 +608,9 @@ function onWindowResize() {
 function handleClick(event) {
   const cubeSection = document.getElementById('cube-section');
   const rect = cubeSection.getBoundingClientRect();
-  const isCubeVisible = rect.top === 0 && rect.bottom === window.innerHeight;
+  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+  const _eps = 2; // tolérance en pixels
+  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
   
   if (!isCubeVisible || app.isModalOpen) return; 
 
@@ -1250,7 +1258,9 @@ function setupHints() {
       if (localStorage.getItem('hasSeenRotateHint')) return;
       // on ne montre le hint que si l'utilisateur est en mode jeu et que le cube est visible
       const rect = cubeSection.getBoundingClientRect();
-      if (!(rect.top === 0 && rect.bottom === window.innerHeight)) return;
+  // Tolérance sur la détection "plein écran"
+  const _eps_local = 2;
+  if (!(rect.top <= 1 && rect.bottom >= window.innerHeight - _eps_local)) return;
 
       positionHints();
       // refresh text in case language changed since creation
@@ -1279,7 +1289,9 @@ function setupHints() {
   if (!hasSeenHints) {
     const onContainerScroll = function() {
       const rect = cubeSection.getBoundingClientRect();
-      if (rect.top === 0 && rect.bottom === window.innerHeight) {
+  // Tolérance sur la détection "plein écran"
+  const _eps_local2 = 2;
+  if (rect.top <= 1 && rect.bottom >= window.innerHeight - _eps_local2) {
         // position then show
         positionHints();
         setTimeout(() => {
