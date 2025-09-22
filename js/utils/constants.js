@@ -303,7 +303,7 @@ export const CUBE_CONTENT = {
             </div>
           </div>
           <section class="project-summary">
-            <p>Ce projet académique, documenté dans ce <a href="https://hal.science/hal-05185396v1" target="_blank">rapport et article de recherche</a>, vise à développer un agent capable de résoudre le Rubik’s Cube par <strong>apprentissage par renforcement profond</strong>, sans connaissances humaines préprogrammées.</p>
+            <p>Ce projet académique, documenté dans ce <a class="links_txt" href="https://hal.science/hal-05185396v1" target="_blank">rapport et article de recherche</a>, vise à développer un agent capable de résoudre le Rubik’s Cube par <strong>apprentissage par renforcement profond</strong>, sans connaissances humaines préprogrammées.</p>
           </section>
           <hr>
           <div class="card-content">
@@ -312,16 +312,16 @@ export const CUBE_CONTENT = {
               <p>Le Rubik’s Cube est un problème combinatoire avec plus de <strong>43 trillions d’états possibles</strong>. L’objectif était de concevoir un agent autonome, comparer différentes stratégies d’IA, étudier la convergence des réseaux neuronaux et finalement construire un prototype robotique capable de manipuler le cube.</p>
 
               <h3>Méthodologie</h3>
-              <p>Notre approche combine deux éléments principaux : <em>Autodidactic Iteration</em> pour générer des données d’entraînement par auto-jeu, et <em>Monte Carlo Tree Search (MCTS)</em> pour guider l’exploration des états.</p>
-              <img src="assets/previews/projects/pe3_2.png" alt="Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+              <p>Notre approche combine celles de <em>DeepCube</em> et <em>AlphaZero</em> avec l'<strong>Autodidactic Iteration</strong> pour générer des données d’entraînement par auto-jeu, et le <strong>Monte Carlo Tree Search (MCTS)</strong> pour guider l’exploration des états.</p>
+              <img src="assets/previews/projects/pe3_3.png" alt="Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
               <p style="font-style: italic; font-size: 0.8em; text-align: center;">Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube</p>
 
-              <p>Le réseau neuronal (implémenté sous TensorFlow) sert d’estimateur de valeur pour les états, ce qui oriente les décisions dans MCTS. L’apprentissage a mis en évidence les difficultés liées à la convergence et à l’exploration dans un espace d’états aussi vaste.</p>
-              <img src="assets/previews/projects/pe3_3.png" alt="Visualisation du fonctionnement précis de l'ADI d'après DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+              <p>Le réseau neuronal (implémenté sous TensorFlow) sert d’estimateur de valeur pour les états, ce qui oriente les décisions dans MCTS, qui lui-même vient affiner les valeurs des états. L’apprentissage a mis en évidence les difficultés liées à la convergence et à l’exploration dans un espace d’états aussi vaste.</p>
+              <img src="assets/previews/projects/pe3_2.png" alt="Visualisation du fonctionnement précis de l'ADI d'après DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
               <p style="font-style: italic; font-size: 0.8em; text-align: center;">Visualisation du fonctionnement précis de l'ADI d'après DeepCube</p>
 
               <h3>Implémentation robotique</h3>
-              <p>En complément de la partie logicielle, nous avons conçu un prototype robotique basé sur une Raspberry Pi et des servomoteurs, capable d’exécuter les solutions proposées par l’agent.</p>
+              <p>En complément de la partie logicielle, nous avons conçu un prototype robotique basé sur l'architecturer de <em>RCR3D</em>. Le robot se compose d'une structure imprimé en 3D, d'une Raspberry Pi et de servomoteurs, capable d’exécuter les solutions proposées par l’agent.</p>
               <img src="assets/previews/projects/pe3_0.png" alt="Robot physique pour résoudre un Rubik’s Cube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
               <p style="font-style: italic; font-size: 0.8em; text-align: center;">Robot physique pour résoudre un Rubik’s Cube basé sur RCR3D</p>
 
@@ -333,7 +333,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Robotique :</strong> Raspberry Pi, servomoteurs</li>
               </ul>
 
-              <p>Ce projet illustre la capacité de l’IA moderne à résoudre des problèmes complexes sans heuristiques humaines. Il constitue un pont entre recherche académique, ingénierie logicielle et prototypage robotique. Le rapport complet est disponible sur <a href="https://hal.science/hal-05185396v1" target="_blank">HAL</a>.</p>
+              <p>Ce projet nous montre la capacité de l’IA moderne à résoudre des problèmes complexes sans heuristiques humaines. Il constitue un pont entre recherche académique, ingénierie logicielle et prototypage robotique. Le rapport complet est disponible sur <a class="links_txt" href="https://hal.science/hal-05185396v1" target="_blank">HAL</a>.</p>
 
               <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">Voir le Projet sur GitHub</a>
             </article>
@@ -351,7 +351,7 @@ export const CUBE_CONTENT = {
                 </div>
               </div>
               <section class="project-summary">
-                <p>This academic project, documented in this <a href="https://hal.science/hal-05185396v1" target="_blank">report and research paper</a>, aimed to develop an agent capable of solving the Rubik’s Cube using <strong>deep reinforcement learning</strong>, without any human-engineered heuristics.</p>
+                <p>This academic project, documented in this <a class="links_txt" href="https://hal.science/hal-05185396v1" target="_blank">report and research paper</a>, aimed to develop an agent capable of solving the Rubik’s Cube using <strong>deep reinforcement learning</strong>, without any human-engineered heuristics.</p>
               </section>
               <hr>
               <div class="card-content">
@@ -360,16 +360,16 @@ export const CUBE_CONTENT = {
                   <p>The Rubik’s Cube is a combinatorial problem with more than <strong>43 trillion possible states</strong>. The goal was to design an autonomous agent, compare different AI strategies, study neural network convergence, and finally build a robotic prototype able to manipulate the cube.</p>
 
                   <h3>Methodology</h3>
-                  <p>Our approach combined two main elements: <em>Autodidactic Iteration</em> to generate training data through self-play, and <em>Monte Carlo Tree Search (MCTS)</em> to guide state exploration.</p>
-                  <img src="assets/previews/projects/pe3_2.png" alt="ADI and MCTS scheme applied to the Rubik’s Cube from DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+                  <p>Our approach combined the method of <em>DeepCube</em> and <em>AlphaZero</em> with the <strong>Autodidactic Iteration</strong> to generate training data through self-play, and the <strong>Monte Carlo Tree Search (MCTS)</strong> to guide state exploration.</p>
+                  <img src="assets/previews/projects/pe3_3.png" alt="ADI and MCTS scheme applied to the Rubik’s Cube from DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
                   <p style="font-style: italic; font-size: 0.8em; text-align: center;">ADI + MCTS pipeline applied to the Rubik’s Cube (based on DeepCube)</p>
 
-                  <p>The neural network (implemented in TensorFlow) served as a value estimator for states, guiding MCTS decisions. Training highlighted the difficulties of convergence and exploration in such a vast state space.</p>
-                  <img src="assets/previews/projects/pe3_3.png" alt="Detailed ADI process visualization from DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
+                  <p>The neural network (implemented in TensorFlow) and ADI served as a value estimator for states, guiding MCTS decisions, which precise even more the states' values. Training highlighted the difficulties of convergence and exploration in such a vast state space.</p>
+                  <img src="assets/previews/projects/pe3_2.png" alt="Detailed ADI process visualization from DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
                   <p style="font-style: italic; font-size: 0.8em; text-align: center;">Detailed ADI visualization (based on DeepCube)</p>
 
                   <h3>Robotic Implementation</h3>
-                  <p>In addition to the software, we designed a robotic prototype using a Raspberry Pi and servomotors, capable of executing the solutions generated by the agent.</p>
+                  <p>In addition to the software, we made a robotic prototype based on <em>RCR3D</em>. The architecture, 3D printed, uses a Raspberry Pi and servomotors, to execute the solutions generated by the agent.</p>
                   <img src="assets/previews/projects/pe3_0.png" alt="Physical robot solving a Rubik’s Cube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
                   <p style="font-style: italic; font-size: 0.8em; text-align: center;">Physical Rubik’s Cube solving robot inspired by RCR3D</p>
 
@@ -381,7 +381,7 @@ export const CUBE_CONTENT = {
                     <li><strong>Robotics:</strong> Raspberry Pi, servomotors</li>
                   </ul>
 
-                  <p>This project illustrates how modern AI can solve complex problems without human heuristics. It bridges academic research, software engineering, and robotic prototyping. The full report is available on <a href="https://hal.science/hal-05185396v1" target="_blank">HAL</a>.</p>
+                  <p>This project illustrates how modern AI can solve complex problems without human heuristics. It bridges academic research, software engineering, and robotic prototyping. The full report is available on <a class="links_txt" href="https://hal.science/hal-05185396v1" target="_blank">HAL</a>.</p>
 
                   <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">View Project on GitHub</a>
                 </article>
@@ -428,11 +428,11 @@ export const CUBE_CONTENT = {
               <p style="font-style: italic; font-size: 0.8em; text-align: center;">Exemple de classification sur CIFAR-10</p>
 
               <h3>Partie 2 – Détection de chutes</h3>
-              <p>À partir du dataset ENetFall (757 signaux multidimensionnels), nous avons conçu plusieurs modèles :</p>
+              <p>À partir du dataset ENetFall (757 signaux multidimensionnels, répartis selon leurs environnements sources), nous avions deux scénarios : prédire les chutes dans un environnement connu ou les prédire dans un environnement inconnu. Pour aborder les deux approches, nous avons conçu plusieurs modèles :</p>
               <ul>
                 <li><strong>CNN simple :</strong> bonne précision et robustesse initiale.</li>
                 <li><strong>MobileNetV2 pré-entraîné :</strong> excellent rappel, pertinent pour détecter la majorité des chutes.</li>
-                <li><strong>CNN-LSTM :</strong> combinaison spatiale + temporelle, mais résultats inférieurs (~80% accuracy).</li>
+                <li><strong>CNN-LSTM :</strong> combinaison spatiale + temporelle, mais résultats inférieurs (~80% accuracy, pour le premier scénario mais ~60% accuracy pour le deuxième).</li>
               </ul>
               <p>Nous avons aussi intégré des techniques d’augmentation de données (bruit, décalage temporel, masquage) 
               pour améliorer la robustesse en conditions réelles.</p>
@@ -485,11 +485,11 @@ export const CUBE_CONTENT = {
                   <p style="font-style: italic; font-size: 0.8em; text-align: center;">Example of CIFAR-10 classification</p>
 
                   <h3>Part 2 – Fall Detection</h3>
-                  <p>Using the ENetFall dataset (757 multidimensional signals), we tested several models:</p>
+                  <p>Using the ENetFall dataset (757 multidimensional signals, from several environments), we had two scenarios : predict the fall in a known environment or predict them in a unknown one. To approch these two tasks, we tested several models:</p>
                   <ul>
                     <li><strong>Simple CNN:</strong> strong initial accuracy.</li>
                     <li><strong>Pre-trained MobileNetV2:</strong> excellent recall, especially important for avoiding missed falls.</li>
-                    <li><strong>CNN-LSTM:</strong> spatio-temporal modeling, but weaker results (~80% accuracy).</li>
+                    <li><strong>CNN-LSTM:</strong> spatio-temporal modeling, but weaker results (~80% accuracy, for the first scenario but ~60% accuracy for the second).</li>
                   </ul>
                   <p>We also implemented data augmentation techniques (Gaussian noise, temporal shifts, dropout masking) to increase robustness in real conditions.</p>
                   <img src="assets/previews/projects/ia02_2.png" alt="Signals used for fall detection" class="project-image" style="width: 90%; height: auto; margin: 1rem;">

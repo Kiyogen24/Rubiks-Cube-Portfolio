@@ -346,6 +346,15 @@
         transition: background-color 0.3s ease, transform 0.3s ease;
         z-index: 10;
     }
+
+    .links_txt {
+        color: #9c6600;
+        text-decoration: underline;
+    }
+
+    [data-theme="dark"] .links_txt {
+        color: orange;
+    }
     
     .project-link:hover {
         background-color: #333;
