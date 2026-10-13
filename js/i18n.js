@@ -24,8 +24,16 @@ function applyTranslations(lang) {
     if (el && text) el.textContent = text;
   };
 
+  document.documentElement.lang = lang;
   updateGameButton();
-  if (ui.resetBtn) app.resetButton.setAttribute('aria-label', ui.resetBtn);
+
+  // Noms accessibles des commandes sans texte
+  const setLabel = (element, text) => element && text && element.setAttribute('aria-label', text);
+  setLabel(app.resetButton, ui.resetBtn);
+  setLabel(document.querySelector('.theme-btn'), ui.themeToggle);
+  setLabel(app.langBtn, ui.langToggle);
+  setLabel(app.renderer.domElement, ui.cubeLabel);
+  setLabel(app.menu, ui.menuLabel);
 
   // Aides
   setText('#click-hint .hint-text', ui.clickHint);
@@ -37,9 +45,9 @@ function applyTranslations(lang) {
   // Menu
   document.querySelectorAll('.menu-item').forEach((item) => {
     const face = item.dataset.face;
-    if (t.categories?.[face]) item.querySelector('h3').textContent = t.categories[face];
+    if (t.categories?.[face]) item.querySelector('.menu-item__title').textContent = t.categories[face];
     const desc = ui.menuDesc?.[MENU_DESC[face]];
-    if (desc) item.querySelector('p').textContent = desc;
+    if (desc) item.querySelector('.menu-item__desc').textContent = desc;
   });
 
   // Textes de la page : titre, chargement, note pour mobile, introduction

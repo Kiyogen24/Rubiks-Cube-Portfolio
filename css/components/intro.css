@@ -49,6 +49,7 @@
 
 .typing-text {
   font-size: 2.5em;
+  font-weight: 400;
   margin: 0;
   font-family: 'Raleway', sans-serif;
   color: var(--light-text);

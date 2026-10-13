@@ -69,9 +69,11 @@
     -->
   </head>
   <body>
-    <button class="theme-btn">
-      <i class="theme-icon fa-solid fa-sun"></i>
-    </button>
+    <header class="site-controls">
+      <button class="theme-btn" aria-label="Changer de thème">
+        <i class="theme-icon fa-solid fa-sun" aria-hidden="true"></i>
+      </button>
+    </header>
 
     <script>
       (function () {
@@ -104,17 +106,17 @@
       </p>
     </div>
     <!-- Boutons de navigation -->
-    <div class="nav-buttons">
-      <button class="nav-button" data-section="0"></button>
-      <button class="nav-button" data-section="1"></button>
-      <button class="nav-button" data-section="2"></button>
-    </div>
+    <nav class="nav-buttons" aria-label="Sections">
+      <button class="nav-button" data-section="0" aria-label="Introduction"></button>
+      <button class="nav-button" data-section="1" aria-label="Rubik's Cube"></button>
+      <button class="nav-button" data-section="2" aria-label="Contact"></button>
+    </nav>
 
-    <div class="container">
+    <main class="container">
       <!-- Section Introduction -->
-      <section id="intro">
+      <section id="intro" tabindex="0" aria-labelledby="intro-title">
         <div class="intro-content">
-          <p class="typing-text">Bienvenue sur ce <strong>Rubik-folio</strong> !</p>
+          <h1 class="typing-text" id="intro-title">Bienvenue sur ce <strong>Rubik-folio</strong> !</h1>
           <p class="device-note">
             Ce site est optimisé pour PC - Il est fortement recommandé de le consulter sur ordinateur pour une meilleure
             expérience.
@@ -160,13 +162,13 @@
       <section id="cube-section">
         <div id="cube-container">
           <!-- Le canvas Three.js sera injecté ici -->
-          <div class="menu-btn">
-            <div class="menu-btn__burger"></div>
-          </div>
+          <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+            <span class="menu-btn__burger"></span>
+          </button>
 
           <!-- Indicateurs d'aide -->
           <div class="cube-hint" id="click-hint">
-            <div class="hint-icon"><i class="fas fa-hand-pointer"></i></div>
+            <div class="hint-icon"><i class="fas fa-hand-pointer" aria-hidden="true"></i></div>
             <div class="hint-text">Cliquez sur le cube pour explorer ou faites glisser pour le pivoter</div>
           </div>
 
@@ -175,32 +177,31 @@
             <div class="hint-text">Utilisez ces boutons pour naviguer entre les sections</div>
           </div>
 
-          <nav class="menu">
-            <!-- menu items -->
-            <div class="menu-item" data-face="top">
-              <h3>À propos</h3>
-              <p>Qui suis-je ?</p>
-            </div>
-            <div class="menu-item" data-face="front">
-              <h3>Compétences</h3>
-              <p>Les hard skills</p>
-            </div>
-            <div class="menu-item" data-face="right">
-              <h3>Projets</h3>
-              <p>Mes réalisations</p>
-            </div>
-            <div class="menu-item" data-face="back">
-              <h3>Expériences</h3>
-              <p>Mon parcours professionnel</p>
-            </div>
-            <div class="menu-item" data-face="left">
-              <h3>Formation</h3>
-              <p>Mon parcours académique</p>
-            </div>
-            <div class="menu-item" data-face="bottom">
-              <h3>Mon CV</h3>
-              <p>Pour voir le CV</p>
-            </div>
+          <nav class="menu" id="menu" aria-label="Catégories">
+            <button class="menu-item" data-face="top">
+              <span class="menu-item__title">À propos</span>
+              <span class="menu-item__desc">Qui suis-je ?</span>
+            </button>
+            <button class="menu-item" data-face="front">
+              <span class="menu-item__title">Compétences</span>
+              <span class="menu-item__desc">Les hard skills</span>
+            </button>
+            <button class="menu-item" data-face="right">
+              <span class="menu-item__title">Projets</span>
+              <span class="menu-item__desc">Mes réalisations</span>
+            </button>
+            <button class="menu-item" data-face="back">
+              <span class="menu-item__title">Expériences</span>
+              <span class="menu-item__desc">Mon parcours professionnel</span>
+            </button>
+            <button class="menu-item" data-face="left">
+              <span class="menu-item__title">Formation</span>
+              <span class="menu-item__desc">Mon parcours académique</span>
+            </button>
+            <button class="menu-item" data-face="bottom">
+              <span class="menu-item__title">Mon CV</span>
+              <span class="menu-item__desc">Pour voir le CV</span>
+            </button>
           </nav>
         </div>
       </section>
@@ -212,17 +213,17 @@
             <!-- Colonne Contact -->
             <div class="footer-column">
               <div class="footer-card">
-                <h3 class="footer-title">Contact</h3>
+                <h2 class="footer-title">Contact</h2>
                 <div class="info-item">
-                  <i class="fas fa-envelope"></i>
+                  <i class="fas fa-envelope" aria-hidden="true"></i>
                   <span>r.goldenchtein@proton.me</span>
                 </div>
                 <div class="info-item">
-                  <i class="fas fa-phone"></i>
+                  <i class="fas fa-phone" aria-hidden="true"></i>
                   <span>+33 7 83 23 23 70</span>
                 </div>
                 <div class="info-item">
-                  <i class="fas fa-map-marker-alt"></i>
+                  <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
                   <span>Troyes, France</span>
                 </div>
               </div>
@@ -231,18 +232,23 @@
             <!-- Colonne Réseaux Sociaux -->
             <div class="footer-column">
               <div class="footer-card">
-                <h3 class="footer-title">Réseaux Sociaux</h3>
+                <h2 class="footer-title">Réseaux Sociaux</h2>
                 <div class="social-links">
-                  <a href="https://github.com/Kiyogen24" class="social-link" target="_blank">
-                    <i class="fab fa-github"></i>
+                  <a href="https://github.com/Kiyogen24" class="social-link" target="_blank" rel="noopener">
+                    <i class="fab fa-github" aria-hidden="true"></i>
                     <span>GitHub</span>
                   </a>
-                  <a href="https://www.linkedin.com/in/romain-goldenchtein/" class="social-link" target="_blank">
-                    <i class="fab fa-linkedin"></i>
+                  <a
+                    href="https://www.linkedin.com/in/romain-goldenchtein/"
+                    class="social-link"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <i class="fab fa-linkedin" aria-hidden="true"></i>
                     <span>LinkedIn</span>
                   </a>
-                  <a href="assets/previews/cv.pdf" class="social-link" target="_blank" download>
-                    <i class="fas fa-file-pdf"></i>
+                  <a href="assets/previews/cv.pdf" class="social-link" target="_blank" rel="noopener" download>
+                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
                     <span>Télécharger CV</span>
                   </a>
                 </div>
@@ -252,7 +258,7 @@
             <!-- Colonne Navigation Rapide -->
             <div class="footer-column">
               <div class="footer-card">
-                <h3 class="footer-title">Navigation</h3>
+                <h2 class="footer-title">Navigation</h2>
                 <div class="quick-links">
                   <a href="#intro" class="quick-link">Accueil</a>
                   <a href="#cube-section" class="quick-link" data-face="front">Compétences</a>
@@ -266,7 +272,7 @@
           </div>
         </footer>
       </section>
-    </div>
+    </main>
     <script>
       const deviceNote = document.getElementById('device-note');
       if (

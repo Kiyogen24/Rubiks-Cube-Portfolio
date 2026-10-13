@@ -2,7 +2,7 @@ import { app } from '../globals.js';
 import { shuffle, solve, registerOnSolved, isBusy, resetMoves } from './animator.js';
 import { updateFaceTextures } from './cube.js';
 import { isCubeSolved } from './solved.js';
-import { closeMenu } from '../ui/menu.js';
+import { closeMenu } from '../ui/menu-state.js';
 import { triggerConfetti } from '../ui/confetti.js';
 import { showRotateHintOnce } from '../ui/hints.js';
 
@@ -101,7 +101,7 @@ export function setupGame() {
   app.shuffleSolveButton.id = 'shuffle-solve';
   app.shuffleSolveButton.className = 'shuffle-btn';
   app.shuffleSolveButton.addEventListener('click', onGameButtonClick);
-  document.body.appendChild(app.shuffleSolveButton);
+  document.getElementById('cube-section').appendChild(app.shuffleSolveButton);
 
   // État résolu au dernier contrôle (null avant le premier)
   let lastSolved = null;

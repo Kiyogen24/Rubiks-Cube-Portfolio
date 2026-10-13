@@ -10,6 +10,13 @@ export const translations = {
     },
     ui: {
       resetBtn: 'Retour',
+      themeToggle: 'Changer de thème',
+      langToggle: 'Passer en anglais',
+      cubeLabel:
+        "Rubik's Cube interactif : chaque face est une catégorie du portfolio, aussi accessible depuis le menu.",
+      menuLabel: 'Catégories',
+      stickersLabel: 'Contenus de la face',
+      externalLink: 'lien externe',
       downloadCV: 'Télécharger le CV',
       openInTab: 'Ouvrir dans un nouvel onglet',
       detailsLabel: 'Points clés',
@@ -51,6 +58,12 @@ export const translations = {
     },
     ui: {
       resetBtn: 'Back',
+      themeToggle: 'Toggle theme',
+      langToggle: 'Switch to French',
+      cubeLabel: "Interactive Rubik's Cube: each face is a portfolio category, also available from the menu.",
+      menuLabel: 'Categories',
+      stickersLabel: 'Face contents',
+      externalLink: 'external link',
       downloadCV: 'Download Resume',
       openInTab: 'Open in a new tab',
       detailsLabel: 'Highlights',

@@ -60,21 +60,10 @@ export function updateCubieHoverState(cubie, isHovered) {
     normal.transformDirection(cubie.matrixWorld);
 
     // Détermine la face concernée en fonction de la direction du vecteur normal
-    const faceType = faceFromNormal(normal);
-
-    // Calcule la position du cubie pour la face identifiée
-    const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
-    const content = CUBE_CONTENT[faceType]?.[position];
-
-    // Applique les effets de survol si une prévisualisation est disponible
-    if (content?.preview) {
-      cubie.userData.hoveredFace = faceType;
-      applyHoverEffects(cubie, faceType, content);
-      liftCubie(cubie, faceType);
-      // Change le curseur si le contenu est interactif
-      if (content?.hasContent || content?.link) {
-        app.renderer.domElement.style.cursor = 'pointer';
-      }
+    const content = highlightSticker(cubie, faceFromNormal(normal));
+    // Change le curseur si le contenu est interactif
+    if (content?.hasContent || content?.link) {
+      app.renderer.domElement.style.cursor = 'pointer';
     }
   } else {
     // Réinitialise l'état de la face survolée et remet le curseur par défaut
@@ -86,6 +75,30 @@ export function updateCubieHoverState(cubie, isHovered) {
     }
     hidePreview();
   }
+}
+
+// Met en avant le sticker d'un cubie (texture, soulèvement, aperçu) s'il a un aperçu ; renvoie son contenu
+function highlightSticker(cubie, faceType) {
+  const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
+  const content = CUBE_CONTENT[faceType]?.[position];
+  if (!content?.preview) return null;
+  cubie.userData.hoveredFace = faceType;
+  applyHoverEffects(cubie, faceType, content);
+  liftCubie(cubie, faceType);
+  return content;
+}
+
+// Clavier : le sticker qui a le focus est mis en avant comme au survol
+export function focusSticker(cubie, faceType) {
+  if (app.hoveredCubie && app.hoveredCubie !== cubie) updateCubieHoverState(app.hoveredCubie, false);
+  app.hoveredCubie = cubie;
+  highlightSticker(cubie, faceType);
+}
+
+export function blurSticker(cubie) {
+  if (app.hoveredCubie !== cubie) return;
+  updateCubieHoverState(cubie, false);
+  app.hoveredCubie = null;
 }
 
 // Applique les effets de survol sur un cubie pour la face donnée en créant une texture dynamique

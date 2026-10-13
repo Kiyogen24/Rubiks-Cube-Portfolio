@@ -8,6 +8,29 @@ import { app } from '../globals.js';
 // Variables globales pour l'overlay et la carte d'information active
 let overlay = null;
 let activeInfoCard = null;
+let focusBeforeCard = null; // élément qui avait le focus à l'ouverture, retrouvé à la fermeture
+const FOCUSABLE = 'a[href], button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+
+// Clavier dans la carte : Échap ferme, Tab reste dans la carte
+function onCardKeydown(e) {
+  if (e.key === 'Escape') {
+    e.stopPropagation(); // ne pas sortir aussi du zoom
+    activeInfoCard?.querySelector('.close-button').click();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const focusables = [...e.currentTarget.querySelectorAll(FOCUSABLE)];
+  if (!focusables.length) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if (e.shiftKey && (document.activeElement === first || document.activeElement === e.currentTarget)) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
 
 // Titre « Poste - Entreprise » : l'entreprise (ou l'établissement) passe sur une ligne à part
 function splitTitle(title = '') {
@@ -32,14 +55,14 @@ function cardHead(data, category) {
     category && !plain(title).includes(plain(category)) ? `<span>${category}</span>` : '',
     data.period ? `<span class="card-period">${formatPeriod(data.period)}</span>` : '',
   ].join('');
-  return `<header class="card-head">
+  return `<div class="card-head">
       <span class="card-sticker" aria-hidden="true"><i class="${data.icon || 'fa-solid fa-cube'}"></i></span>
       <div>
         ${eyebrow ? `<p class="card-eyebrow">${eyebrow}</p>` : ''}
         <h2 class="card-title">${title}</h2>
         ${org ? `<p class="card-org">${org}</p>` : ''}
       </div>
-    </header>`;
+    </div>`;
 }
 
 // « Prénom : <strong>Romain</strong> » → libellé et valeur
@@ -171,11 +194,18 @@ export function showInfoCard(event, faceType, cubePosition) {
   // Fermer la carte précédente si elle existe
   if (activeInfoCard) {
     activeInfoCard.remove();
+  } else {
+    focusBeforeCard = document.activeElement;
   }
 
   // Création de la carte d'information
   const card = document.createElement('div');
   card.className = 'info-card';
+  // boîte de dialogue : annoncée avec son titre, focus déplacé dedans
+  card.setAttribute('role', 'dialog');
+  card.setAttribute('aria-modal', 'true');
+  card.tabIndex = -1;
+  card.addEventListener('keydown', onCardKeydown);
 
   // Création de la zone de contenu de la carte (doit être créée avant toute utilisation)
   const content = document.createElement('div');
@@ -301,6 +331,9 @@ export function showInfoCard(event, faceType, cubePosition) {
     if (app.renderer) app.renderer.domElement.style.cursor = 'default';
     setTimeout(() => card.remove(), 200);
     activeInfoCard = null;
+    // le focus revient là où il était (bouton d'un sticker au clavier)
+    if (focusBeforeCard?.isConnected) focusBeforeCard.focus({ preventScroll: true });
+    focusBeforeCard = null;
   };
 
   // Empêcher la fermeture de la carte lors d'un clic à l'intérieur
@@ -317,8 +350,15 @@ export function showInfoCard(event, faceType, cubePosition) {
     if (data.file) card.classList.add('info-card--wide');
   } else {
     // Cas par défaut si aucun contenu spécifique n'est défini
-    content.innerHTML = `<header class="card-head"><div><h2 class="card-title">${category}</h2></div></header>
+    content.innerHTML = `<div class="card-head"><div><h2 class="card-title">${category}</h2></div></div>
       <div class="card-body"><p class="card-lead">${labels.comingSoon}</p></div>`;
+  }
+
+  // Titre de la boîte de dialogue
+  const title = content.querySelector('.card-title, .card-header h2');
+  if (title) {
+    title.id = 'info-card-title';
+    card.setAttribute('aria-labelledby', title.id);
   }
 
   // Ajout des éléments à la carte
@@ -328,6 +368,7 @@ export function showInfoCard(event, faceType, cubePosition) {
   document.body.appendChild(card);
 
   // Animation d'ouverture de la carte
+  card.focus({ preventScroll: true });
   requestAnimationFrame(() => {
     card.classList.add('active');
   });

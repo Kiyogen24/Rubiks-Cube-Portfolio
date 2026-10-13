@@ -24,6 +24,7 @@ export function createScene() {
   // Le canvas est placé dans la section du cube
   document.getElementById('cube-section').appendChild(app.renderer.domElement);
   app.renderer.domElement.style.position = 'absolute';
+  app.renderer.domElement.setAttribute('role', 'img');
 
   app.controls = new OrbitControls(app.camera, app.renderer.domElement);
   app.controls.enableDamping = true;

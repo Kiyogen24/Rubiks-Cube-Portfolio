@@ -16,7 +16,7 @@ import {
 
 test('la page se charge sans erreur', async ({ page }) => {
   const errors = watchErrors(page);
-  await prepare(page);
+  await prepare(page, { motion: true });
   await open(page);
   await expect(page.locator('.typing-text')).toHaveCSS('animation-play-state', /running/);
   await toCube(page);

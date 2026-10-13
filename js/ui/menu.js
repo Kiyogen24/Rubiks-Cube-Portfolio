@@ -1,27 +1,6 @@
 import { app } from '../globals.js';
 import { zoomToFace, dezoom, getCentralCubie } from '../cube/navigation.js';
-
-export function openMenu() {
-  if (app.isPlayable) return;
-  app.menuBtn.classList.add('open');
-  app.menu.classList.add('active');
-  app.menuOpen = true;
-}
-
-export function closeMenu() {
-  app.menuBtn.classList.remove('open');
-  app.menu.classList.remove('active');
-  app.menuOpen = false;
-}
-
-// Met en avant l'entrée du menu d'une face (data-face, indépendant de la langue)
-export function highlightMenuItem(faceType, { scroll = false } = {}) {
-  document.querySelectorAll('.menu-item').forEach((item) => {
-    const active = item.dataset.face === faceType;
-    item.classList.toggle('active', active);
-    if (active && scroll) item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-}
+import { openMenu, closeMenu, highlightMenuItem } from './menu-state.js';
 
 // Zoom sur une face depuis le menu ou un lien rapide
 function zoomFromMenu(faceType) {
@@ -36,13 +15,14 @@ function zoomFromMenu(faceType) {
 export function setupMenu() {
   app.menuBtn = document.querySelector('.menu-btn');
   app.menu = document.querySelector('.menu');
+  closeMenu(); // état initial : fermé et inerte
 
   // Bouton « Retour » : sortie du zoom
   app.resetButton = document.createElement('button');
   app.resetButton.id = 'reset';
   app.resetButton.setAttribute('aria-label', 'Retour');
   app.resetButton.addEventListener('click', dezoom);
-  document.body.appendChild(app.resetButton);
+  document.getElementById('cube-section').appendChild(app.resetButton);
 
   // Ouverture / fermeture du menu, impossible en mode jeu
   app.menuBtn.addEventListener('click', () => {

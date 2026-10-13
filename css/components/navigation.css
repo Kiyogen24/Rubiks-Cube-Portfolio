@@ -41,6 +41,9 @@
 
 /* Menu hamburger */
 .menu-btn {
+  box-sizing: content-box;
+  font: inherit;
+  appearance: none;
   position: fixed;
   top: 20px;
   right: 20px;
@@ -122,11 +125,30 @@
 }
 
 .menu-item {
+  display: block;
+  width: 100%;
   margin: 0;
   padding: 15px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
   border-bottom: 1px solid rgba(225, 222, 255, 0.5);
   cursor: pointer;
   transition: 0.3s ease;
+}
+
+.menu-item__title {
+  display: block;
+  margin: 1em 0;
+  font-size: 1.17em;
+  font-weight: 700;
+}
+
+.menu-item__desc {
+  display: block;
+  margin: 1em 0;
 }
 
 .menu-item:hover,
@@ -258,7 +280,7 @@
   .menu-btn__burger,
   .menu-btn__burger::before,
   .menu-btn__burger::after {
-    background: var(--dark-primary);
+    background: #8c84ff;
   }
 
   .menu {

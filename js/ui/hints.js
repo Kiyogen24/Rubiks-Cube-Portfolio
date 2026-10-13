@@ -19,7 +19,7 @@ function createRotateHint() {
     </div>
     <div class="hint-text">${app.langManager.translate('rotateHint', 'ui')}</div>
   `;
-  document.body.appendChild(rotate);
+  document.getElementById('cube-section').appendChild(rotate);
   return rotate;
 }
 

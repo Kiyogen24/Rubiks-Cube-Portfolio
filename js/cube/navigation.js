@@ -4,6 +4,8 @@ import { updateFaceTextures, createFaceTexture, setFaceMap } from './cube.js';
 import { updateCubieHoverState, hidePreview } from '../cards/preview.js';
 import { dropAll, updateLifts } from './lift.js';
 import { onFrame } from './scene.js';
+import { showStickerButtons, hideStickerButtons } from './sticker-buttons.js';
+import { closeMenu } from '../ui/menu-state.js';
 import { app } from '../globals.js';
 
 // Stockage du cubie survolé (initialisé à null)
@@ -47,8 +49,10 @@ function setShuffleButtonVisible(visible) {
 }
 
 const ZOOM_DISTANCE = 6; // de la face à la caméra
-const ZOOM_DURATION = 0.9; // s
-const DEZOOM_DURATION = 0.8; // s
+// durées en s, raccourcies si l'utilisateur préfère réduire les animations
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const zoomDuration = () => (reducedMotion.matches ? 0.35 : 0.9);
+const dezoomDuration = () => (reducedMotion.matches ? 0.35 : 0.8);
 const FACE_NORMALS = {
   front: new THREE.Vector3(0, 0, 1),
   back: new THREE.Vector3(0, 0, -1),
@@ -151,7 +155,7 @@ export function zoomToFace(face, faceType) {
       : faceType === 'bottom'
         ? new THREE.Vector3(0, 0, 1)
         : new THREE.Vector3(0, 1, 0);
-  flyCamera(endPosition, lookRotation(endPosition, target, up), ZOOM_DURATION, () => finishZoom(faceType));
+  flyCamera(endPosition, lookRotation(endPosition, target, up), zoomDuration(), () => finishZoom(faceType));
 }
 
 // Finalisation du zoom : mise à jour de l'interface et des textures de la face
@@ -164,6 +168,8 @@ export function finishZoom(faceType) {
   faceCubies.forEach((cubie) => {
     updateFaceTextures(cubie, faceType);
   });
+  // stickers accessibles au clavier
+  showStickerButtons(faceType, faceCubies);
 
   app.isZoomed = true;
   app.resetButton.style.display = 'block';
@@ -186,13 +192,14 @@ export function dezoom() {
     btn.classList.remove('disabled');
   });
 
-  // Nettoyage de l'interface utilisateur
+  // Nettoyage de l'interface utilisateur ; le focus clavier passe des stickers au bouton du menu
+  const focusWasInZoom = document.activeElement?.closest('.sticker-buttons, #reset');
+  hideStickerButtons();
   const body = document.querySelector('.container');
   body.style.overflow = 'auto';
-  app.menuBtn.classList.remove('open');
-  app.menu.classList.remove('active');
-  app.menuOpen = false;
+  closeMenu();
   app.resetButton.style.display = 'none';
+  if (focusWasInZoom) app.menuBtn.focus({ preventScroll: true });
 
   // Suppression du contenu de la face s'il existe
   const container = document.getElementById('face-content');
@@ -205,7 +212,7 @@ export function dezoom() {
   const endPosition = app.lastCameraPosition.clone();
   if (endPosition.length() < 7) endPosition.normalize().multiplyScalar(7);
   const endQuaternion = lookRotation(endPosition, new THREE.Vector3(), new THREE.Vector3(0, 1, 0));
-  flyCamera(endPosition, endQuaternion, DEZOOM_DURATION, () => {
+  flyCamera(endPosition, endQuaternion, dezoomDuration(), () => {
     app.controls.enabled = true;
     app.cameraAnimating = false;
   });
@@ -316,6 +323,8 @@ export function setupNavigation() {
     // Active le bouton correspondant à la section courante
     buttons.forEach((button, index) => {
       button.classList.toggle('active', index === currentIndex);
+      if (index === currentIndex) button.setAttribute('aria-current', 'true');
+      else button.removeAttribute('aria-current');
     });
 
     // Affiche ou cache le menu et le bouton thème suivant la section active
@@ -328,11 +337,7 @@ export function setupNavigation() {
     setShuffleButtonVisible(isCubeSection && !app.isZoomed);
 
     // Ferme le menu si on quitte la section du cube
-    if (!isCubeSection && app.menu.classList.contains('active')) {
-      app.menu.classList.remove('active');
-      app.menuBtn.classList.remove('open');
-      app.menuOpen = false;
-    }
+    if (!isCubeSection && app.menu.classList.contains('active')) closeMenu();
   }
 
   // Clic sur les boutons de navigation : défilement vers la bonne section
@@ -340,6 +345,11 @@ export function setupNavigation() {
     button.addEventListener('click', () => {
       sections[index].scrollIntoView({ behavior: 'smooth' });
     });
+  });
+
+  // Échap : sortie du zoom (une carte ouverte se ferme d'abord, voir overlay.js)
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && app.isZoomed && !app.isModalOpen) dezoom();
   });
 
   // Vol de la caméra et soulèvement des cubies survolés, à chaque image

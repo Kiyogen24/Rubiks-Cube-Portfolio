@@ -146,7 +146,11 @@ section {
   }
 
   .theme-icon {
-    color: var(--dark-primary);
+    color: #8c84ff;
+  }
+
+  .lang-btn .lang-code {
+    color: #8c84ff;
   }
 
   .mobile-version-btn {
@@ -174,5 +178,55 @@ section {
   .lang-dropdown button:hover {
     background: var(--dark-primary);
     color: var(--dark-secondary);
+  }
+}
+
+/* Focus clavier visible sur toutes les commandes */
+:focus-visible {
+  outline: 2px solid var(--light-primary);
+  outline-offset: 3px;
+}
+
+[data-theme='dark'] :focus-visible {
+  outline-color: #b4b0ff;
+}
+
+/* zones pleine largeur (introduction, entrées du menu) : contour à l'intérieur */
+#intro:focus-visible,
+.menu-item:focus-visible {
+  outline-offset: -4px;
+}
+
+/* Visible seulement par les lecteurs d'écran et au clavier (stickers de la face zoomée) */
+.sticker-buttons {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  list-style: none;
+  border: 0;
+  clip-path: inset(50%);
+}
+
+/* Moins de mouvement si l'utilisateur le préfère : défilement direct, animations décoratives coupées */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .intro-content,
+  .mouse::before,
+  .hint-arrow,
+  .cube-loader {
+    animation: none !important;
+  }
+
+  .typing-text {
+    max-width: none;
+    border-right: none;
+    animation: none;
   }
 }

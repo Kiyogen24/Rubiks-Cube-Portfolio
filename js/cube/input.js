@@ -5,7 +5,7 @@ import { zoomToFace, getCentralCubie, onMouseMove } from './navigation.js';
 import { queueMove } from './animator.js';
 import { showInfoCard } from '../cards/overlay.js';
 import { CUBE_CONTENT } from '../utils/constants.js';
-import { openMenu, highlightMenuItem } from '../ui/menu.js';
+import { openMenu, highlightMenuItem } from '../ui/menu-state.js';
 import { isCubeSectionInView } from '../utils/view.js';
 
 // Position de départ de la souris, pour distinguer un clic d'un glissement
