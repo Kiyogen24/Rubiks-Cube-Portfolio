@@ -147,7 +147,7 @@ function preloadImages() {
 
 // Fonction d'initialisation principale
 function init() {
-  preloadImages();
+  const imagesLoaded = preloadImages();
 
   // Détermination du thème initial à partir de la préférence système ou stockée
   const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -181,15 +181,20 @@ function init() {
     const loadingScreen = document.querySelector('.loading-screen');
     loadingScreen.classList.add('fade-out');
     document.querySelector('.container').style.visibility = 'visible';
-    
+    // Démarre l'animation d'écriture de l'introduction (voir intro.css)
+    document.body.classList.add('loaded');
+
     // Suppression de l'écran de chargement après l'animation
     setTimeout(() => {
       loadingScreen.remove();
     }, 500);
   }
-  
-  // Simulation d'un délai de chargement avant de masquer l'écran
-  setTimeout(hideLoadingScreen, 3000);
+
+  // Masquer l'écran de chargement une fois les aperçus et les polices chargés
+  // (affiché au moins 1 s pour l'animation, au plus 5 s si le réseau est lent)
+  const minDelay = new Promise(resolve => setTimeout(resolve, 1000));
+  const maxDelay = new Promise(resolve => setTimeout(resolve, 5000));
+  Promise.race([Promise.all([imagesLoaded, document.fonts.ready, minDelay]), maxDelay]).then(hideLoadingScreen);
 
   // Création de la scène Three.js
   app.scene = new THREE.Scene();
@@ -549,7 +554,16 @@ function init() {
         footTitles[1].textContent = ui.socialNetworks || footTitles[1].textContent;
         footTitles[2].textContent = ui.navigation || footTitles[2].textContent;
       }
-  
+
+      // Lien de téléchargement du CV : fichier et libellé selon la langue
+      const cvLink = document.querySelector('.social-link[download]');
+      if (cvLink) {
+        const cv = CUBE_CONTENT.bottom[4];
+        cvLink.href = (cv.i18n && cv.i18n[lang] && cv.i18n[lang].file) || cv.file;
+        const cvLabel = cvLink.querySelector('span');
+        if (cvLabel && ui.downloadResume) cvLabel.textContent = ui.downloadResume;
+      }
+
       // Quick links
       document.querySelectorAll('.quick-link').forEach(a => {
         const face = a.getAttribute('data-face');
@@ -921,21 +935,15 @@ app.shuffleSolveButton.addEventListener('click', async (e) => {
 
 // Quand le solveur a fini, revenir au portfolio
 registerOnSolved(() => {
-  // réactiver l'UI portfolio
+  // replacer exactement les cubies (la solution peut laisser des centres tournés sur eux-mêmes)
+  resetRubikToHome();
+  // réactiver l'UI portfolio (remet aussi le libellé du bouton)
   exitGameModeUI();
   // réinitialiser les mouvements stockés
   resetMoves();
   app.isAutoSolving = false; // Réinitialiser l'état de résolution automatique
-
-  // Réinitialiser le label du bouton si le cube est résolu manuellement
-  const isSolved = app.cubies.every(cubie => {
-    const pos = cubie.userData.gridPos;
-    return pos.x === 0 && pos.y === 0 && pos.z === 0; // Vérifie si chaque cubie est à sa position d'origine
-  });
-
-  if (isSolved) {
-    app.shuffleSolveButton.textContent = 'Mélanger';
-  }
+  // état résolu déjà traité : la vérification périodique ne doit pas le prendre pour une résolution manuelle
+  __lastSolvedState = true;
 });
 
 // Détection automatique de l'état "résolu" (pour mouvements manuels)
@@ -1006,8 +1014,19 @@ function isCubeSolvedRobust(epsilon = 0.25) {
         if (r.distanceTo(currents[i]) > epsilon) { ok = false; break; }
       }
       if (ok) {
-        // console.log('[debug] solved detected with rotation index', ri);
-        return true;
+        // positions correctes : vérifier aussi l'orientation des coins et des arêtes
+        // (un centre peut tourner sur lui-même sans changer les couleurs visibles)
+        const mx = new THREE.Vector3(m[0], m[3], m[6]); // image de l'axe x par la rotation
+        const my = new THREE.Vector3(m[1], m[4], m[7]); // image de l'axe y par la rotation
+        const q = new THREE.Quaternion();
+        const oriented = app.cubies.every((c, i) => {
+          const h = homes[i];
+          if ([h.x, h.y, h.z].filter(v => v !== 0).length < 2) return true; // centres et cubie central
+          c.getWorldQuaternion(q);
+          return new THREE.Vector3(1, 0, 0).applyQuaternion(q).distanceTo(mx) <= epsilon &&
+                 new THREE.Vector3(0, 1, 0).applyQuaternion(q).distanceTo(my) <= epsilon;
+        });
+        if (oriented) return true;
       }
     }
     return false;

@@ -2,31 +2,94 @@ import * as THREE from 'three';
 import { app } from '../globals.js';
 
 let isAnimating = false;
+let isSolving = false;
 let moveQueue = [];
 let completedMoves = [];
 let onSolvedCallback = null;
-let lastShuffleAlg = '';
+
+// Correspondance notation standard <-> représentation interne { layer, number, orientation }.
+// orientation 1 = rotation de +90° autour de l'axe (col: x, row: y, depth: z) ;
+// cw = orientation qui correspond au sens horaire de la notation (vu depuis la face concernée).
+const NOTATION = {
+  R: { layer: 'col', number: 1, cw: 0 },
+  L: { layer: 'col', number: -1, cw: 1 },
+  M: { layer: 'col', number: 0, cw: 1 },      // tranche centrale verticale, même sens que L
+  x: { layer: 'col', number: 'all', cw: 0 },  // rotation du cube entier, même sens que R
+  U: { layer: 'row', number: 1, cw: 0 },
+  D: { layer: 'row', number: -1, cw: 1 },
+  E: { layer: 'row', number: 0, cw: 1 },      // tranche équatoriale, même sens que D
+  y: { layer: 'row', number: 'all', cw: 0 },  // même sens que U
+  F: { layer: 'depth', number: 1, cw: 0 },
+  B: { layer: 'depth', number: -1, cw: 1 },
+  S: { layer: 'depth', number: 0, cw: 0 },    // tranche debout, même sens que F
+  z: { layer: 'depth', number: 'all', cw: 0 } // même sens que F
+};
 
 // utilitaire : mappe la représentation interne d'un mouvement vers la notation standard du cube
 function moveToAlg(m) {
-  // m: { layer: 'col'|'row'|'depth', number: -1|0|1, orientation: 1|0 }
-  const dir = m.orientation === 1 ? '' : "'";
-  if (m.layer === 'col') {
-    if (m.number === 1) return 'R' + dir;
-    if (m.number === -1) return 'L' + dir;
-    return 'M' + dir; // tranche centrale verticale
-  }
-  if (m.layer === 'row') {
-    if (m.number === 1) return 'U' + dir;
-    if (m.number === -1) return 'D' + dir;
-    return 'E' + dir; // tranche équatoriale
-  }
-  if (m.layer === 'depth') {
-    if (m.number === 1) return 'F' + dir;
-    if (m.number === -1) return 'B' + dir;
-    return 'S' + dir; // tranche debout
-  }
-  return '';
+  const base = Object.keys(NOTATION).find(k => NOTATION[k].layer === m.layer && NOTATION[k].number === m.number);
+  if (!base) return '';
+  return base + (m.orientation === NOTATION[base].cw ? '' : "'");
+}
+
+// convertit un algorithme en notation standard (ex. "x R U2 M'") en mouvements internes
+function algToMoves(alg) {
+  return alg.split(/\s+/).filter(Boolean).map(token => {
+    const n = NOTATION[token[0]];
+    const suffix = token.slice(1);
+    if (!n || !['', "'", '2'].includes(suffix)) throw new Error(`Mouvement inconnu : ${token}`);
+    return {
+      layer: n.layer,
+      number: n.number,
+      orientation: suffix === "'" ? 1 - n.cw : n.cw,
+      turns: suffix === '2' ? 2 : 1 // "2" = demi-tour
+    };
+  });
+}
+
+// Solveur Kociemba (cubejs) exécuté dans un worker, car son initialisation bloque plusieurs secondes
+let solverWorker = null;
+let solverFailed = false;
+const solverRequests = new Map();
+let nextSolverRequestId = 0;
+
+function startSolver() {
+  if (solverWorker || solverFailed || typeof Worker === 'undefined') return;
+  solverWorker = new Worker(new URL('./solver-worker.js', import.meta.url));
+  solverWorker.onmessage = (e) => {
+    const request = solverRequests.get(e.data.id);
+    if (!request) return;
+    solverRequests.delete(e.data.id);
+    if (e.data.ok) request.resolve(e.data);
+    else request.reject(new Error(e.data.error));
+  };
+  // cubejs n'a pas pu être chargé (réseau, CDN...) : abandonner le worker pour basculer sur le repli
+  solverWorker.onerror = (e) => {
+    solverWorker.terminate();
+    solverWorker = null;
+    solverFailed = true;
+    solverRequests.forEach(request => request.reject(new Error(e.message || 'solver worker error')));
+    solverRequests.clear();
+  };
+  // précalcule les tables de Kociemba en arrière-plan (pendant le mélange)
+  postToSolver('init').catch(() => {});
+}
+
+function postToSolver(cmd, payload = {}, timeout = 20000) {
+  startSolver();
+  if (!solverWorker) return Promise.reject(new Error('solver worker unavailable'));
+  return new Promise((resolve, reject) => {
+    const id = ++nextSolverRequestId;
+    const timer = setTimeout(() => {
+      solverRequests.delete(id);
+      reject(new Error('solver timeout'));
+    }, timeout);
+    solverRequests.set(id, {
+      resolve: (data) => { clearTimeout(timer); resolve(data); },
+      reject: (err) => { clearTimeout(timer); reject(err); }
+    });
+    solverWorker.postMessage({ cmd, id, ...payload });
+  });
 }
 
 // retourne la liste des cubies appartenant à une couche donnée
@@ -34,6 +97,7 @@ function getLayerCubies(layer, number) {
   return app.cubies.filter(cubie => {
     const p = cubie.userData.gridPos;
     if (!p) return false;
+    if (number === 'all') return true; // rotation du cube entier (x, y, z)
     if (layer === 'row') return Math.abs(p.y - number) < 0.1;
     if (layer === 'col') return Math.abs(p.x - number) < 0.1;
     if (layer === 'depth') return Math.abs(p.z - number) < 0.1;
@@ -60,8 +124,8 @@ function rotateVecGrid(pos, axis, angle) {
   return new THREE.Vector3(roundGridVal(v.x), roundGridVal(v.y), roundGridVal(v.z));
 }
 
-// anime la rotation d'une couche donnée
-function animateRotation(layer, number, orientation, duration = 400, recordMove = true, highlight = true) {
+// anime la rotation d'une couche donnée (turns = 2 pour un demi-tour)
+function animateRotation(layer, number, orientation, duration = 400, recordMove = true, highlight = true, turns = 1) {
   return new Promise(resolve => {
     if (!app.scene || !app.rubiksCube) return resolve();
 
@@ -97,7 +161,7 @@ function animateRotation(layer, number, orientation, duration = 400, recordMove 
 
     const start = performance.now();
     const from = 0;
-    const angle = (orientation === 1 ? 1 : -1) * Math.PI / 2;
+    const angle = (orientation === 1 ? 1 : -1) * turns * Math.PI / 2;
 
     function step(now) {
       const t = Math.min((now - start) / duration, 1);
@@ -146,15 +210,15 @@ function animateRotation(layer, number, orientation, duration = 400, recordMove 
 async function processQueue() {
   if (isAnimating) return;
   if (!moveQueue.length) {
-    // détection solved lors d'une résolution automatique : si on a exécuté une séquence de solve,
-    // et que completedMoves est vide => appeler le callback
-    if (onSolvedCallback && completedMoves.length === 0) {
-      onSolvedCallback();
+    // fin d'une résolution automatique : prévenir l'interface
+    if (isSolving) {
+      isSolving = false;
+      if (onSolvedCallback) onSolvedCallback();
     }
     return;
   }
   const move = moveQueue.shift();
-  await animateRotation(move.layer, move.number, move.orientation, move.duration || 400, move.recordMove, move.highlight !== undefined ? move.highlight : true);
+  await animateRotation(move.layer, move.number, move.orientation, move.duration || 400, move.recordMove, move.highlight !== undefined ? move.highlight : true, move.turns || 1);
 
   // enregistrer le mouvement terminé ici pour inclure des métadonnées (isShuffle)
   try {
@@ -169,6 +233,9 @@ async function processQueue() {
 
 // Mélange intelligent : évite que des mouvements consécutifs s'annulent ou se répètent
 export function shuffle(nMoves = 25) {
+  // charger le solveur pendant le mélange pour qu'il soit prêt au moment de résoudre
+  startSolver();
+
   // planifier des mouvements aléatoires
   const axes = ['row','col','depth'];
   const algParts = [];
@@ -220,96 +287,49 @@ export function shuffle(nMoves = 25) {
     algParts.push(moveToAlg(chosen));
   }
 
-  // stocker l'algorithme de shuffle pour accélérer le solveur
-  lastShuffleAlg = algParts.join(' ').trim();
   // marquer jouable
   app.isPlayable = true;
   processQueue();
 }
 
 export async function solve() {
-  // si aucun mouvement enregistré et pas de lastShuffleAlg, le cube est déjà résolu
-  if (completedMoves.length === 0 && !lastShuffleAlg) {
-    console.log('solve() appelé mais completedMoves vide et pas de lastShuffleAlg -> cube déjà résolu');
+  // si aucun mouvement n'a été enregistré, le cube est déjà résolu
+  if (completedMoves.length === 0) {
     if (onSolvedCallback) onSolvedCallback();
     return;
   }
-  // essayer d'utiliser cubejs (Kociemba) si disponible
-  try {
-    const cubejs = await import('cubejs');
-    // préférer lastShuffleAlg si présent (plus rapide / fiable)
-    const scrambleAlg = lastShuffleAlg || completedMoves.filter(m => m.isShuffle).map(m => moveToAlg(m)).join(' ').trim();
-    console.log('scramble courant (from lastShuffleAlg/completedMoves):', scrambleAlg);
-    // construire une représentation compacte de l'état du cube à partir des cubies (positions de grille)
-    try {
-      const state = app.cubies ? app.cubies.map((c, i) => {
-        const g = c.userData.gridPos || {x:'?',y:'?',z:'?'};
-        const h = c.userData.homePos || {x:'?',y:'?',z:'?'};
-        return `${i}:home(${h.x},${h.y},${h.z})->pos(${g.x},${g.y},${g.z})`;
-      }).slice(0,24).join(' | ') : 'no-cubies';
-    console.log('sample cube state (indices):', state);
-  } catch(e) { console.warn('failed to build cube state debug:', e); }
-    let solutionAlg = '';
-    if (scrambleAlg.length > 0) {
-      // cubejs.solve accepte une chaîne scramble et retourne un algorithme solution
-      if (typeof cubejs.solve === 'function') {
-        solutionAlg = cubejs.solve(scrambleAlg);
-      } else if (cubejs.default && typeof cubejs.default.solve === 'function') {
-        solutionAlg = cubejs.default.solve(scrambleAlg);
-      }
-    }
+  isSolving = true;
 
-    if (solutionAlg && solutionAlg.length) {
-  console.log('cubejs a retourné une solution:', solutionAlg);
-      // parser solutionAlg en mouvements et les mettre en file
-      const moves = solutionAlg.split(/\s+/).filter(Boolean);
-      moves.forEach(mv => {
-        // parser prime et base
-        const prime = mv.endsWith("'");
-        const base = prime ? mv.slice(0,-1) : mv;
-        // mapper la base vers notre représentation interne
-        let layer, number, orientation;
-        switch(base) {
-          case 'R': layer='col'; number=1; break;
-          case 'L': layer='col'; number=-1; break;
-          case 'M': layer='col'; number=0; break;
-          case 'U': layer='row'; number=1; break;
-          case 'D': layer='row'; number=-1; break;
-          case 'E': layer='row'; number=0; break;
-          case 'F': layer='depth'; number=1; break;
-          case 'B': layer='depth'; number=-1; break;
-          case 'S': layer='depth'; number=0; break;
-          default: layer=undefined;
-        }
-        if (layer) {
-          orientation = prime ? 0 : 1;
-          // utiliser une durée plus courte pour l'auto-solve et désactiver la surbrillance (action du bouton)
-          moveQueue.push({ layer, number, orientation, duration: 120, recordMove: false, highlight: false });
-        }
-      });
-      // vider completedMoves car on résout
-      completedMoves = [];
-      // vider lastShuffleAlg car on l'utilise maintenant
-      lastShuffleAlg = '';
-      processQueue();
-      return;
-    }
+  // historique complet : mélange + mouvements manuels
+  const history = completedMoves.slice();
+  completedMoves = [];
+
+  let solutionMoves = null;
+  try {
+    // cubejs (Kociemba) : réorientation du cube entier puis solution en mouvements de faces
+    const { upright, solution } = await postToSolver('solve', { alg: history.map(moveToAlg).join(' ') });
+    console.log('[animator] solution cubejs :', `${upright} ${solution}`.trim());
+    solutionMoves = algToMoves(`${upright} ${solution}`);
   } catch (e) {
-  console.warn('cubejs non disponible ou a échoué :', e);
+    console.warn('[animator] cubejs non disponible ou a échoué, repli sur l\'inverse des mouvements :', e);
   }
 
-  // Repli : pousser l'inverse des completedMoves dans l'ordre inverse
-  const toSolve = completedMoves.slice().reverse();
-  completedMoves = []; // on reconstruit si besoin pendant l'exécution
-  lastShuffleAlg = '';
-  toSolve.forEach(m => {
-    moveQueue.push({ layer: m.layer, number: m.number, orientation: m.orientation ? 0 : 1, duration: 120, recordMove: false, highlight: false });
+  // Repli : rejouer l'inverse de l'historique dans l'ordre inverse
+  if (!solutionMoves) {
+    solutionMoves = history.reverse().map(m => ({ layer: m.layer, number: m.number, orientation: m.orientation ? 0 : 1, turns: 1 }));
+  }
+
+  // durée plus courte pour l'auto-solve et pas de surbrillance (action du bouton)
+  solutionMoves.forEach(m => {
+    moveQueue.push({ ...m, duration: 120 * m.turns, recordMove: false, highlight: false });
   });
   processQueue();
 }
 
 // empile un mouvement dans la file (utilisé pour interactions manuelles)
 export function queueMove(layer, number, orientation, duration = 400, options = {}) {
+  // ignoré pendant une résolution automatique : il fausserait la solution en cours
+  if (isSolving) return;
   const highlight = options.highlight !== undefined ? options.highlight : true;
   moveQueue.push({ layer, number, orientation, duration, recordMove: true, highlight });
   processQueue();
@@ -317,10 +337,10 @@ export function queueMove(layer, number, orientation, duration = 400, options = 
 
 export function registerOnSolved(cb) { onSolvedCallback = cb; }
 
-export function isBusy() { return isAnimating || moveQueue.length > 0; }
+export function isBusy() { return isAnimating || isSolving || moveQueue.length > 0; }
 
 export function getCompletedMoves() { return completedMoves; }
 
-export function resetMoves() { completedMoves = []; moveQueue = []; lastShuffleAlg = ''; }
+export function resetMoves() { completedMoves = []; moveQueue = []; }
 
 export default { shuffle, solve, queueMove, registerOnSolved, isBusy, resetMoves };

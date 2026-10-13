@@ -197,9 +197,20 @@ export function createFaceTexture(faceType, hasContent = false) {
   const texture = new THREE.CanvasTexture(canvas);
   texture.anisotropy = app.renderer.capabilities.getMaxAnisotropy();
   textureCache.set(cacheKey, texture);
-  
+
   return texture;
-}  
+}
+
+// Remplace la texture d'une face ; l'ancienne est libérée (mémoire GPU) si elle n'est pas
+// partagée via le cache (textures de survol, textures initiales propres à chaque cubie)
+export function setFaceMap(material, texture) {
+  const previous = material.map;
+  if (previous && previous !== texture && ![...textureCache.values()].includes(previous)) {
+    previous.dispose();
+  }
+  material.map = texture;
+  material.needsUpdate = true;
+}
 
 // Met à jour les textures d'une face d'un cubie selon son statut actif
 export function updateFaceTextures(cubie, faceType, isActive) {
@@ -223,9 +234,8 @@ export function updateFaceTextures(cubie, faceType, isActive) {
   const hasContent = app.isZoomed && content?.preview;
   // Crée une nouvelle texture pour la face
   const texture = createFaceTexture(faceType, hasContent);
-  
-  cubie.material[faceIndex].map = texture;
-  cubie.material[faceIndex].needsUpdate = true;
+
+  setFaceMap(cubie.material[faceIndex], texture);
 }
 
 // Calcule la position d'un cubie sur une face donnée

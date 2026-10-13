@@ -2,7 +2,7 @@
 
 Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube en 3D. Chaque face représente une catégorie différente (compétences, projets, expériences, etc.) avec des éléments interactifs.
 
-[Lien du projet](goldenrom.vercel.app)
+[Lien du projet](https://goldenrom.vercel.app)
 
 ## Fonctionnalités
 
@@ -43,6 +43,7 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 ### Bibliothèques
 
 - Three.js pour les graphiques 3D
+- cubejs (algorithme de Kociemba) pour la résolution automatique du cube, exécuté dans un Web Worker
 - Font Awesome pour les icônes
 
 ## Installation
@@ -70,7 +71,6 @@ npm start
 ```plaintext
 ├── assets/              # Images et ressources
 │   ├── pp.png
-│   ├── pp2.png
 │   └── previews/
 │       ├── about/
 │       │   ├── github.png
@@ -78,6 +78,7 @@ npm start
 │       │   └── … 
 │       ├── cv_pr.png
 │       ├── cv.pdf
+│       ├── cv_en.pdf
 │       ├── exp/
 │       ├── formation/
 │       ├── projects/
@@ -102,7 +103,8 @@ npm start
 │   ├── cube/
 │   │   ├── cube.js
 │   │   ├── animator.js
-│   │   └── navigation.js
+│   │   ├── navigation.js
+│   │   └── solver-worker.js
 │   ├── globals.js
 │   ├── main.js
 │   └── utils/

@@ -1,8 +1,7 @@
 // Importation des modules nécessaires depuis Three.js et nos fichiers internes
 import * as THREE from 'three';
-import { calculateCubiePosition, updateFaceTextures, createFaceTexture } from './cube.js';
+import { calculateCubiePosition, updateFaceTextures, createFaceTexture, setFaceMap } from './cube.js';
 import { updateCubieHoverState, hidePreview } from '../cards/preview.js';
-import { CATEGORIES } from '../utils/constants.js';
 import { app } from '../globals.js';
 
 // Stockage du cubie survolé (initialisé à null)
@@ -255,8 +254,7 @@ export function dezoom() {
         ['right', 'left', 'top', 'bottom', 'front', 'back'].forEach(faceType => {
           const texture = createFaceTexture(faceType, false);
           const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
-          cubie.material[faceIndex].map = texture;
-          cubie.material[faceIndex].needsUpdate = true;
+          setFaceMap(cubie.material[faceIndex], texture);
         });
       });
   
@@ -439,10 +437,10 @@ export function setupNavigation() {
                         app.menuOpen = true;
                     }
 
-                    // Active l'élément de menu lié à la catégorie
+                    // Active l'élément de menu lié à la catégorie (data-face, indépendant de la langue)
                     document.querySelectorAll('.menu-item').forEach(item => {
                         item.classList.remove('active');
-                        if (item.querySelector('h3').textContent === CATEGORIES[faceType]) {
+                        if (item.dataset.face === faceType) {
                             item.classList.add('active');
                             item.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }

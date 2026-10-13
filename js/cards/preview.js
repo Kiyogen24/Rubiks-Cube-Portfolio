@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { CUBE_CONTENT, stickerColors } from '../utils/constants.js';
-import { calculateCubiePosition, updateFaceTextures } from '../cube/cube.js';
+import { calculateCubiePosition, updateFaceTextures, setFaceMap } from '../cube/cube.js';
 import { app } from '../globals.js';
 
 let previewElement = null;
+let previewFrame = null; // affichage en attente (annulé si la popup est masquée entre-temps)
 
 // Affiche une popup de prévisualisation à la position donnée avec une image en fond
 export function displayPreview(imageSrc, event) {
@@ -24,7 +25,9 @@ export function displayPreview(imageSrc, event) {
     const cubieCenterY = event.clientY;
     
     // Utilise requestAnimationFrame pour une transition fluide en ajoutant la classe "visible"
-    requestAnimationFrame(() => {
+    cancelAnimationFrame(previewFrame);
+    previewFrame = requestAnimationFrame(() => {
+      previewFrame = null;
       previewElement.classList.add('visible');
       previewElement.style.left = `${cubieCenterX}px`;
       previewElement.style.top = `${cubieCenterY}px`;
@@ -33,6 +36,9 @@ export function displayPreview(imageSrc, event) {
 
 // Masque la popup de prévisualisation
 export function hidePreview() {
+    // annule un affichage encore en attente (clic dans la même frame que l'entrée sur le sticker)
+    cancelAnimationFrame(previewFrame);
+    previewFrame = null;
     if (previewElement) {
         previewElement.classList.remove('visible');
     }
@@ -123,8 +129,7 @@ function applyHoverEffects(cubie, faceType, content) {
       // Crée une texture depuis le canvas
       const texture = new THREE.CanvasTexture(canvas);
       texture.anisotropy = app.renderer.capabilities.getMaxAnisotropy();
-      cubie.material[faceIndex].map = texture;
-      cubie.material[faceIndex].needsUpdate = true;
+      setFaceMap(cubie.material[faceIndex], texture);
   
       // Calcule la position du cubie à l'écran pour positionner la prévisualisation
       const vector = new THREE.Vector3();

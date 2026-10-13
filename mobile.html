@@ -21,6 +21,7 @@
             padding: 20px;
             padding-top: 5vh;
             min-height: 100vh;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -30,7 +31,8 @@
             color: var(--light-text);
             text-align: center;
             position: relative;
-            overflow: hidden;
+            /* défilement vertical autorisé : les liens de contact peuvent dépasser sur les petits écrans */
+            overflow-x: hidden;
             scrollbar-width: none;
         }
         
@@ -66,7 +68,8 @@
             opacity: 0.9;
         }
         
-        .desktop-link {
+        .desktop-link,
+        .contact-link {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -78,16 +81,50 @@
             transition: all 0.3s ease;
             font-weight: 600;
         }
-        
-        .desktop-link:hover {
+
+        .desktop-link:hover,
+        .contact-link:hover {
             background: var(--light-accent);
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(67, 59, 255, 0.2);
         }
 
-        .desktop-link i {
+        .desktop-link i,
+        .contact-link i {
             font-size: 1.2rem;
+        }
+
+        /* Liens de contact : CV, e-mail, téléphone, réseaux */
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .contact-link {
+            justify-content: center;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            overflow-wrap: anywhere;
+        }
+
+        /* Bouton FR/EN, comme sur la version desktop (dans le coin de la carte) */
+        .lang-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 44px;
+            height: 44px;
+            background: var(--light-secondary);
+            border: 2px solid var(--light-primary);
+            border-radius: 8px;
+            color: var(--light-primary);
+            font-family: 'Raleway', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 2;
         }
 
         /* Animation flottante pour le Rubik's Cube */
@@ -104,17 +141,87 @@
 <body>
 
     <div class="container">
+        <button class="lang-btn" id="langBtn" aria-label="Langue / Language">FR</button>
         <img src="assets/previews/rubik.png" alt="Rubik's Cube" class="rubiks-cube">
-        <h1>Version Mobile en Développement</h1>
-        <p>Je travaille actuellement sur l'optimisation de ce portfolio pour les appareils mobiles. Pour une meilleure expérience, veuillez consulter le site sur un <strong>ordinateur</strong>.</p>
-        <p><em>La version mobile sera bientôt disponible...</em></p>
+        <h1 data-i18n="title">Version Mobile en Développement</h1>
+        <p data-i18n="intro">Je travaille actuellement sur l'optimisation de ce portfolio pour les appareils mobiles. Pour une meilleure expérience, veuillez consulter le site sur un <strong>ordinateur</strong>.</p>
+        <p><em data-i18n="soon">La version mobile sera bientôt disponible...</em></p>
+        <p data-i18n="contactIntro">En attendant, vous pouvez télécharger mon CV ou me contacter :</p>
+        <div class="contact-links">
+            <a href="assets/previews/cv.pdf" class="contact-link" id="cvLink" target="_blank" download>
+                <i class="fas fa-file-pdf"></i>
+                <span data-i18n="cv">Télécharger mon CV</span>
+            </a>
+            <a href="mailto:r.goldenchtein@proton.me" class="contact-link">
+                <i class="fas fa-envelope"></i>
+                r.goldenchtein@proton.me
+            </a>
+            <a href="tel:+33783232370" class="contact-link">
+                <i class="fas fa-phone"></i>
+                +33 7 83 23 23 70
+            </a>
+            <a href="https://www.linkedin.com/in/romain-goldenchtein/" class="contact-link" target="_blank">
+                <i class="fab fa-linkedin"></i>
+                LinkedIn
+            </a>
+            <a href="https://github.com/Kiyogen24" class="contact-link" target="_blank">
+                <i class="fab fa-github"></i>
+                GitHub
+            </a>
+        </div>
         <a href="#" class="desktop-link" id="forceDesktop">
             <i class="fas fa-desktop"></i>
-            Continuer vers la version desktop
+            <span data-i18n="desktop">Continuer vers la version desktop</span>
         </a>
     </div>
 
     <script>
+        // Textes FR/EN (même clé localStorage "lang" que la version desktop)
+        const TEXTS = {
+            fr: {
+                pageTitle: 'Version Mobile en Développement',
+                title: 'Version Mobile en Développement',
+                intro: "Je travaille actuellement sur l'optimisation de ce portfolio pour les appareils mobiles. Pour une meilleure expérience, veuillez consulter le site sur un <strong>ordinateur</strong>.",
+                soon: 'La version mobile sera bientôt disponible...',
+                contactIntro: 'En attendant, vous pouvez télécharger mon CV ou me contacter :',
+                cv: 'Télécharger mon CV',
+                desktop: 'Continuer vers la version desktop',
+                cvFile: 'assets/previews/cv.pdf'
+            },
+            en: {
+                pageTitle: 'Mobile Version in Development',
+                title: 'Mobile Version in Development',
+                intro: "I'm currently optimizing this portfolio for mobile devices. For the best experience, please visit the site on a <strong>computer</strong>.",
+                soon: 'The mobile version will be available soon...',
+                contactIntro: 'In the meantime, you can download my resume or contact me:',
+                cv: 'Download my resume',
+                desktop: 'Continue to the desktop version',
+                cvFile: 'assets/previews/cv_en.pdf'
+            }
+        };
+
+        function applyLanguage(lang) {
+            const t = TEXTS[lang];
+            document.documentElement.lang = lang;
+            document.title = t.pageTitle;
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t[el.dataset.i18n]; });
+            document.getElementById('cvLink').href = t.cvFile;
+            document.getElementById('langBtn').textContent = lang.toUpperCase();
+        }
+
+        // Langue choisie sur le site, sinon celle du navigateur
+        let initialLang = 'fr';
+        try {
+            initialLang = localStorage.getItem('lang') || ((navigator.language || '').startsWith('fr') ? 'fr' : 'en');
+        } catch (e) {}
+        applyLanguage(initialLang === 'en' ? 'en' : 'fr');
+
+        document.getElementById('langBtn').addEventListener('click', () => {
+            const next = document.documentElement.lang === 'fr' ? 'en' : 'fr';
+            applyLanguage(next);
+            try { localStorage.setItem('lang', next); } catch (e) {}
+        });
+
         document.getElementById('forceDesktop').addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.setItem('forceDesktop', 'true');

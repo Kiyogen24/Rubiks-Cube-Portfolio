@@ -30,17 +30,6 @@ export function createOverlay() {
 
 // Fonction pour afficher une carte d'information
 export function showInfoCard(event, faceType, cubePosition) {
-    // Debug d'entrée pour confirmer l'appel et tracer l'origine
-    // Utiliser des logs de niveau supérieur pour s'assurer qu'ils apparaissent même si console.debug est filtré
-    console.info('enter showInfoCard', { faceType, cubePosition, eventType: event && event.type });
-    console.trace('call stack');
-    // Montrer un aperçu du contenu disponible pour vérifier le mapping des faces
-    try {
-    console.info('available CUBE_CONTENT faces', Object.keys(CUBE_CONTENT || {}));
-    } catch (err) {
-    console.warn('cannot read CUBE_CONTENT keys', err);
-    }
-
     // Création de l'overlay si il n'existe pas encore
     if (!overlay) createOverlay();
 
@@ -60,9 +49,9 @@ export function showInfoCard(event, faceType, cubePosition) {
   
     // Désactiver les contrôles du cube et activer le mode modal
     app.isModalOpen = true;
-    app.controls.enabled = false;
+    // (pas de contrôles ni de rendu 3D sur la page mobile)
+    if (app.controls) app.controls.enabled = false;
     overlay.classList.add('active');
-    console.debug('overlay activated', { overlayExists: !!overlay });
 
     // Fermer la carte précédente si elle existe
     if (activeInfoCard) {
@@ -82,17 +71,14 @@ export function showInfoCard(event, faceType, cubePosition) {
     // Recherche plus robuste avec logs pour diagnostiquer les cas où rien n'est trouvé
     let contentData = null;
     try {
-    console.info('resolving content', { faceType, cubePosition, typeOfCubePos: typeof cubePosition, hasCUBE_CONTENT: !!CUBE_CONTENT });
         if (CUBE_CONTENT && CUBE_CONTENT[faceType]) {
             const faceContent = CUBE_CONTENT[faceType];
-            console.info('face keys', Object.keys(faceContent));
 
             // Essayer les correspondances directes avec différents types de clés
             const tryKeys = [cubePosition, String(cubePosition), Number(cubePosition)];
             for (const k of tryKeys) {
                 if (k !== undefined && faceContent[k] !== undefined) {
                     contentData = faceContent[k];
-                    console.info('matched with key on requested face', { key: k, faceType });
                     break;
                 }
             }
@@ -108,7 +94,6 @@ export function showInfoCard(event, faceType, cubePosition) {
                         || String(entry.position) === String(cubePosition)
                         || (entry.title && String(entry.title).toLowerCase() === String(cubePosition).toLowerCase())) {
                         contentData = entry;
-                        console.info('fuzzy matched entry on requested face', { key: k, entry });
                         break;
                     }
                 }
@@ -149,9 +134,6 @@ export function showInfoCard(event, faceType, cubePosition) {
         const keys = Object.keys(CUBE_CONTENT[faceType]);
         if (keys.length > 0) contentData = CUBE_CONTENT[faceType][keys[0]];
     }
-
-    // Log final d'aide au diagnostic (niveau info pour visibilité)
-    console.info('showInfoCard', { faceType, cubePosition, resolved: contentData ? 'found' : 'not found', contentData, langState: app && app.langManager ? app.langManager.currentLang : null });
 
     // Choisir la langue courante et fusionner avec les champs i18n si présents
     const lang = (app.langManager && app.langManager.currentLang) ? app.langManager.currentLang : 'fr';
@@ -195,10 +177,11 @@ export function showInfoCard(event, faceType, cubePosition) {
         e.stopPropagation();
         // Réactiver les contrôles et fermer la fenêtre modale
         app.isModalOpen = false;
-        app.controls.enabled = true;
+        // les contrôles restent désactivés tant que la vue est zoomée sur une face
+        if (app.controls) app.controls.enabled = !app.isZoomed;
         card.classList.remove('active');
         overlay.classList.remove('active');
-        app.renderer.domElement.style.cursor = 'default';
+        if (app.renderer) app.renderer.domElement.style.cursor = 'default';
         setTimeout(() => card.remove(), 300);
         activeInfoCard = null;
     };
@@ -216,8 +199,8 @@ export function showInfoCard(event, faceType, cubePosition) {
     else if (data && data.hasContent) {
         content.innerHTML = data.file
         ? `<div class="pdf-view">
-            <iframe src="assets/previews/cv.pdf" type="application/pdf" width="100%" height="90%"></iframe>
-            <a href="assets/previews/cv.pdf" target="_blank" class="pdf-download-link">
+            <iframe src="${data.file}" type="application/pdf" width="100%" height="90%"></iframe>
+            <a href="${data.file}" target="_blank" class="pdf-download-link">
               <i class="fa-regular fa-folder-open"></i> ${labels.openCV}
             </a>
           </div>`
