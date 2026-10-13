@@ -12,6 +12,7 @@ export const app = {
     lastCameraPosition: null,
     lastCameraRotation: null,
     isZoomed: false,
+    cameraAnimating: false, // vrai pendant les animations de zoom / dézoom
     isModalOpen: false,
     isDragging: false,
     menuOpen: false,

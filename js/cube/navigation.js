@@ -59,6 +59,7 @@ export function zoomToFace(face, normal, faceType) {
   const targetPosition = face.position.clone();
   const distance = 6;
   app.controls.enabled = false;
+  app.cameraAnimating = true;
 
   // Désactivation temporaire des boutons de navigation
   document.querySelectorAll('.nav-button').forEach(btn => {
@@ -190,6 +191,7 @@ export function zoomToFace(face, normal, faceType) {
 // Finalisation du zoom : mise à jour de l'interface et des textures de la face
 export function finishZoom(faceType) {
     cubeSection.classList.add('zoomed');
+    app.cameraAnimating = false;
 
     // Mise à jour des textures pour chaque cubie de la face
     const faceCubies = getFaceCubies(faceType);
@@ -213,6 +215,7 @@ export function dezoom() {
   
     app.isZoomed = false;
     app.isDragging = false;
+    app.cameraAnimating = true;
     cubeSection.classList.remove('zoomed');
 
     // Réactivation des boutons de navigation
@@ -280,6 +283,7 @@ export function dezoom() {
             app.camera.position.copy(endPos);
             app.camera.lookAt(0, 0, 0);
             app.controls.enabled = true;
+            app.cameraAnimating = false;
         }
       }
   
