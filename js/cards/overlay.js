@@ -9,19 +9,134 @@ import { app } from '../globals.js';
 let overlay = null;
 let activeInfoCard = null;
 
+// Titre « Poste - Entreprise » : l'entreprise (ou l'établissement) passe sur une ligne à part
+function splitTitle(title = '') {
+  const parts = title.trim().split(' - ');
+  return parts.length > 1 ? [parts.slice(0, -1).join(' - '), parts[parts.length - 1]] : [title.trim(), ''];
+}
+
+const formatPeriod = (period) => period.replace(/\s-\s/g, ' – ');
+
+// Texte comparable : sans accents ni majuscules
+const plain = (text) =>
+  text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+
+// En-tête : pastille de la couleur de la face (comme le sticker cliqué), catégorie et période, titre
+function cardHead(data, category) {
+  const [title, org] = splitTitle(data.title);
+  const eyebrow = [
+    // catégorie masquée si le titre la répète (« Mon CV », « A propos de Moi »)
+    category && !plain(title).includes(plain(category)) ? `<span>${category}</span>` : '',
+    data.period ? `<span class="card-period">${formatPeriod(data.period)}</span>` : '',
+  ].join('');
+  return `<header class="card-head">
+      <span class="card-sticker" aria-hidden="true"><i class="${data.icon || 'fa-solid fa-cube'}"></i></span>
+      <div>
+        ${eyebrow ? `<p class="card-eyebrow">${eyebrow}</p>` : ''}
+        <h2 class="card-title">${title}</h2>
+        ${org ? `<p class="card-org">${org}</p>` : ''}
+      </div>
+    </header>`;
+}
+
+// « Prénom : <strong>Romain</strong> » → libellé et valeur
+const KEY_VALUE = /^([^<:]{1,20}?)\s*:\s*(.+)$/;
+// « <strong>Échecs :</strong> texte » → titre et texte
+const FEATURE = /^<strong>([^<]+?)\s*:?\s*<\/strong>\s*:?\s*(.+)$/;
+
+// Détails, mis en forme selon leur nature
+function detailsBlock(items = [], label) {
+  if (!items.length) return '';
+  const list = (className, render) => `<ul class="${className}">${items.map(render).join('')}</ul>`;
+
+  // liens (certifications)
+  if (items.every((d) => d.trim().startsWith('<a '))) return list('card-links', (d) => `<li>${d}</li>`);
+
+  // fiche d'identité : libellé et valeur
+  if (items.filter((d) => KEY_VALUE.test(d)).length >= 3) {
+    const facts = items.map((d) => {
+      const match = d.match(KEY_VALUE);
+      // valeur longue (adresse mail) : toute la largeur
+      if (match && match[2].replace(/<[^>]+>/g, '').length > 22) {
+        return `<div class="card-facts__wide"><dt>${match[1]}</dt><dd>${match[2]}</dd></div>`;
+      }
+      return match
+        ? `<div><dt>${match[1]}</dt><dd>${match[2]}</dd></div>`
+        : `<div class="card-facts__wide"><dd>${d}</dd></div>`;
+    });
+    return `<dl class="card-facts">${facts.join('')}</dl>`;
+  }
+
+  // passions : titre puis texte
+  if (items.every((d) => FEATURE.test(d))) {
+    return list('card-features', (d) => {
+      const [, title, text] = d.match(FEATURE);
+      return `<li><strong>${title}</strong><span>${text}</span></li>`;
+    });
+  }
+
+  // éléments courts (bibliothèques, qualités) en étiquettes, sinon liste à puces
+  const short = items.every((d) => !/[<:]/.test(d) && d.length <= 32);
+  return `<section class="card-section">
+      <h3 class="card-label">${label}</h3>
+      ${list(short ? 'card-chips' : 'card-list', (d) => `<li>${d}</li>`)}
+    </section>`;
+}
+
+function standardCard(data, category, labels) {
+  return `${cardHead(data, category)}
+    <div class="card-body">
+      ${data.description ? `<p class="card-lead">${data.description}</p>` : ''}
+      ${detailsBlock(data.details, data.infos || labels.details)}
+    </div>`;
+}
+
+// CV : aperçu du PDF, téléchargement et ouverture dans un onglet
+function pdfCard(data, category, labels) {
+  return `${cardHead(data, category)}
+    <div class="pdf-view">
+      <iframe src="${data.file}" title="${data.title}"></iframe>
+      <div class="pdf-actions">
+        <a class="card-button" href="${data.file}" download="${labels.fileName}">
+          <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>${labels.download}
+        </a>
+        <a class="card-text-link" href="${data.file}" target="_blank" rel="noopener">
+          ${labels.openTab}<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>`;
+}
+
+// Cartes de projets (HTML écrit à la main) : catégorie devant la période, tiret de période typographique
+function polishCustomCard(content, category) {
+  const badge = content.querySelector('.card-header .period-badge');
+  if (!badge) return;
+  badge.dataset.category = category;
+  const period = badge.querySelector('span');
+  if (period) period.textContent = formatPeriod(period.textContent);
+}
+
 // Fonction pour créer l'overlay modal
 export function createOverlay() {
   // Création de l'élément overlay
   overlay = document.createElement('div');
   overlay.className = 'overlay';
 
-  // Ajout d'un écouteur d'événement sur le clic pour fermer la carte si clic en dehors
+  // Clic en dehors de la carte : fermeture, seulement si l'appui a aussi commencé sur le fond
+  // (le clic qui ouvre la carte, ou une sélection de texte relâchée en dehors, ne la referme pas)
+  let pressedOnOverlay = false;
+  overlay.addEventListener('pointerdown', (e) => {
+    pressedOnOverlay = e.target === overlay;
+  });
   overlay.addEventListener('click', (e) => {
     e.stopPropagation();
-    // Si le clic est sur l'overlay et une carte est active, simule le clic sur le bouton de fermeture
-    if (e.target === overlay && activeInfoCard) {
+    if (e.target === overlay && pressedOnOverlay && activeInfoCard) {
       activeInfoCard.querySelector('.close-button').click();
     }
+    pressedOnOverlay = false;
   });
 
   // Ajout de l'overlay au document
@@ -58,15 +173,13 @@ export function showInfoCard(event, faceType, cubePosition) {
     activeInfoCard.remove();
   }
 
-  // Détection du mode mobile pour ajuster la carte
-  const isMobile = window.innerWidth < 768;
-
   // Création de la carte d'information
   const card = document.createElement('div');
   card.className = 'info-card';
 
   // Création de la zone de contenu de la carte (doit être créée avant toute utilisation)
   const content = document.createElement('div');
+  content.className = 'card-inner';
   // Récupération des données en fonction de la face et de la position du cube
   // Recherche plus robuste avec logs pour diagnostiquer les cas où rien n'est trouvé
   let contentData = null;
@@ -158,26 +271,25 @@ export function showInfoCard(event, faceType, cubePosition) {
     app.langManager.translations[lang].ui
       ? app.langManager.translations[lang].ui
       : {};
+  const fr = lang === 'fr';
   const labels = {
-    description: ui.descriptionLabel || (lang === 'fr' ? 'Description' : 'Description'),
-    details: ui.detailsLabel || (lang === 'fr' ? 'Détails' : 'Details'),
-    openCV: ui.downloadCV || (lang === 'fr' ? 'Ouvrir le CV' : 'Open CV'),
-    comingSoon: ui.comingSoon || (lang === 'fr' ? 'Bientôt...' : 'Coming soon...'),
+    details: ui.detailsLabel || (fr ? 'Points clés' : 'Highlights'),
+    download: ui.downloadCV || (fr ? 'Télécharger le CV' : 'Download Resume'),
+    openTab: ui.openInTab || (fr ? 'Ouvrir dans un nouvel onglet' : 'Open in a new tab'),
+    fileName: fr ? 'CV-Romain-Goldenchtein.pdf' : 'Resume-Romain-Goldenchtein.pdf',
+    close: ui.close || (fr ? 'Fermer' : 'Close'),
+    comingSoon: ui.comingSoon || (fr ? 'Bientôt...' : 'Coming soon...'),
   };
+  const category = app.langManager?.translations?.[lang]?.categories?.[faceType] || CATEGORIES[faceType] || '';
 
-  // Configuration spécifique pour mobile
-  if (isMobile) {
-    card.style.width = '95vw';
-    card.style.margin = '10px';
-  }
-
-  // Attribuer un type de face à la carte pour la stylisation potentielle
+  // Attribuer un type de face à la carte : ses couleurs en dépendent
   card.setAttribute('data-face', faceType);
 
   // Création du bouton de fermeture de la carte
   const closeBtn = document.createElement('button');
   closeBtn.className = 'close-button';
-  closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+  closeBtn.setAttribute('aria-label', labels.close);
+  closeBtn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
   closeBtn.onclick = (e) => {
     e.stopPropagation();
     // Réactiver les contrôles et fermer la fenêtre modale
@@ -187,7 +299,7 @@ export function showInfoCard(event, faceType, cubePosition) {
     card.classList.remove('active');
     overlay.classList.remove('active');
     if (app.renderer) app.renderer.domElement.style.cursor = 'default';
-    setTimeout(() => card.remove(), 300);
+    setTimeout(() => card.remove(), 200);
     activeInfoCard = null;
   };
 
@@ -196,38 +308,17 @@ export function showInfoCard(event, faceType, cubePosition) {
     e.stopPropagation();
   });
 
-  // Si on est sur la face "right" et que du contenu HTML personnalisé est disponible
+  // Contenu HTML écrit à la main (projets), CV en PDF ou carte standard
   if (dataHtml) {
     content.innerHTML = dataHtml;
-  }
-  // Sinon, afficher le contenu standard ou un aperçu PDF
-  else if (data && data.hasContent) {
-    content.innerHTML = data.file
-      ? `<div class="pdf-view">
-            <iframe src="${data.file}" type="application/pdf" width="100%" height="90%"></iframe>
-            <a href="${data.file}" target="_blank" class="pdf-download-link">
-              <i class="fa-regular fa-folder-open"></i> ${labels.openCV}
-            </a>
-          </div>`
-      : `<div class="standard-card">
-            <div class="card-header">
-              <div class="header-main">
-                <i class="${data.icon || ''} card-icon"></i>
-                <h2>${data.title || ''}</h2>
-              </div>
-              ${data.period ? `<div class="period-badge"><i class="fas fa-calendar-alt"></i><span>${data.period}</span></div>` : ''}
-            </div>
-            <div class="card-content">
-              ${data.description ? `<div class="description-section"><h3><i class="fas fa-info-circle"></i> ${labels.description}</h3><p class="description">${data.description}</p></div>` : ''}
-              ${data.details && data.details.length > 0 ? `<div class="details-section"><h3><i class="fas fa-list-ul"></i> ${data.infos ? data.infos : labels.details}</h3><ul class="details-list">${data.details.map((detail) => `<li><i class="fas fa-check"></i><span>${detail}</span></li>`).join('')}</ul></div>` : ''}
-            </div>
-          </div>`;
+    polishCustomCard(content, category);
+  } else if (data && data.hasContent) {
+    content.innerHTML = data.file ? pdfCard(data, category, labels) : standardCard(data, category, labels);
+    if (data.file) card.classList.add('info-card--wide');
   } else {
     // Cas par défaut si aucun contenu spécifique n'est défini
-    content.innerHTML = `
-            <h2>${CATEGORIES[faceType] || ''}</h2>
-            <p>${labels.comingSoon}</p>
-        `;
+    content.innerHTML = `<header class="card-head"><div><h2 class="card-title">${category}</h2></div></header>
+      <div class="card-body"><p class="card-lead">${labels.comingSoon}</p></div>`;
   }
 
   // Ajout des éléments à la carte

@@ -411,17 +411,14 @@ export const CUBE_CONTENT = {
 
               <h3>Méthodologie</h3>
               <p>Notre approche combine celles de <em>DeepCube</em> et <em>AlphaZero</em> avec l'<strong>Autodidactic Iteration</strong> pour générer des données d’entraînement par auto-jeu, et le <strong>Monte Carlo Tree Search (MCTS)</strong> pour guider l’exploration des états.</p>
-              <img src="assets/previews/projects/pe3_3.png" alt="Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube</p>
+              <figure class="project-figure"><img src="assets/previews/projects/pe3_3.png" alt="Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube" class="project-image"><figcaption>Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube</figcaption></figure>
 
               <p>Le réseau neuronal (implémenté sous TensorFlow) sert d’estimateur de valeur pour les états, ce qui oriente les décisions dans MCTS, qui lui-même vient affiner les valeurs des états. L’apprentissage a mis en évidence les difficultés liées à la convergence et à l’exploration dans un espace d’états aussi vaste.</p>
-              <img src="assets/previews/projects/pe3_2.png" alt="Visualisation du fonctionnement précis de l'ADI d'après DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Visualisation du fonctionnement précis de l'ADI d'après DeepCube</p>
+              <figure class="project-figure"><img src="assets/previews/projects/pe3_2.png" alt="Visualisation du fonctionnement précis de l'ADI d'après DeepCube" class="project-image"><figcaption>Visualisation du fonctionnement précis de l'ADI d'après DeepCube</figcaption></figure>
 
               <h3>Implémentation robotique</h3>
               <p>En complément de la partie logicielle, nous avons conçu un prototype robotique basé sur l'architecture de <em>RCR3D</em>. Le robot se compose d'une structure imprimée en 3D, d'une Raspberry Pi et de servomoteurs, capable d’exécuter les solutions proposées par l’agent.</p>
-              <img src="assets/previews/projects/pe3_0.png" alt="Robot physique pour résoudre un Rubik’s Cube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Robot physique pour résoudre un Rubik’s Cube basé sur RCR3D</p>
+              <figure class="project-figure"><img src="assets/previews/projects/pe3_0.png" alt="Robot physique pour résoudre un Rubik’s Cube" class="project-image"><figcaption>Robot physique pour résoudre un Rubik’s Cube basé sur RCR3D</figcaption></figure>
 
               <h3>Technologies utilisées</h3>
               <ul>
@@ -433,7 +430,7 @@ export const CUBE_CONTENT = {
 
               <p>Ce projet nous montre la capacité de l’IA moderne à résoudre des problèmes complexes sans heuristiques humaines. Il constitue un pont entre recherche académique, ingénierie logicielle et prototypage robotique. Le rapport complet est disponible sur <a class="links_txt" href="https://hal.science/hal-05185396v1" target="_blank">HAL</a>.</p>
 
-              <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">Voir le Projet sur GitHub</a>
+              <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">Voir le projet sur GitHub</a>
             </article>
           </div>
         `,
@@ -459,17 +456,14 @@ export const CUBE_CONTENT = {
 
                   <h3>Methodology</h3>
                   <p>Our approach combined the method of <em>DeepCube</em> and <em>AlphaZero</em> with the <strong>Autodidactic Iteration</strong> to generate training data through self-play, and the <strong>Monte Carlo Tree Search (MCTS)</strong> to guide state exploration.</p>
-                  <img src="assets/previews/projects/pe3_3.png" alt="ADI and MCTS scheme applied to the Rubik’s Cube from DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">ADI + MCTS pipeline applied to the Rubik’s Cube (based on DeepCube)</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe3_3.png" alt="ADI and MCTS scheme applied to the Rubik’s Cube from DeepCube" class="project-image"><figcaption>ADI + MCTS pipeline applied to the Rubik’s Cube (based on DeepCube)</figcaption></figure>
 
                   <p>The neural network (implemented in TensorFlow) and ADI served as a value estimator for states, guiding MCTS decisions, which in turn refine the states' values. Training highlighted the difficulties of convergence and exploration in such a vast state space.</p>
-                  <img src="assets/previews/projects/pe3_2.png" alt="Detailed ADI process visualization from DeepCube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">Detailed ADI visualization (based on DeepCube)</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe3_2.png" alt="Detailed ADI process visualization from DeepCube" class="project-image"><figcaption>Detailed ADI visualization (based on DeepCube)</figcaption></figure>
 
                   <h3>Robotic Implementation</h3>
                   <p>In addition to the software, we made a robotic prototype based on <em>RCR3D</em>. The architecture, 3D printed, uses a Raspberry Pi and servomotors, to execute the solutions generated by the agent.</p>
-                  <img src="assets/previews/projects/pe3_0.png" alt="Physical robot solving a Rubik’s Cube" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">Physical Rubik’s Cube solving robot inspired by RCR3D</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe3_0.png" alt="Physical robot solving a Rubik’s Cube" class="project-image"><figcaption>Physical Rubik’s Cube solving robot inspired by RCR3D</figcaption></figure>
 
                   <h3>Technologies</h3>
                   <ul>
@@ -481,7 +475,7 @@ export const CUBE_CONTENT = {
 
                   <p>This project illustrates how modern AI can solve complex problems without human heuristics. It bridges academic research, software engineering, and robotic prototyping. The full report is available on <a class="links_txt" href="https://hal.science/hal-05185396v1" target="_blank">HAL</a>.</p>
 
-                  <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">View Project on GitHub</a>
+                  <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">View the project on GitHub</a>
                 </article>
               </div>
             `,
@@ -521,8 +515,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Architecture inspirée de MCDNN :</strong> réseau multi-colonnes, plus coûteux mais performant (~83% accuracy).</li>
                 <li><strong>Modèle hybride MobileNetV2 :</strong> transfert learning avec fine-tuning partiel, rapidité d’entraînement et bons résultats.</li>
               </ul>
-              <img src="assets/previews/projects/ia02_1.png" alt="Exemple de classification sur CIFAR-10" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Exemple de classification sur CIFAR-10</p>
+              <figure class="project-figure"><img src="assets/previews/projects/ia02_1.png" alt="Exemple de classification sur CIFAR-10" class="project-image"><figcaption>Exemple de classification sur CIFAR-10</figcaption></figure>
 
               <h3>Partie 2 – Détection de chutes</h3>
               <p>À partir du dataset ENetFall (757 signaux multidimensionnels, répartis selon leurs environnements sources), nous avions deux scénarios : prédire les chutes dans un environnement connu ou les prédire dans un environnement inconnu. Pour aborder les deux approches, nous avons conçu plusieurs modèles :</p>
@@ -533,8 +526,7 @@ export const CUBE_CONTENT = {
               </ul>
               <p>Nous avons aussi intégré des techniques d’augmentation de données (bruit, décalage temporel, masquage) 
               pour améliorer la robustesse en conditions réelles.</p>
-              <img src="assets/previews/projects/ia02_2.png" alt="Exemple de signaux pour la détection de chutes" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Représentation de signaux pour la détection de chutes</p>
+              <figure class="project-figure"><img src="assets/previews/projects/ia02_2.png" alt="Exemple de signaux pour la détection de chutes" class="project-image"><figcaption>Représentation de signaux pour la détection de chutes</figcaption></figure>
 
               <h3>Technologies utilisées</h3>
               <ul>
@@ -547,7 +539,7 @@ export const CUBE_CONTENT = {
               <p>Ce projet a permis de comparer concrètement différentes architectures et de mettre en évidence 
               les enjeux de généralisation et d’optimisation en deep learning.</p>
 
-              <a href="https://github.com/Kiyogen24/IA02-Projet" target="_blank" class="project-link">Voir le Projet sur GitHub</a>
+              <a href="https://github.com/Kiyogen24/IA02-Projet" target="_blank" class="project-link">Voir le projet sur GitHub</a>
             </article>
           </div>
         `,
@@ -578,8 +570,7 @@ export const CUBE_CONTENT = {
                     <li><strong>MCDNN-inspired architecture:</strong> multi-column network, more costly but achieved ~83% accuracy.</li>
                     <li><strong>Hybrid MobileNetV2 model:</strong> transfer learning with partial fine-tuning, fast training and strong performance.</li>
                   </ul>
-                  <img src="assets/previews/projects/ia02_1.png" alt="CIFAR-10 classification example" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">Example of CIFAR-10 classification</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/ia02_1.png" alt="CIFAR-10 classification example" class="project-image"><figcaption>Example of CIFAR-10 classification</figcaption></figure>
 
                   <h3>Part 2 – Fall Detection</h3>
                   <p>Using the ENetFall dataset (757 multidimensional signals, from several environments), we had two scenarios: predict the falls in a known environment or predict them in an unknown one. To approach these two tasks, we tested several models:</p>
@@ -589,8 +580,7 @@ export const CUBE_CONTENT = {
                     <li><strong>CNN-LSTM:</strong> spatio-temporal modeling, but weaker results (~80% accuracy, for the first scenario but ~60% accuracy for the second).</li>
                   </ul>
                   <p>We also implemented data augmentation techniques (Gaussian noise, temporal shifts, dropout masking) to increase robustness in real conditions.</p>
-                  <img src="assets/previews/projects/ia02_2.png" alt="Signals used for fall detection" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">Signal representation for fall detection</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/ia02_2.png" alt="Signals used for fall detection" class="project-image"><figcaption>Signal representation for fall detection</figcaption></figure>
 
                   <h3>Technologies</h3>
                   <ul>
@@ -602,7 +592,7 @@ export const CUBE_CONTENT = {
 
                   <p>This project allowed us to benchmark multiple architectures and highlighted the challenges of generalization and optimization in deep learning.</p>
 
-                  <a href="https://github.com/Kiyogen24/IA02-Projet" target="_blank" class="project-link">View Project on GitHub</a>
+                  <a href="https://github.com/Kiyogen24/IA02-Projet" target="_blank" class="project-link">View the project on GitHub</a>
                 </article>
               </div>
             `,
@@ -641,12 +631,9 @@ export const CUBE_CONTENT = {
               <li><strong>Design responsive <em>(en développement)</em> :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
             </ul>
 
-            <img src="assets/previews/projects/portfolio_2.png" alt="Aperçu du Rubik's Cube en 3D" class="project-image" style="width: 90%; height: auto;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page du Rubik's Cube en 3D</p>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.png" alt="Aperçu du Rubik's Cube en 3D" class="project-image"><figcaption>Aperçu de la page du Rubik's Cube en 3D</figcaption></figure>
 
-            <img src="assets/previews/projects/portfolio_3.png" alt="Cube mélangé et mode jeu" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 
-            0.8em; text-align: center;">Aperçu du cube mélangé en mode jeu</p>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.png" alt="Cube mélangé et mode jeu" class="project-image"><figcaption>Aperçu du cube mélangé en mode jeu</figcaption></figure>
 
             <h3>Technologie utilisée :</h3>
             <ul>
@@ -654,10 +641,9 @@ export const CUBE_CONTENT = {
               <li><strong>Bibliothèque 3D :</strong> Three.js</li>
             </ul>
 
-            <img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une des faces avec effet de survolement</p>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image"><figcaption>Aperçu d'une des faces avec effet de survolement</figcaption></figure>
             <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
-            <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le Projet sur Github</a>
+            <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le projet sur GitHub</a>
           </article>
         </div>
       `,
@@ -687,11 +673,9 @@ export const CUBE_CONTENT = {
                   <li><strong>EN/FR toggle button:</strong> Dynamic language switch for a bilingual experience.</li>
                   <li><strong>Responsive design <em>(in progress)</em>:</strong> Adapts the display for an optimal experience across devices and screen sizes.</li>
                 </ul>
-                <img src="assets/previews/projects/portfolio_3.png" alt="Shuffled cube in play mode" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of the shuffled cube in play mode</p>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.png" alt="Shuffled cube in play mode" class="project-image"><figcaption>Preview of the shuffled cube in play mode</figcaption></figure>
 
-                <img src="assets/previews/projects/portfolio_2.png" alt="Rubik's Cube 3D preview" class="project-image" style="width: 90%; height: auto;">
-                <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of the 3D Rubik's Cube page</p>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.png" alt="Rubik's Cube 3D preview" class="project-image"><figcaption>Preview of the 3D Rubik's Cube page</figcaption></figure>
 
                 <h3>Technology used:</h3>
                 <ul>
@@ -699,10 +683,9 @@ export const CUBE_CONTENT = {
                   <li><strong>3D library:</strong> Three.js</li>
                 </ul>
 
-                <img src="assets/previews/projects/portfolio_1.png" alt="Preview of a face" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of one face with hover effect</p>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.png" alt="Preview of a face" class="project-image"><figcaption>Preview of one face with hover effect</figcaption></figure>
                 <p>The site is built with a 3D-first approach, offering an immersive user experience and intuitive navigation through my various projects and skills.</p>
-                <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View Project on GitHub</a>
+                <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View the project on GitHub</a>
               </article>
             </div>
           `,
@@ -733,8 +716,7 @@ export const CUBE_CONTENT = {
           <article class="project-content">
             <p>À partir de données clients, l’objectif est d’identifier les facteurs influençant le risque de crédit et d’entraîner différents modèles pour améliorer la précision des prédictions.</p>
   
-            <img src="assets/previews/projects/ia01_1.png" alt="Données du dataset" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Données du dataset</p>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_1.png" alt="Données du dataset" class="project-image"><figcaption>Données du dataset</figcaption></figure>
             <h3>Fonctionnalités principales :</h3>
             <ul>
               <li><strong>Exploration et prétraitement des données :</strong> Nettoyage des données, gestion des valeurs manquantes et analyse des distributions.</li>
@@ -749,12 +731,11 @@ export const CUBE_CONTENT = {
               <li><strong>Bibliothèques :</strong> Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn</li>
             </ul>
   
-            <img src="assets/previews/projects/ia01_2.png" alt="Comparaison des modèles" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Comparaison des modèles</p>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_2.png" alt="Comparaison des modèles" class="project-image"><figcaption>Comparaison des modèles</figcaption></figure>
   
             <p>Ce projet met en œuvre une approche complète du machine learning appliqué à la finance, de l’analyse exploratoire des données à l’optimisation des modèles.</p>
             
-            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">Voir le Projet sur Github</a>
+            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">Voir le projet sur GitHub</a>
           </article>
         </div>
       `,
@@ -777,8 +758,7 @@ export const CUBE_CONTENT = {
         <article class="project-content">
           <p>Using client data, the goal is to identify factors influencing credit risk and train different models to improve prediction accuracy.</p>
   
-            <img src="assets/previews/projects/ia01_1.png" alt="Dataset preview" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Dataset preview</p>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_1.png" alt="Dataset preview" class="project-image"><figcaption>Dataset preview</figcaption></figure>
             <h3>Main features:</h3>
             <ul>
               <li><strong>Exploration and preprocessing:</strong> Data cleaning, handling missing values and distribution analysis.</li>
@@ -792,12 +772,11 @@ export const CUBE_CONTENT = {
               <li><strong>Libraries:</strong> Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn</li>
             </ul>
   
-            <img src="assets/previews/projects/ia01_2.png" alt="Model comparison" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Model comparison</p>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_2.png" alt="Model comparison" class="project-image"><figcaption>Model comparison</figcaption></figure>
   
             <p>This project implements a complete ML workflow applied to finance, from exploratory data analysis to model optimization.</p>
             
-            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">View Project on GitHub</a>
+            <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">View the project on GitHub</a>
           </article>
         </div>
       `,
@@ -829,12 +808,10 @@ export const CUBE_CONTENT = {
           <ul>
           <li><strong>Technologies utilisées :</strong> Java 21, JavaFX 21, Maven 3.13+</li>
           </ul>
-          <img src="assets/previews/projects/lo02_1.png" alt="Aperçu du projet PocketImperium" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu du menu du jeu</p>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_1.png" alt="Aperçu du projet PocketImperium" class="project-image"><figcaption>Aperçu du menu du jeu</figcaption></figure>
           <p>Le jeu intègre une interface graphique complète, un journal des actions pour suivre chaque événement, ainsi qu’un système de sauvegarde et chargement des parties. Les effets sonores et musiques ajoutent une immersion supplémentaire.</p>
-          <img src="assets/previews/projects/lo02_2.png" alt="Aperçu du projet PocketImperium" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Plateau de PocketImperium, historiques des coups et choix des actions</p>
-          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">Voir le Projet sur Github</a>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_2.png" alt="Aperçu du projet PocketImperium" class="project-image"><figcaption>Plateau de PocketImperium, historiques des coups et choix des actions</figcaption></figure>
+          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">Voir le projet sur GitHub</a>
         </article>
         </div>
       `,
@@ -859,12 +836,10 @@ export const CUBE_CONTENT = {
           <ul>
           <li><strong>Technologies used:</strong> Java 21, JavaFX 21, Maven 3.13+</li>
           </ul>
-          <img src="assets/previews/projects/lo02_1.png" alt="PocketImperium preview" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Preview of the game menu</p>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_1.png" alt="PocketImperium preview" class="project-image"><figcaption>Preview of the game menu</figcaption></figure>
           <p>The game includes a full GUI, an action log to track events, and a save/load system. Sound effects and music add immersion.</p>
-          <img src="assets/previews/projects/lo02_2.png" alt="PocketImperium preview" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Board of PocketImperium, move history and action choices</p>
-          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">View Project on GitHub</a>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_2.png" alt="PocketImperium preview" class="project-image"><figcaption>Board of PocketImperium, move history and action choices</figcaption></figure>
+          <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">View the project on GitHub</a>
         </article>
         </div>
       `,
@@ -900,8 +875,7 @@ export const CUBE_CONTENT = {
           <li><strong>Discussions de groupe :</strong> participation à des discussions de groupe avec des noms et photos de profil affichés en couleurs différentes.</li>
           <li><strong>Personnalisation du profil :</strong> possibilité de changer sa photo de profil.</li>
           </ul>
-          <img src="assets/previews/projects/pe2_1.png" alt="Aperçu de la page de connexion" class="project-image" style="width: 90%; height: auto;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu de la page de connexion</p>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_1.png" alt="Aperçu de la page de connexion" class="project-image"><figcaption>Aperçu de la page de connexion</figcaption></figure>
           <h3>Technologie utilisée :</h3>
           <ul>
           <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
@@ -909,9 +883,8 @@ export const CUBE_CONTENT = {
           <li><strong>Base de données :</strong> MongoDB</li>
           <li><strong>Sécurité :</strong> chiffrement RSA-OAEP, gestion sécurisée des sessions</li>
           </ul>
-          <img src="assets/previews/projects/pe2_2.png" alt="Aperçu d'une discussion de groupe" class="project-image" style="width: 90%; height: auto;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Aperçu d'une discussion de groupe</p>
-          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">Voir le Projet sur Github</a>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_2.png" alt="Aperçu d'une discussion de groupe" class="project-image"><figcaption>Aperçu d'une discussion de groupe</figcaption></figure>
+          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">Voir le projet sur GitHub</a>
         </article>
         </div>
         `,
@@ -940,8 +913,7 @@ export const CUBE_CONTENT = {
           <li><strong>Group chats:</strong> participate in groups with colored names and avatars.</li>
           <li><strong>Profile customization:</strong> ability to change your avatar.</li>
           </ul>
-          <img src="assets/previews/projects/pe2_1.png" alt="Login page preview" class="project-image" style="width: 90%; height: auto;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Login page preview</p>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_1.png" alt="Login page preview" class="project-image"><figcaption>Login page preview</figcaption></figure>
           <h3>Technology used:</h3>
           <ul>
           <li><strong>Frontend:</strong> HTML, CSS, JavaScript</li>
@@ -949,9 +921,8 @@ export const CUBE_CONTENT = {
           <li><strong>Database:</strong> MongoDB</li>
           <li><strong>Security:</strong> RSA-OAEP encryption, secure session management</li>
           </ul>
-          <img src="assets/previews/projects/pe2_2.png" alt="Group chat preview" class="project-image" style="width: 90%; height: auto;">
-          <p style="font-style: italic; font-size: 0.8em; text-align: center;">Group chat preview</p>
-          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">View Project on GitHub</a>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_2.png" alt="Group chat preview" class="project-image"><figcaption>Group chat preview</figcaption></figure>
+          <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">View the project on GitHub</a>
         </article>
         </div>
         `,
@@ -988,8 +959,7 @@ export const CUBE_CONTENT = {
               <li><strong>Visualisation du réseau :</strong> Génération d'une carte interactive affichant le réseau ferroviaire et les trajets optimisés.</li>
             </ul>
       
-            <img src="assets/previews/projects/nf06_1.png" alt="Visualisation du réseau ferroviaire" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Visualisation du réseau ferroviaire</p>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_1.png" alt="Visualisation du réseau ferroviaire" class="project-image"><figcaption>Visualisation du réseau ferroviaire</figcaption></figure>
       
             <h3>Technologies utilisées :</h3>
             <ul>
@@ -998,12 +968,11 @@ export const CUBE_CONTENT = {
             </ul>
     
       
-            <img src="assets/previews/projects/nf06_2.png" alt="Illustration de la distance entre 2 chemins" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Illustration de la distance entre 2 chemins</p>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_2.png" alt="Illustration de la distance entre 2 chemins" class="project-image"><figcaption>Illustration de la distance entre 2 chemins</figcaption></figure>
       
             <p>Ce projet met en œuvre des concepts avancés de théorie des graphes et démontre l'intégration efficace entre des modules C performants et une interface Python conviviale pour la modélisation de réseaux complexes.</p>
             
-            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">Voir le Projet sur Github</a>
+            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">Voir le projet sur GitHub</a>
           </article>
         </div>
         `,
@@ -1033,8 +1002,7 @@ export const CUBE_CONTENT = {
               <li><strong>Network visualization:</strong> Generates an interactive map showing the railway network and optimized routes.</li>
             </ul>
 
-            <img src="assets/previews/projects/nf06_1.png" alt="Rail network visualization" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Rail network visualization</p>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_1.png" alt="Rail network visualization" class="project-image"><figcaption>Rail network visualization</figcaption></figure>
 
             <h3>Technologies used:</h3>
             <ul>
@@ -1042,12 +1010,11 @@ export const CUBE_CONTENT = {
               <li><strong>Libraries:</strong> ctypes for C–Python interfacing, Tkinter for the GUI, and Folium for the interactive map</li>
             </ul>
 
-            <img src="assets/previews/projects/nf06_2.png" alt="Illustration of the distance between two paths" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-            <p style="font-style: italic; font-size: 0.8em; text-align: center;">Illustration of the distance between two paths</p>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_2.png" alt="Illustration of the distance between two paths" class="project-image"><figcaption>Illustration of the distance between two paths</figcaption></figure>
 
             <p>This project applies advanced graph theory concepts and demonstrates efficient integration between high-performance C modules and a user-friendly Python interface for modeling complex networks.</p>
 
-            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">View Project on GitHub</a>
+            <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">View the project on GitHub</a>
           </article>
         </div>
         `,
@@ -1087,8 +1054,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Interface graphique :</strong> Visualisation des deux algorithmes s'affrontant aux échecs.</li>
               </ul>
 
-              <img src="assets/previews/projects/pe1_2.png" alt="Illustration de l'algorithme Minimax" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Illustration de l'algorithme Minimax</p>
+              <figure class="project-figure"><img src="assets/previews/projects/pe1_2.png" alt="Illustration de l'algorithme Minimax" class="project-image"><figcaption>Illustration de l'algorithme Minimax</figcaption></figure>
               
               <h3>Technologies utilisées :</h3>
               <ul>
@@ -1097,8 +1063,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Moteur d’échecs :</strong> Stockfish</li>
               </ul>
 
-              <img src="assets/previews/projects/pe1_1.png" alt="Illustration de l'algorithme MCTS" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-              <p style="font-style: italic; font-size: 0.8em; text-align: center;">Simulations de l'algorithme MCTS</p>
+              <figure class="project-figure"><img src="assets/previews/projects/pe1_1.png" alt="Illustration de l'algorithme MCTS" class="project-image"><figcaption>Simulations de l'algorithme MCTS</figcaption></figure>
 
               <p>Ce projet a permis d’étudier l’approche décisionnelle des IA d’échecs et d’optimiser leur stratégie contre un adversaire de référence. L'objectif était initialement d'ajouter un réseau de neurones au MCTS pour s'inspirer du modèle d'AlphaZero Chess. Mais par manque de temps et de connaissances au moment de la réalisation de ce projet, cela n'a pas été fait.</p>
             </article>
@@ -1133,8 +1098,7 @@ export const CUBE_CONTENT = {
                     <li><strong>Graphical interface:</strong> Visualization of both algorithms competing against each other in chess.</li>
                   </ul>
 
-                  <img src="assets/previews/projects/pe1_2.png" alt="Minimax algorithm illustration" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">Minimax algorithm illustration</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe1_2.png" alt="Minimax algorithm illustration" class="project-image"><figcaption>Minimax algorithm illustration</figcaption></figure>
 
                   <h3>Technologies used:</h3>
                   <ul>
@@ -1143,8 +1107,7 @@ export const CUBE_CONTENT = {
                     <li><strong>Chess engine:</strong> Stockfish</li>
                   </ul>
 
-                  <img src="assets/previews/projects/pe1_1.png" alt="MCTS algorithm simulation" class="project-image" style="width: 90%; height: auto; margin: 1rem;">
-                  <p style="font-style: italic; font-size: 0.8em; text-align: center;">MCTS algorithm simulations</p>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe1_1.png" alt="MCTS algorithm simulation" class="project-image"><figcaption>MCTS algorithm simulations</figcaption></figure>
 
                   <p>This project made it possible to study the decision-making approach of chess AIs and to optimize their strategy against a reference opponent. The initial goal was to add a neural network to MCTS to follow the AlphaZero Chess model, but due to lack of time and knowledge at the time, this was not implemented.</p>
                 </article>

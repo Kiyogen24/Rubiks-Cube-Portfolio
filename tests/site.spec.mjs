@@ -44,7 +44,7 @@ test('les cartes en français reprennent le CV', async ({ page }) => {
 
   await zoomTo(page, 'top');
   card = await openCard(page, 'top', 6);
-  await expect(card).toContainText(`Âge : ${expectedAge()} ans`);
+  await expect(card.locator('.card-facts > div', { hasText: 'Âge' })).toContainText(`${expectedAge()} ans`);
   await closeCard(page);
 
   await zoomTo(page, 'bottom');

@@ -11,6 +11,9 @@ export const translations = {
     ui: {
       resetBtn: 'Retour',
       downloadCV: 'Télécharger le CV',
+      openInTab: 'Ouvrir dans un nouvel onglet',
+      detailsLabel: 'Points clés',
+      close: 'Fermer',
       comingSoon: 'Bientôt...',
       // Footer
       contact: 'Contact',
@@ -49,6 +52,9 @@ export const translations = {
     ui: {
       resetBtn: 'Back',
       downloadCV: 'Download Resume',
+      openInTab: 'Open in a new tab',
+      detailsLabel: 'Highlights',
+      close: 'Close',
       comingSoon: 'Coming soon...',
       // Footer
       contact: 'Contact',
