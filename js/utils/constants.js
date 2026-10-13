@@ -1,24 +1,22 @@
 // Constantes
 export const CATEGORIES = {
-    front: 'Compétences',
-    back: 'Expériences',
-    top: 'À propos', 
-    bottom: 'Mon CV', 
-    right: 'Projets',
-    left: 'Formation'
+  front: 'Compétences',
+  back: 'Expériences',
+  top: 'À propos',
+  bottom: 'Mon CV',
+  right: 'Projets',
+  left: 'Formation',
 };
-
 
 // Constantes pour les couleurs des faces
 export const stickerColors = {
-  front: '#B90000',  
-  back: '#ff8000',  
-  top: '#FFFFFF',  
-  bottom: '#ffff00',  
+  front: '#B90000',
+  back: '#ff8000',
+  top: '#FFFFFF',
+  bottom: '#ffff00',
   right: '#000FFF',
-  left: '#00994C'
+  left: '#00994C',
 };
-
 
 // Date de naissance : l'âge affiché dans « À propos » est recalculé à chaque visite
 const BIRTH_DATE = new Date(2004, 9, 20); // 20/10/2004 (les mois commencent à 0)
@@ -26,341 +24,374 @@ const BIRTH_DATE = new Date(2004, 9, 20); // 20/10/2004 (les mois commencent à 
 function computeAge(birthDate) {
   const today = new Date();
   const age = today.getFullYear() - birthDate.getFullYear();
-  const birthdayPassed = today.getMonth() > birthDate.getMonth() ||
+  const birthdayPassed =
+    today.getMonth() > birthDate.getMonth() ||
     (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
   return birthdayPassed ? age : age - 1;
 }
 
 const AGE = computeAge(BIRTH_DATE);
 
-
 // Export des constantes nécessaires
 export const CUBE_CONTENT = {
-    front: { // **Compétences**
-      0: {
-        title: "Python",
-        infos : "Bibliothèques",
-        description: "Maîtrise du langage et des bibliothèques liées à la data science et à l'IA",
-        details: ["NumPy", "Pandas", "Scikit-Learn", "PyTorch", "TensorFlow", "Keras"],
-        icon: "fa-brands fa-python",
-        preview: 'assets/previews/skills/python.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Python",
-            infos: "Libraries",
-            description: "Mastery of the language and libraries related to data science and AI",
-            details: ["NumPy", "Pandas", "Scikit-Learn", "PyTorch", "TensorFlow", "Keras"]
-          }
-        }
-      },
-      1: {
-        title: "JavaScript", 
-        icon: "fa-brands fa-js",
-        preview: 'assets/previews/skills/javascript.png',
-        hasContent: false
-      },
-      2: {
-        title: "React", 
-        icon: "fa-brands fa-react",
-        preview: 'assets/previews/skills/react.svg',
-        hasContent: false
-      },
-      3: {
-        title: "Node.js", 
-        icon: "fa-brands fa-node-js",
-        preview: 'assets/previews/skills/node.png',
-        hasContent: false
-      },
-      4: {
-        title: "Java",
-        icon: "fa-brands fa-java",
-        preview: 'assets/previews/skills/java.png',
-        hasContent: false
-      },
-      5: {
-        title: "C",
-        icon: "fa-regular fa-file-code",
-        preview: 'assets/previews/skills/c.png',
-        hasContent: false
-      },
-      6: {
-        title: "HTML/CSS",
-        icon: "fa-brands fa-html5",
-        preview: 'assets/previews/skills/html.png',
-        hasContent: false
-      },
-      7: {
-        title: "Bases De Données",
-        description: "Maîtrise de la gestion des bases de données",
-        infos : "Liste",
-        details: ["SQL", "MongoDB"],
-        icon: "fa-solid fa-database",
-        preview: 'assets/previews/skills/data_b.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Databases",
-            description: "Database management mastery",
-            infos: "List",
-            details: ["SQL", "MongoDB"]
-          }
-        }
-      },
-      8: {
-        title: "Pack Office",
-        icon: "fa-regular fa-file-word",
-        description: "Maîtrise du Pack Office",
-        details: ["Word", "Excel", "PowerPoint"],
-        preview: 'assets/previews/skills/office.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Office Suite",
-            description: "Office Suite mastery",
-            details: ["Word", "Excel", "PowerPoint"]
-          }
-        }
+  front: {
+    // **Compétences**
+    0: {
+      title: 'Python',
+      infos: 'Bibliothèques',
+      description: "Maîtrise du langage et des bibliothèques liées à la data science et à l'IA",
+      details: ['NumPy', 'Pandas', 'Scikit-Learn', 'PyTorch', 'TensorFlow', 'Keras'],
+      icon: 'fa-brands fa-python',
+      preview: 'assets/previews/skills/python.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Python',
+          infos: 'Libraries',
+          description: 'Mastery of the language and libraries related to data science and AI',
+          details: ['NumPy', 'Pandas', 'Scikit-Learn', 'PyTorch', 'TensorFlow', 'Keras'],
+        },
       },
     },
-   back: { // **Expériences**
-      0: {
-        title: "Stage R&D en Deep Reinforcement Learning - Dassault Systèmes (DELMIA)",
-        period: "02/2026 - 07/2026",
-        description: "Stage R&D à Vélizy-Villacoublay (NVIDIA Omniverse) : ordonnancement par RL d'une flotte d'AGV en bord de ligne d'assemblage.",
-        details: [
-          "Simulation de l'usine sous NVIDIA Isaac Sim/Isaac Lab : flux kanban, batteries, obstacles dynamiques, vectorisation sur 16 384 environnements.",
-          "Architecture combinant PPO avec Transformer et DeepSets, étendue par domain randomization et curriculum learning pour la généralisation.",
-          "L'agent surpasse les baselines heuristiques kanban sur plusieurs scénarios fixés.",
-          "Recherche sur les GNN et les algorithmes évolutionnaires (CMA-ES)."
-        ],
-        icon: "fa-solid fa-gears",
-        preview: 'assets/previews/exp/dassault.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "R&D Internship in Deep Reinforcement Learning - DELMIA (Dassault Systèmes)",
-            period: "02/2026 - 07/2026",
-            description: "R&D internship in Vélizy (NVIDIA Omniverse): RL-based scheduling of an AGV fleet supplying an assembly line.",
-            details: [
-              "Factory simulation in NVIDIA Isaac Sim/Isaac Lab: kanban flows, batteries, dynamic obstacles, vectorized across 16,384 environments.",
-              "Architecture combining PPO, a Transformer and DeepSets, with domain randomization and curriculum learning for generalization.",
-              "The agent outperforms kanban heuristic baselines on several fixed scenarios.",
-              "Research on GNNs and evolutionary algorithms (CMA-ES)."
-            ]
-          }
-        }
-      },
-      1: {
-        title: "Ingénieur Machine Learning - Labelbox (Alignerr)",
-        period: "11/2025 - Aujourd'hui",
-        description: "Mission freelance à distance pour les plus grands laboratoires d'IA.",
-        details: [
-          "Conception de problèmes et de solutions expertes en machine learning, deep learning et reinforcement learning pour les plus grands laboratoires d'IA, afin d'évaluer, d'entraîner et de repousser les limites des meilleurs LLM.",
-          "Encadrement d'une équipe de plus de 75 contributeurs : suivi de l'avancement, rédaction des directives, réponses aux questions.",
-          "Production et validation de données d'entraînement ; stress-tests des modèles pour détecter biais et failles de raisonnement."
-        ],
-        icon: "fa-solid fa-laptop-code",
-        preview: 'assets/previews/exp/labelbox.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Machine Learning Engineer - Labelbox (Alignerr)",
-            period: "11/2025 - Present",
-            description: "Remote freelance mission for the largest AI labs.",
-            details: [
-              "Design expert problems and solutions in machine learning, deep learning and reinforcement learning for the largest AI labs, to evaluate, train and push the limits of top LLMs.",
-              "Supervise a team of 75+ contributors: progress tracking, writing guidelines, answering questions.",
-              "Produce and validate training data; stress-test models to uncover biases and reasoning failures."
-            ]
-          }
-        }
-      },
-      2: {
-        title: "Alignement de réponses LLM - Outlier.ai",
-        period: "01/2025 - 12/2025",
-        description: "Mission freelance à distance : amélioration des réponses de modèles LLM type GPT.",
-        details: [
-          "Analyse des réponses d’un modèle LLM type GPT.",
-          "Amélioration de la cohérence et réduction des hallucinations.",
-          "Rédaction de rapports détaillés en anglais."
-        ],
-        icon: "fa-solid fa-robot",
-        preview: 'assets/previews/exp/outlier.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "LLM Response Alignment - Outlier.ai",
-            period: "01/2025 - 12/2025",
-            description: "Remote freelance mission: improving GPT-like model responses.",
-            details: [
-              "Analysis of GPT-like model outputs.",
-              "Improved coherence and hallucination reduction.",
-              "Drafting detailed reports in English."
-            ]
-          }
-        }
-      },
-      3: {
-        title: "Responsable de projet - Junior Conseil UTT",
-        period: "09/2024 - 02/2026",
-        description: "Suivi et gestion de projets clients au sein de la Junior-Entreprise de l’UTT.",
-        details: [
-          "Suivi de projets clients (cadrage, planning, livrables, communication).",
-          "Interface entre les étudiants intervenants et les clients.",
-          "Garantie de la qualité et du respect des délais."
-        ],
-        icon: "fa-solid fa-briefcase",
-        preview: 'assets/previews/exp/junior.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Project Manager - Junior Conseil UTT",
-            period: "09/2024 - 02/2026",
-            description: "Project monitoring and management within UTT’s Junior-Enterprise.",
-            details: [
-              "Project monitoring (scope, planning, deliverables, communication).",
-              "Acting as an interface between student consultants and clients.",
-              "Ensuring quality and compliance with deadlines."
-            ]
-          }
-        }
-      },
-      4: {
-        title: "Tutorat étudiant",
-        period: "02/2024 - 06/2024",
-        description: "Tutorat indépendant d'une élève de l'UTT.",
-        details: [
-          "Accompagnement individuel en mathématiques et physico-chimie.",
-          "Développement de compétences pédagogiques et de communication."
-        ],
-        icon: "fa-solid fa-chalkboard-user",
-        preview: 'assets/previews/exp/tutorat.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Student Tutoring",
-            period: "02/2024 - 06/2024",
-            description: "Independent tutoring for a UTT student.",
-            details: [
-              "Individual support in mathematics and physics-chemistry.",
-              "Development of teaching and communication skills."
-            ]
-          }
-        }
-      },
-      5: {
-        title: "Stage ouvrier - Siemens Mobility France",
-        period: "07/2023",
-        description: "Assistant logistique à Châtillon.",
-        details: [
-          "Gestion du magasin.",
-          "Réception physique des marchandises et inspection des colis.",
-          "Préparation des commandes.",
-          "Bases en VBA et gestion de projets."
-        ],
-        icon: "fa-solid fa-industry",
-        preview: 'assets/previews/exp/siemens.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Internship - Siemens Mobility France",
-            period: "07/2023",
-            description: "Logistics Assistant in Châtillon.",
-            details: [
-              "Warehouse management.",
-              "Physical receipt of goods and package inspection.",
-              "Order preparation.",
-              "Basics in VBA and project management."
-            ]
-          }
-        }
-      }
+    1: {
+      title: 'JavaScript',
+      icon: 'fa-brands fa-js',
+      preview: 'assets/previews/skills/javascript.png',
+      hasContent: false,
     },
+    2: {
+      title: 'React',
+      icon: 'fa-brands fa-react',
+      preview: 'assets/previews/skills/react.svg',
+      hasContent: false,
+    },
+    3: {
+      title: 'Node.js',
+      icon: 'fa-brands fa-node-js',
+      preview: 'assets/previews/skills/node.png',
+      hasContent: false,
+    },
+    4: {
+      title: 'Java',
+      icon: 'fa-brands fa-java',
+      preview: 'assets/previews/skills/java.png',
+      hasContent: false,
+    },
+    5: {
+      title: 'C',
+      icon: 'fa-regular fa-file-code',
+      preview: 'assets/previews/skills/c.png',
+      hasContent: false,
+    },
+    6: {
+      title: 'HTML/CSS',
+      icon: 'fa-brands fa-html5',
+      preview: 'assets/previews/skills/html.png',
+      hasContent: false,
+    },
+    7: {
+      title: 'Bases De Données',
+      description: 'Maîtrise de la gestion des bases de données',
+      infos: 'Liste',
+      details: ['SQL', 'MongoDB'],
+      icon: 'fa-solid fa-database',
+      preview: 'assets/previews/skills/data_b.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Databases',
+          description: 'Database management mastery',
+          infos: 'List',
+          details: ['SQL', 'MongoDB'],
+        },
+      },
+    },
+    8: {
+      title: 'Pack Office',
+      icon: 'fa-regular fa-file-word',
+      description: 'Maîtrise du Pack Office',
+      details: ['Word', 'Excel', 'PowerPoint'],
+      preview: 'assets/previews/skills/office.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Office Suite',
+          description: 'Office Suite mastery',
+          details: ['Word', 'Excel', 'PowerPoint'],
+        },
+      },
+    },
+  },
+  back: {
+    // **Expériences**
+    0: {
+      title: 'Stage R&D en Deep Reinforcement Learning - Dassault Systèmes (DELMIA)',
+      period: '02/2026 - 07/2026',
+      description:
+        "Stage R&D à Vélizy-Villacoublay (NVIDIA Omniverse) : ordonnancement par RL d'une flotte d'AGV en bord de ligne d'assemblage.",
+      details: [
+        "Simulation de l'usine sous NVIDIA Isaac Sim/Isaac Lab : flux kanban, batteries, obstacles dynamiques, vectorisation sur 16 384 environnements.",
+        'Architecture combinant PPO avec Transformer et DeepSets, étendue par domain randomization et curriculum learning pour la généralisation.',
+        "L'agent surpasse les baselines heuristiques kanban sur plusieurs scénarios fixés.",
+        'Recherche sur les GNN et les algorithmes évolutionnaires (CMA-ES).',
+      ],
+      icon: 'fa-solid fa-gears',
+      preview: 'assets/previews/exp/dassault.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'R&D Internship in Deep Reinforcement Learning - DELMIA (Dassault Systèmes)',
+          period: '02/2026 - 07/2026',
+          description:
+            'R&D internship in Vélizy (NVIDIA Omniverse): RL-based scheduling of an AGV fleet supplying an assembly line.',
+          details: [
+            'Factory simulation in NVIDIA Isaac Sim/Isaac Lab: kanban flows, batteries, dynamic obstacles, vectorized across 16,384 environments.',
+            'Architecture combining PPO, a Transformer and DeepSets, with domain randomization and curriculum learning for generalization.',
+            'The agent outperforms kanban heuristic baselines on several fixed scenarios.',
+            'Research on GNNs and evolutionary algorithms (CMA-ES).',
+          ],
+        },
+      },
+    },
+    1: {
+      title: 'Ingénieur Machine Learning - Labelbox (Alignerr)',
+      period: "11/2025 - Aujourd'hui",
+      description: "Mission freelance à distance pour les plus grands laboratoires d'IA.",
+      details: [
+        "Conception de problèmes et de solutions expertes en machine learning, deep learning et reinforcement learning pour les plus grands laboratoires d'IA, afin d'évaluer, d'entraîner et de repousser les limites des meilleurs LLM.",
+        "Encadrement d'une équipe de plus de 75 contributeurs : suivi de l'avancement, rédaction des directives, réponses aux questions.",
+        "Production et validation de données d'entraînement ; stress-tests des modèles pour détecter biais et failles de raisonnement.",
+      ],
+      icon: 'fa-solid fa-laptop-code',
+      preview: 'assets/previews/exp/labelbox.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Machine Learning Engineer - Labelbox (Alignerr)',
+          period: '11/2025 - Present',
+          description: 'Remote freelance mission for the largest AI labs.',
+          details: [
+            'Design expert problems and solutions in machine learning, deep learning and reinforcement learning for the largest AI labs, to evaluate, train and push the limits of top LLMs.',
+            'Supervise a team of 75+ contributors: progress tracking, writing guidelines, answering questions.',
+            'Produce and validate training data; stress-test models to uncover biases and reasoning failures.',
+          ],
+        },
+      },
+    },
+    2: {
+      title: 'Alignement de réponses LLM - Outlier.ai',
+      period: '01/2025 - 12/2025',
+      description: 'Mission freelance à distance : amélioration des réponses de modèles LLM type GPT.',
+      details: [
+        'Analyse des réponses d’un modèle LLM type GPT.',
+        'Amélioration de la cohérence et réduction des hallucinations.',
+        'Rédaction de rapports détaillés en anglais.',
+      ],
+      icon: 'fa-solid fa-robot',
+      preview: 'assets/previews/exp/outlier.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'LLM Response Alignment - Outlier.ai',
+          period: '01/2025 - 12/2025',
+          description: 'Remote freelance mission: improving GPT-like model responses.',
+          details: [
+            'Analysis of GPT-like model outputs.',
+            'Improved coherence and hallucination reduction.',
+            'Drafting detailed reports in English.',
+          ],
+        },
+      },
+    },
+    3: {
+      title: 'Responsable de projet - Junior Conseil UTT',
+      period: '09/2024 - 02/2026',
+      description: 'Suivi et gestion de projets clients au sein de la Junior-Entreprise de l’UTT.',
+      details: [
+        'Suivi de projets clients (cadrage, planning, livrables, communication).',
+        'Interface entre les étudiants intervenants et les clients.',
+        'Garantie de la qualité et du respect des délais.',
+      ],
+      icon: 'fa-solid fa-briefcase',
+      preview: 'assets/previews/exp/junior.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Project Manager - Junior Conseil UTT',
+          period: '09/2024 - 02/2026',
+          description: 'Project monitoring and management within UTT’s Junior-Enterprise.',
+          details: [
+            'Project monitoring (scope, planning, deliverables, communication).',
+            'Acting as an interface between student consultants and clients.',
+            'Ensuring quality and compliance with deadlines.',
+          ],
+        },
+      },
+    },
+    4: {
+      title: 'Tutorat étudiant',
+      period: '02/2024 - 06/2024',
+      description: "Tutorat indépendant d'une élève de l'UTT.",
+      details: [
+        'Accompagnement individuel en mathématiques et physico-chimie.',
+        'Développement de compétences pédagogiques et de communication.',
+      ],
+      icon: 'fa-solid fa-chalkboard-user',
+      preview: 'assets/previews/exp/tutorat.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Student Tutoring',
+          period: '02/2024 - 06/2024',
+          description: 'Independent tutoring for a UTT student.',
+          details: [
+            'Individual support in mathematics and physics-chemistry.',
+            'Development of teaching and communication skills.',
+          ],
+        },
+      },
+    },
+    5: {
+      title: 'Stage ouvrier - Siemens Mobility France',
+      period: '07/2023',
+      description: 'Assistant logistique à Châtillon.',
+      details: [
+        'Gestion du magasin.',
+        'Réception physique des marchandises et inspection des colis.',
+        'Préparation des commandes.',
+        'Bases en VBA et gestion de projets.',
+      ],
+      icon: 'fa-solid fa-industry',
+      preview: 'assets/previews/exp/siemens.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Internship - Siemens Mobility France',
+          period: '07/2023',
+          description: 'Logistics Assistant in Châtillon.',
+          details: [
+            'Warehouse management.',
+            'Physical receipt of goods and package inspection.',
+            'Order preparation.',
+            'Basics in VBA and project management.',
+          ],
+        },
+      },
+    },
+  },
 
-      top : {
-      6: {
-        title: " A propos de Moi",
-        details: ["Prénom : <strong>Romain</strong>", "Nom : <strong>Goldenchtein</strong>", "Nationalité : <strong>Français</strong>", `Âge : <strong>${AGE} ans</strong>`, "Adresse : <strong>Yerres</strong>", "Ville d'études : <strong>Troyes</strong>","Mail : <strong>r.goldenchtein@proton.me</strong>", "<strong>Permis B</strong>"],
-        icon: "fa-regular fa-user",
-        preview: 'assets/previews/about/person.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "About Me",
-            details: ["First name: <strong>Romain</strong>", "Last name: <strong>Goldenchtein</strong>", "Nationality: <strong>French</strong>", `Age: <strong>${AGE} years old</strong>`, "Address: <strong>Yerres</strong>", "Study city: <strong>Troyes</strong>", "Email: <strong>r.goldenchtein@proton.me</strong>", "<strong>Driver's License</strong>"]
-          }
-        }
+  top: {
+    6: {
+      title: ' A propos de Moi',
+      details: [
+        'Prénom : <strong>Romain</strong>',
+        'Nom : <strong>Goldenchtein</strong>',
+        'Nationalité : <strong>Français</strong>',
+        `Âge : <strong>${AGE} ans</strong>`,
+        'Adresse : <strong>Yerres</strong>',
+        "Ville d'études : <strong>Troyes</strong>",
+        'Mail : <strong>r.goldenchtein@proton.me</strong>',
+        '<strong>Permis B</strong>',
+      ],
+      icon: 'fa-regular fa-user',
+      preview: 'assets/previews/about/person.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'About Me',
+          details: [
+            'First name: <strong>Romain</strong>',
+            'Last name: <strong>Goldenchtein</strong>',
+            'Nationality: <strong>French</strong>',
+            `Age: <strong>${AGE} years old</strong>`,
+            'Address: <strong>Yerres</strong>',
+            'Study city: <strong>Troyes</strong>',
+            'Email: <strong>r.goldenchtein@proton.me</strong>',
+            "<strong>Driver's License</strong>",
+          ],
+        },
       },
-      7: {
-        title: "Mes passions",
-        description: "Ce que j'aime faire de mon temps libre", 
-        details: ["<strong>Echecs :</strong> J'ai appris de manière autodidacte et ai participé à quelques compétitions. Au meilleur de ma forme, j'ai pu atteindre les 1600 Elo sur chess.com !", "<strong>Danse :</strong> J'ai pratiqué pendant 12 ans le Hip-Hop et c'est une activité que j'adore !", "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. Actuellement, j'en connais 400 :)", "<strong>Sport :</strong> J'essaye d'aller à la salle 3 fois par semaine et de courir et nager au moins une fois par semaine. La santé, c'est important !"],
-        icon: "fa-regular fa-heart",
-        preview: 'assets/previews/about/hobbies.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "My Passions",
-            description: "What I love to do in my free time",
-            details: ["<strong>Chess:</strong> Self-taught, I participated in a few competitions. At my best, I reached 1600 Elo on chess.com!", "<strong>Dancing:</strong> I practiced Hip-Hop for 12 years and it's an activity that I truly love!", "<strong>Memory competitions:</strong> I enjoy memorizing digits of Pi (don't ask me why) and testing my memory. I currently know 400 digits :)", "<strong>Sport:</strong> I try to go to the gym 3 times a week and to run and swim at least once a week. Health is important!"]
-          }
-        }
+    },
+    7: {
+      title: 'Mes passions',
+      description: "Ce que j'aime faire de mon temps libre",
+      details: [
+        "<strong>Echecs :</strong> J'ai appris de manière autodidacte et ai participé à quelques compétitions. Au meilleur de ma forme, j'ai pu atteindre les 1600 Elo sur chess.com !",
+        "<strong>Danse :</strong> J'ai pratiqué pendant 12 ans le Hip-Hop et c'est une activité que j'adore !",
+        "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. Actuellement, j'en connais 400 :)",
+        "<strong>Sport :</strong> J'essaye d'aller à la salle 3 fois par semaine et de courir et nager au moins une fois par semaine. La santé, c'est important !",
+      ],
+      icon: 'fa-regular fa-heart',
+      preview: 'assets/previews/about/hobbies.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'My Passions',
+          description: 'What I love to do in my free time',
+          details: [
+            '<strong>Chess:</strong> Self-taught, I participated in a few competitions. At my best, I reached 1600 Elo on chess.com!',
+            "<strong>Dancing:</strong> I practiced Hip-Hop for 12 years and it's an activity that I truly love!",
+            "<strong>Memory competitions:</strong> I enjoy memorizing digits of Pi (don't ask me why) and testing my memory. I currently know 400 digits :)",
+            '<strong>Sport:</strong> I try to go to the gym 3 times a week and to run and swim at least once a week. Health is important!',
+          ],
+        },
       },
-      8: {
-        title: "Soft Skills",
-        details: ["Curiosité", "Persévérance", "Résolution des problèmes", "Organisé", "Gestion de Projet"],
-        icon: "fa-regular fa-lightbulb",
-        preview: 'assets/previews/about/soft.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Soft Skills",
-            details: ["Curiosity", "Perseverance", "Problem solving", "Organized", "Project Management"]
-          }
-        }
+    },
+    8: {
+      title: 'Soft Skills',
+      details: ['Curiosité', 'Persévérance', 'Résolution des problèmes', 'Organisé', 'Gestion de Projet'],
+      icon: 'fa-regular fa-lightbulb',
+      preview: 'assets/previews/about/soft.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Soft Skills',
+          details: ['Curiosity', 'Perseverance', 'Problem solving', 'Organized', 'Project Management'],
+        },
       },
-      3: {
-        title: "GitHub",
-        description: "Mon profil GitHub",
-        icon: "fa-brands fa-github",
-        preview: 'assets/previews/about/github.png',
-        hasContent: false,
-        link: "https://github.com/Kiyogen24"
+    },
+    3: {
+      title: 'GitHub',
+      description: 'Mon profil GitHub',
+      icon: 'fa-brands fa-github',
+      preview: 'assets/previews/about/github.png',
+      hasContent: false,
+      link: 'https://github.com/Kiyogen24',
+    },
+    5: {
+      title: 'LinkedIn',
+      description: 'Mon profil LinkedIn',
+      icon: 'fa-brands fa-linkedin',
+      preview: 'assets/previews/about/linkedin.png',
+      hasContent: false,
+      link: 'https://www.linkedin.com/in/romain-goldenchtein/',
+    },
+  },
+  bottom: {
+    4: {
+      title: 'Mon CV',
+      details: [],
+      icon: 'fa-regular fa-file-pdf',
+      file: 'assets/previews/cv.pdf',
+      preview: 'assets/previews/cv_pr.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'My Resume',
+          file: 'assets/previews/cv_en.pdf',
+        },
       },
-      5: {
-        title: "LinkedIn",
-        description: "Mon profil LinkedIn",
-        icon: "fa-brands fa-linkedin",
-        preview: 'assets/previews/about/linkedin.png',
-        hasContent: false,
-        link: "https://www.linkedin.com/in/romain-goldenchtein/"
-      }
-      },
-      bottom: {
-      4: {
-        title: "Mon CV",
-        details: [],
-        icon: "fa-regular fa-file-pdf",
-        file: 'assets/previews/cv.pdf',
-        preview: 'assets/previews/cv_pr.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "My Resume",
-            file: 'assets/previews/cv_en.pdf'
-          }
-        }
-      }
-      },
-      right: { // **Projets**
-      0: {
-        title: "Résolution du Rubik’s Cube par Apprentissage par Renforcement",
-        icon: "fa-solid fa-cube",
-        period: "02/2025 - 07/2025",
-        preview: 'assets/previews/projects/pe3_1.png',
-        hasContent: true,
-        htmlContent: `
+    },
+  },
+  right: {
+    // **Projets**
+    0: {
+      title: 'Résolution du Rubik’s Cube par Apprentissage par Renforcement',
+      icon: 'fa-solid fa-cube',
+      period: '02/2025 - 07/2025',
+      preview: 'assets/previews/projects/pe3_1.png',
+      hasContent: true,
+      htmlContent: `
           <div class="card-header">
             <i class="fa-solid fa-cube"></i>
             <h2>Rubik’s Cube par Apprentissage par Renforcement</h2>
@@ -406,9 +437,9 @@ export const CUBE_CONTENT = {
             </article>
           </div>
         `,
-        i18n: {
-          en: {
-            htmlContent: `
+      i18n: {
+        en: {
+          htmlContent: `
               <div class="card-header">
                 <i class="fa-solid fa-cube"></i>
                 <h2>Rubik’s Cube with Reinforcement Learning</h2>
@@ -453,19 +484,18 @@ export const CUBE_CONTENT = {
                   <a href="https://github.com/Kiyogen24/Reinforcement-Learning-for-Rubiks-Cube" target="_blank" class="project-link">View Project on GitHub</a>
                 </article>
               </div>
-            `
-          }
-        }
+            `,
+        },
       },
+    },
 
-
-      1: {
-        title: "Classification d’images et détection de chutes",
-        icon: "fa-solid fa-brain",
-        period: "05/2025 - 06/2025",
-        preview: 'assets/previews/projects/ia02_0.png',
-        hasContent: true,
-        htmlContent: `
+    1: {
+      title: 'Classification d’images et détection de chutes',
+      icon: 'fa-solid fa-brain',
+      period: '05/2025 - 06/2025',
+      preview: 'assets/previews/projects/ia02_0.png',
+      hasContent: true,
+      htmlContent: `
           <div class="card-header">
             <i class="fa-solid fa-brain"></i>
             <h2>Classification d’images et détection de chutes</h2>
@@ -521,9 +551,9 @@ export const CUBE_CONTENT = {
             </article>
           </div>
         `,
-        i18n: {
-          en: {
-            htmlContent: `
+      i18n: {
+        en: {
+          htmlContent: `
               <div class="card-header">
                 <i class="fa-solid fa-brain"></i>
                 <h2>Image Classification and Fall Detection</h2>
@@ -575,15 +605,15 @@ export const CUBE_CONTENT = {
                   <a href="https://github.com/Kiyogen24/IA02-Projet" target="_blank" class="project-link">View Project on GitHub</a>
                 </article>
               </div>
-            `
-          }
-        }
+            `,
+        },
       },
+    },
 
-      2: {
-      title: "Portfolio",
-      icon: "fa-solid fa-cube",
-      period: "02/2025 - 09/2025",
+    2: {
+      title: 'Portfolio',
+      icon: 'fa-solid fa-cube',
+      period: '02/2025 - 09/2025',
       preview: 'assets/previews/projects/portfolio_0.png',
       hasContent: true,
       htmlContent: `
@@ -675,18 +705,18 @@ export const CUBE_CONTENT = {
                 <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View Project on GitHub</a>
               </article>
             </div>
-          `
-        }
-      }
+          `,
+        },
+      },
     },
 
-      3: {
-        title: "Prédiction de défauts de paiement",
-        icon: "fa-solid fa-chart-simple",
-        period: "11/2024 - 01/2025",
-        preview: 'assets/previews/projects/ia01_1.png',
-        hasContent: true,
-        htmlContent: `
+    3: {
+      title: 'Prédiction de défauts de paiement',
+      icon: 'fa-solid fa-chart-simple',
+      period: '11/2024 - 01/2025',
+      preview: 'assets/previews/projects/ia01_1.png',
+      hasContent: true,
+      htmlContent: `
         <div class="card-header">
           <i class="fa-solid fa-chart-line"></i>
           <h2>Prédiction de défauts de paiement</h2>
@@ -770,17 +800,17 @@ export const CUBE_CONTENT = {
             <a href="https://github.com/Kiyogen24/Project_IA01" target="_blank" class="project-link">View Project on GitHub</a>
           </article>
         </div>
-      `
-        }
-      }
+      `,
+        },
       },
-      4: {
-        title: "Pocket Imperium",
-        icon: "fa-brands fa-space-awesome",
-        period: "09/2024 - 01/2025",
-        preview: 'assets/previews/projects/lo02_1.png',
-        hasContent: true,
-        htmlContent: `
+    },
+    4: {
+      title: 'Pocket Imperium',
+      icon: 'fa-brands fa-space-awesome',
+      period: '09/2024 - 01/2025',
+      preview: 'assets/previews/projects/lo02_1.png',
+      hasContent: true,
+      htmlContent: `
       <div class="card-header">
         <i class="fa-brands fa-space-awesome"></i>
         <h2>Pocket Imperium</h2>
@@ -837,17 +867,17 @@ export const CUBE_CONTENT = {
           <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">View Project on GitHub</a>
         </article>
         </div>
-      `
-        }
-      }
+      `,
+        },
       },
-      5: {
-        title: "Messagerie Web sécurisée : Neutrino",
-        icon: "fa-solid fa-comments",
-        period: "02/2024 - 07/2024",
-        preview: 'assets/previews/projects/pe2_0.png',
-        hasContent: true,
-        htmlContent: `
+    },
+    5: {
+      title: 'Messagerie Web sécurisée : Neutrino',
+      icon: 'fa-solid fa-comments',
+      period: '02/2024 - 07/2024',
+      preview: 'assets/previews/projects/pe2_0.png',
+      hasContent: true,
+      htmlContent: `
       <div class="card-header">
         <i class="fa-solid fa-comments"></i>
         <h2>Neutrino Chat</h2>
@@ -885,9 +915,9 @@ export const CUBE_CONTENT = {
         </article>
         </div>
         `,
-        i18n: {
-          en: {
-            htmlContent: `
+      i18n: {
+        en: {
+          htmlContent: `
       <div class="card-header">
         <i class="fa-solid fa-comments"></i>
         <h2>Neutrino Chat</h2>
@@ -924,17 +954,17 @@ export const CUBE_CONTENT = {
           <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">View Project on GitHub</a>
         </article>
         </div>
-        `
-          }
-        }
+        `,
+        },
       },
-      6: {
-        title: "Tracé d’un Réseau Ferroviaire",
-        icon: "fa-solid fa-train",
-        period: "11/2023 - 01/2024",
-        preview: 'assets/previews/projects/nf06_0.png',
-        hasContent: true,
-        htmlContent: `
+    },
+    6: {
+      title: 'Tracé d’un Réseau Ferroviaire',
+      icon: 'fa-solid fa-train',
+      period: '11/2023 - 01/2024',
+      preview: 'assets/previews/projects/nf06_0.png',
+      hasContent: true,
+      htmlContent: `
         <div class="card-header">
           <i class="fa-solid fa-train"></i>
           <h2>Tracé d’un Réseau Ferroviaire</h2>
@@ -978,8 +1008,8 @@ export const CUBE_CONTENT = {
         </div>
         `,
       i18n: {
-      en: {
-      htmlContent: `
+        en: {
+          htmlContent: `
         <div class="card-header">
           <i class="fa-solid fa-train"></i>
           <h2>Railway Network Layout</h2>
@@ -1020,17 +1050,17 @@ export const CUBE_CONTENT = {
             <a href="https://github.com/Kiyogen24/NF06_project" target="_blank" class="project-link">View Project on GitHub</a>
           </article>
         </div>
-        `
-          }
-        }
+        `,
+        },
       },
-      7: {
-        title: "Recherche d'algorithmes pour jouer aux échecs",
-        icon: "fa-solid fa-chess",
-        period: "02/2023 - 06/2023",
-        preview: 'assets/previews/projects/pe1_0.png',
-        hasContent: true,
-        htmlContent: `
+    },
+    7: {
+      title: "Recherche d'algorithmes pour jouer aux échecs",
+      icon: 'fa-solid fa-chess',
+      period: '02/2023 - 06/2023',
+      preview: 'assets/previews/projects/pe1_0.png',
+      hasContent: true,
+      htmlContent: `
           <div class="card-header">
             <i class="fa-solid fa-chess"></i>
             <h2>IA appliquée aux échecs</h2>
@@ -1074,9 +1104,9 @@ export const CUBE_CONTENT = {
             </article>
           </div>
         `,
-        i18n: {
-          en: {
-            htmlContent: `
+      i18n: {
+        en: {
+          htmlContent: `
               <div class="card-header">
                 <i class="fa-solid fa-chess"></i>
                 <h2>AI applied to Chess</h2>
@@ -1119,126 +1149,120 @@ export const CUBE_CONTENT = {
                   <p>This project made it possible to study the decision-making approach of chess AIs and to optimize their strategy against a reference opponent. The initial goal was to add a neural network to MCTS to follow the AlphaZero Chess model, but due to lack of time and knowledge at the time, this was not implemented.</p>
                 </article>
               </div>
-            `
-          }
-        }
+            `,
+        },
       },
     },
+  },
 
-    left : {
-      0: {
-        title: "The University of Tokyo (Todai)",
-        period: "10/2026 - 02/2027",
-        description: "Semestre d'échange académique",
-        details: [
-          "Projet de recherche au laboratoire du Pr. Shinsuke Murakami : Multi-Agent RL (MARL) pour simuler les décisions d'agents économiques et sociaux dans des modèles agent-based (ABM) de gestion des ressources et d'économie circulaire."
-        ],
-        icon: "fa-solid fa-building-columns",
-        preview: 'assets/previews/formation/todai.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "The University of Tokyo (Todai)",
-            period: "10/2026 - 02/2027",
-            description: "Special Auditor Student",
-            details: [
-              "Research project in Prof. Shinsuke Murakami's laboratory: Multi-Agent RL (MARL) to simulate the decisions of economic and social agents in agent-based models (ABM) of resource management and circular economy."
-            ]
-          }
-        }
-      },
-      1: {
-        title: "Université de Technologie de Troyes - UTT",
-        period: "09/2022 - 2027",
-        description: "Diplôme d'ingénieur, Informatique et Systèmes d'information",
-        details: [
-          "Cursus en 5 ans",
-          "Cycle généraliste pendant 2 ans",
-          "Cycle Informatique pendant 3 ans",
-          "Spécialisation Intelligence Artificielle et Data Science (machine learning, deep learning, systèmes intelligents)"
-        ],
-        icon: "fa-solid fa-graduation-cap",
-        preview: 'assets/previews/formation/utt.jpg',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "University of Technology of Troyes - UTT",
-            period: "09/2022 - 2027",
-            description: "Engineering Degree (Master's level), Computer Science and Information Systems",
-            details: [
-              "5-year curriculum",
-              "2 years of general engineering studies",
-              "3 years of computer science studies",
-              "Specialization in Artificial Intelligence and Data Science (machine learning, deep learning, intelligent systems)"
-            ]
-          }
-        }
-      },
-      2: {
-        title: "Institut Saint-Pierre",
-        description: "Baccalauréat Scientifique | Mention <strong>Très Bien</strong>",
-        details: [
-          "Mathématiques",
-          "Numérique et sciences de l'informatique"
-        ],
-        icon: "fa-solid fa-school",
-        preview: 'assets/previews/formation/lycee.png',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Institut Saint-Pierre",
-            description: "Scientific Baccalaureate | <strong>Highest Honors</strong>",
-            details: [
-              "Mathematics",
-              "Computer Science and Digital Sciences"
-            ]
-          }
-        }
-      },
-      3: {
-        title: "Certifications",
-        description: "Liste de mes certifications",
-        details: [
-            `<a class="info-list-link" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank">Deep Learning Specialization</a>`, 
-            `<a class="info-list-link" href="https://course.elementsofai.com/" target="_blank">Introduction to AI</a>`, 
-            `<a class="info-list-link" href="https://pix.fr/" target="_blank">PIX</a>`
+  left: {
+    0: {
+      title: 'The University of Tokyo (Todai)',
+      period: '10/2026 - 02/2027',
+      description: "Semestre d'échange académique",
+      details: [
+        "Projet de recherche au laboratoire du Pr. Shinsuke Murakami : Multi-Agent RL (MARL) pour simuler les décisions d'agents économiques et sociaux dans des modèles agent-based (ABM) de gestion des ressources et d'économie circulaire.",
+      ],
+      icon: 'fa-solid fa-building-columns',
+      preview: 'assets/previews/formation/todai.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'The University of Tokyo (Todai)',
+          period: '10/2026 - 02/2027',
+          description: 'Special Auditor Student',
+          details: [
+            "Research project in Prof. Shinsuke Murakami's laboratory: Multi-Agent RL (MARL) to simulate the decisions of economic and social agents in agent-based models (ABM) of resource management and circular economy.",
           ],
-        icon: "fa-solid fa-certificate",
-        preview: 'assets/previews/formation/certif.avif',
-        hasContent: true,
-        i18n: {
-          en: {
-            title: "Certifications",
-            description: "List of my certifications",
-            details: [
-            `<a class="info-list-link" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank">Deep Learning Specialization</a>`, 
-            `<a class="info-list-link" href="https://course.elementsofai.com/" target="_blank">Introduction to AI</a>`, 
-            `<a class="info-list-link" href="https://pix.fr/" target="_blank">PIX</a>`
-            ],
-          }
-        }
+        },
       },
-    }
-      
-    };
+    },
+    1: {
+      title: 'Université de Technologie de Troyes - UTT',
+      period: '09/2022 - 2027',
+      description: "Diplôme d'ingénieur, Informatique et Systèmes d'information",
+      details: [
+        'Cursus en 5 ans',
+        'Cycle généraliste pendant 2 ans',
+        'Cycle Informatique pendant 3 ans',
+        'Spécialisation Intelligence Artificielle et Data Science (machine learning, deep learning, systèmes intelligents)',
+      ],
+      icon: 'fa-solid fa-graduation-cap',
+      preview: 'assets/previews/formation/utt.jpg',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'University of Technology of Troyes - UTT',
+          period: '09/2022 - 2027',
+          description: "Engineering Degree (Master's level), Computer Science and Information Systems",
+          details: [
+            '5-year curriculum',
+            '2 years of general engineering studies',
+            '3 years of computer science studies',
+            'Specialization in Artificial Intelligence and Data Science (machine learning, deep learning, intelligent systems)',
+          ],
+        },
+      },
+    },
+    2: {
+      title: 'Institut Saint-Pierre',
+      description: 'Baccalauréat Scientifique | Mention <strong>Très Bien</strong>',
+      details: ['Mathématiques', "Numérique et sciences de l'informatique"],
+      icon: 'fa-solid fa-school',
+      preview: 'assets/previews/formation/lycee.png',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Institut Saint-Pierre',
+          description: 'Scientific Baccalaureate | <strong>Highest Honors</strong>',
+          details: ['Mathematics', 'Computer Science and Digital Sciences'],
+        },
+      },
+    },
+    3: {
+      title: 'Certifications',
+      description: 'Liste de mes certifications',
+      details: [
+        `<a class="info-list-link" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank">Deep Learning Specialization</a>`,
+        `<a class="info-list-link" href="https://course.elementsofai.com/" target="_blank">Introduction to AI</a>`,
+        `<a class="info-list-link" href="https://pix.fr/" target="_blank">PIX</a>`,
+      ],
+      icon: 'fa-solid fa-certificate',
+      preview: 'assets/previews/formation/certif.avif',
+      hasContent: true,
+      i18n: {
+        en: {
+          title: 'Certifications',
+          description: 'List of my certifications',
+          details: [
+            `<a class="info-list-link" href="https://www.deeplearning.ai/courses/deep-learning-specialization/" target="_blank">Deep Learning Specialization</a>`,
+            `<a class="info-list-link" href="https://course.elementsofai.com/" target="_blank">Introduction to AI</a>`,
+            `<a class="info-list-link" href="https://pix.fr/" target="_blank">PIX</a>`,
+          ],
+        },
+      },
+    },
+  },
+};
 
 // Site-level internationalized strings (page title, loading screen, device note, intro)
 export const SITE_I18N = {
   fr: {
     pageTitle: 'Portfolio Romain Goldenchtein',
     loadingText: 'Chargement...',
-    deviceNote: "Ce site est optimisé pour PC, il est fortement recommandé de le consulter sur ordinateur pour une meilleure expérience.",
+    deviceNote:
+      'Ce site est optimisé pour PC, il est fortement recommandé de le consulter sur ordinateur pour une meilleure expérience.',
     typingText: 'Bienvenue sur ce Rubik-folio !',
     intro: {
       paragraphs: [
         "Salut ! Je m'appelle <strong>Romain Goldenchtein</strong> et ceci est mon portfolio.",
         "Ce qui me motive avant tout, c’est <strong>l'innovation</strong> et la recherche de nouvelles approches pour résoudre des problèmes complexes. Passionné par l’<strong>intelligence artificielle</strong>, je m’intéresse particulièrement au <strong>deep learning</strong> et à ses applications. Mais au-delà des algorithmes, c’est <em>l’impact des technologies</em> qui me fascine : comment elles transforment notre manière de comprendre, d’optimiser et de créer.",
-        "Curieux et toujours en quête de nouveaux défis, j’explore divers domaines liés à la <strong>data</strong>, à l’<strong>IA</strong> et au <strong>développement logiciel</strong>. Que ce soit en construisant des modèles de <strong>machine learning</strong>, en concevant des architectures logicielles ou en expérimentant de nouvelles technologies, j’aime apprendre en faisant et repousser les limites du possible.",
-        "Ce portfolio est un aperçu de mon parcours et de mes projets, pensés pour être à la fois <strong>techniques</strong> et <strong>innovants</strong>.",
+        'Curieux et toujours en quête de nouveaux défis, j’explore divers domaines liés à la <strong>data</strong>, à l’<strong>IA</strong> et au <strong>développement logiciel</strong>. Que ce soit en construisant des modèles de <strong>machine learning</strong>, en concevant des architectures logicielles ou en expérimentant de nouvelles technologies, j’aime apprendre en faisant et repousser les limites du possible.',
+        'Ce portfolio est un aperçu de mon parcours et de mes projets, pensés pour être à la fois <strong>techniques</strong> et <strong>innovants</strong>.',
         "<em>Le Rubik’s Cube que vous verrez n’est pas là pour décorer. <strong>N'hésitez pas à l’explorer !</strong></em>",
-        "<strong>Bonne navigation !</strong>"
-      ]
-    }
+        '<strong>Bonne navigation !</strong>',
+      ],
+    },
   },
   en: {
     pageTitle: 'Portfolio Romain Goldenchtein',
@@ -1248,13 +1272,12 @@ export const SITE_I18N = {
     intro: {
       paragraphs: [
         "Hi! I'm <strong>Romain Goldenchtein</strong> and this is my portfolio.",
-        "My main motivation is <strong>innovation</strong> and finding new approaches to solve complex problems. Passionate about <strong>artificial intelligence</strong>, I am particularly interested in <strong>deep learning</strong> and its applications. Beyond algorithms, it is the <em>impact of technologies</em> that fascinates me: how they transform how we understand, optimize and create.",
-        "Curious and always seeking new challenges, I explore various fields related to <strong>data</strong>, <strong>AI</strong> and <strong>software development</strong>. Whether building machine learning models, designing software architectures or experimenting with new technologies, I enjoy learning by doing and pushing the limits of what is possible.",
-        "This portfolio gives an overview of my background and projects, designed to be both <strong>technical</strong> and <strong>innovative</strong>.",
+        'My main motivation is <strong>innovation</strong> and finding new approaches to solve complex problems. Passionate about <strong>artificial intelligence</strong>, I am particularly interested in <strong>deep learning</strong> and its applications. Beyond algorithms, it is the <em>impact of technologies</em> that fascinates me: how they transform how we understand, optimize and create.',
+        'Curious and always seeking new challenges, I explore various fields related to <strong>data</strong>, <strong>AI</strong> and <strong>software development</strong>. Whether building machine learning models, designing software architectures or experimenting with new technologies, I enjoy learning by doing and pushing the limits of what is possible.',
+        'This portfolio gives an overview of my background and projects, designed to be both <strong>technical</strong> and <strong>innovative</strong>.',
         "<em>The Rubik's Cube you will see is not just decoration. <strong>Feel free to explore it!</strong></em>",
-        "<strong>Enjoy your visit!</strong>"
-      ]
-    }
-  }
+        '<strong>Enjoy your visit!</strong>',
+      ],
+    },
+  },
 };
-

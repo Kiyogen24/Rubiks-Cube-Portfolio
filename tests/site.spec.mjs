@@ -64,9 +64,9 @@ test('la version anglaise traduit les cartes, le CV et les liens', async ({ page
 
   await zoomTo(page, 'right');
   card = await openCard(page, 'right', 2);
-  const broken = await card.locator('img').evaluateAll((imgs) =>
-    imgs.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.getAttribute('src')),
-  );
+  const broken = await card
+    .locator('img')
+    .evaluateAll((imgs) => imgs.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.getAttribute('src')));
   expect(broken).toEqual([]);
   await closeCard(page);
 
@@ -126,8 +126,7 @@ test('les textures de survol sont libérées', async ({ page }) => {
   await open(page);
   await toCube(page);
   await zoomTo(page, 'front');
-  const textures = () =>
-    page.evaluate(async () => (await import('/js/globals.js')).app.renderer.info.memory.textures);
+  const textures = () => page.evaluate(async () => (await import('/js/globals.js')).app.renderer.info.memory.textures);
   const before = await textures();
   const a = await cellPos(page, 'front', 0);
   const b = await cellPos(page, 'front', 1);

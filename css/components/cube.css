@@ -1,11 +1,11 @@
 #cube-section {
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-    /*cursor: grab; */
-  }
-  
-  /*
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  /*cursor: grab; */
+}
+
+/*
   #cube-section.grabbing {
     cursor: grabbing; 
   }
@@ -21,40 +21,41 @@
     cursor: default;
   }
   */
-  
+
 canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 
 .preview-popup {
-    position: fixed;
-    z-index: 1000;
-    width: 200px;
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    pointer-events: none;
-    opacity: 0;
-    transform: scale(0.95) translate(-50%, -50%);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    backdrop-filter: blur(12px); 
-  }
-  
-  .preview-popup.visible {
-    opacity: 1;
-    transform: scale(1) translate(-50%, -50%);
-  }
+  position: fixed;
+  z-index: 1000;
+  width: 200px;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95) translate(-50%, -50%);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  backdrop-filter: blur(12px);
+}
 
-  [data-theme="dark"] {
+.preview-popup.visible {
+  opacity: 1;
+  transform: scale(1) translate(-50%, -50%);
+}
 
-    #cube-section {
-        background: var(--dark-bg);
-    }
+[data-theme='dark'] {
+  #cube-section {
+    background: var(--dark-bg);
+  }
 }
 
 /* Bouton Mélanger / Assembler centré en bas */
@@ -73,15 +74,22 @@ canvas {
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  transition: transform 0.12s ease, opacity 0.2s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition:
+    transform 0.12s ease,
+    opacity 0.2s ease;
 }
 
-.shuffle-btn:active { transform: translateX(-50%) scale(0.98); }
-.shuffle-btn[disabled] { opacity: 0.6; cursor: progress; }
+.shuffle-btn:active {
+  transform: translateX(-50%) scale(0.98);
+}
+.shuffle-btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
 
 /* Adaptation pour le thème clair */
-[data-theme="light"] .shuffle-btn {
+[data-theme='light'] .shuffle-btn {
   background: linear-gradient(90deg, var(--light-accent, #433bff), var(--light-primary, #2f27ce));
 }
 

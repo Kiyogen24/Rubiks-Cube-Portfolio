@@ -9,7 +9,7 @@ export class LanguageManager {
     // Importer les traductions
     const { translations } = await import('./translations.js');
     this.translations = translations;
-    
+
     // Initialiser la langue
     this.setLanguage(this.currentLang);
   }
@@ -29,6 +29,6 @@ export class LanguageManager {
   }
 
   notifySubscribers() {
-    this.callbacks.forEach(callback => callback(this.currentLang));
+    this.callbacks.forEach((callback) => callback(this.currentLang));
   }
 }

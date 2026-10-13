@@ -69,7 +69,7 @@ if (WATCH) {
   fs.watch(ROOT, { recursive: true }, (event, name) => {
     if (!name || /^(node_modules|\.git|test-results|playwright-report)[\\/]/.test(name)) return;
     clearTimeout(timer);
-    timer = setTimeout(() => clients.forEach(client => client.write('data: reload\n\n')), 100);
+    timer = setTimeout(() => clients.forEach((client) => client.write('data: reload\n\n')), 100);
   });
 }
 

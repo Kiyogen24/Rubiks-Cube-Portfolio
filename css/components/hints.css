@@ -12,7 +12,9 @@
   z-index: 100;
   opacity: 0;
   transform: translateY(18px) scale(0.98);
-  transition: opacity 0.45s cubic-bezier(.2,.9,.2,1), transform 0.45s cubic-bezier(.2,.9,.2,1);
+  transition:
+    opacity 0.45s cubic-bezier(0.2, 0.9, 0.2, 1),
+    transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1);
   pointer-events: none;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -31,13 +33,13 @@
 
 /* Indicateur pour les boutons de navigation */
 .nav-hint {
-  left: 80px; 
-  top: 40%; 
+  left: 80px;
+  top: 40%;
   transform: translateY(-50%);
   flex-direction: column;
   gap: 10px;
-  max-width: 200px; 
-  text-align: center; 
+  max-width: 200px;
+  text-align: center;
 }
 
 /* Style générique des icônes d'aide */
@@ -48,9 +50,11 @@
   display: inline-grid;
   place-items: center;
   font-size: 1.6rem;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.03);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
   margin-bottom: 6px;
 }
 
@@ -70,15 +74,26 @@
 
 /* Animation de pulsation centrée */
 @keyframes pulse {
-  0% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.06); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 /* Animation de rebondissement horizontale */
 @keyframes bounce-horizontal {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-8px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-8px);
+  }
 }
 
 /* États visibles des indicateurs */
@@ -89,8 +104,8 @@
 }
 
 /* Adaptation au mode sombre/clair */
-[data-theme="light"] .cube-hint,
-[data-theme="light"] .nav-hint {
+[data-theme='light'] .cube-hint,
+[data-theme='light'] .nav-hint {
   background-color: rgba(255, 255, 255, 0.95);
   color: #222;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -99,7 +114,15 @@
 /* Réduction pour petits écrans */
 @media (max-width: 640px) {
   /* responsive adjustments for existing hints */
-  .cube-hint { max-width: 92%; padding: 8px 10px; }
-  .cube-hint .hint-icon { width: 40px; height: 40px; }
-  .cube-hint .hint-text { font-size: 0.92rem; }
+  .cube-hint {
+    max-width: 92%;
+    padding: 8px 10px;
+  }
+  .cube-hint .hint-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .cube-hint .hint-text {
+    font-size: 0.92rem;
+  }
 }

@@ -1,9 +1,6 @@
 // Worker de résolution : charge cubejs (algorithme de Kociemba) hors du thread principal,
 // car Cube.initSolver() bloque plusieurs secondes.
-importScripts(
-  'https://unpkg.com/cubejs@1.3.2/lib/cube.js',
-  'https://unpkg.com/cubejs@1.3.2/lib/solve.js'
-);
+importScripts('https://unpkg.com/cubejs@1.3.2/lib/cube.js', 'https://unpkg.com/cubejs@1.3.2/lib/solve.js');
 
 let initialized = false;
 

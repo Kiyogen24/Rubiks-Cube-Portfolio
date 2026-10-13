@@ -40,7 +40,10 @@ test.describe('prototype mobile1', () => {
   test('toucher une case ouvre une carte sans erreur', async ({ page }) => {
     const errors = watchErrors(page);
     await page.goto('/mobile1.html');
-    await page.locator('.cubie-mobile[data-has-content]').first().evaluate((el) => el.click());
+    await page
+      .locator('.cubie-mobile[data-has-content]')
+      .first()
+      .evaluate((el) => el.click());
     await expect(page.locator('.info-card')).toHaveCount(1);
     await expect(page.locator('a.social-link[href*="github"]')).toHaveAttribute('href', 'https://github.com/Kiyogen24');
     expect(errors).toEqual([]);

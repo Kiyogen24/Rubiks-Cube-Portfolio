@@ -10,7 +10,6 @@ import { app } from './globals.js';
 import { shuffle, solve, queueMove, registerOnSolved, isBusy, resetMoves } from './cube/animator.js';
 import { LanguageManager } from './language-manager.js';
 
-
 // Variables globales
 let currentSection = 'intro';
 let resetButton;
@@ -34,7 +33,11 @@ function attachMenuBtnListener(btn) {
     // Prevent opening when game mode active
     if (app.isPlayable) {
       // ensure menu is closed
-      try { app.menu.classList.remove('active'); app.menuBtn.classList.remove('open'); app.menuOpen = false; } catch(e){}
+      try {
+        app.menu.classList.remove('active');
+        app.menuBtn.classList.remove('open');
+        app.menuOpen = false;
+      } catch (e) {}
       return;
     }
 
@@ -101,13 +104,13 @@ const themeBtn = document.querySelector('.theme-btn');
 const cubeSection = document.getElementById('cube-section');
 
 // Basculer le thème (clair/sombre) lors du clic sur le bouton thématique
-themeBtn.addEventListener('click', function() {
+themeBtn.addEventListener('click', function () {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const newTheme = isDark ? 'light' : 'dark';
-  
+
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
-  
+
   const themeIcon = document.querySelector('.theme-icon');
   themeIcon.classList.remove('fa-moon', 'fa-sun');
   themeIcon.classList.add(newTheme === 'dark' ? 'fa-moon' : 'fa-sun');
@@ -118,31 +121,31 @@ window.addEventListener('mousemove', onMouseMove);
 
 // Fonction permettant de précharger les images utilisées dans le cube
 function preloadImages() {
-    const imagesToPreload = new Set();
-    
-    // Collecte de toutes les URL d'images disponibles dans CUBE_CONTENT
-    Object.values(CUBE_CONTENT).forEach(face => {
-      Object.values(face).forEach(content => {
-        if (content.preview) {
-          imagesToPreload.add(content.preview);
-        }
-      });
+  const imagesToPreload = new Set();
+
+  // Collecte de toutes les URL d'images disponibles dans CUBE_CONTENT
+  Object.values(CUBE_CONTENT).forEach((face) => {
+    Object.values(face).forEach((content) => {
+      if (content.preview) {
+        imagesToPreload.add(content.preview);
+      }
     });
-  
-    // Création d'une promesse pour chaque image à charger
-    const preloadPromises = Array.from(imagesToPreload).map(url => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(url);
-        img.onerror = () => reject(url);
-        img.src = url;
-      });
+  });
+
+  // Création d'une promesse pour chaque image à charger
+  const preloadPromises = Array.from(imagesToPreload).map((url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = () => reject(url);
+      img.src = url;
     });
-  
-    // Attente du chargement de toutes les images
-    return Promise.all(preloadPromises)
-      .then(() => console.log('Toutes les images sont préchargées'))
-      .catch(failed => console.warn('Certaines images n\'ont pas pu être chargées:', failed));
+  });
+
+  // Attente du chargement de toutes les images
+  return Promise.all(preloadPromises)
+    .then(() => console.log('Toutes les images sont préchargées'))
+    .catch((failed) => console.warn("Certaines images n'ont pas pu être chargées:", failed));
 }
 
 // Fonction d'initialisation principale
@@ -158,14 +161,15 @@ function init() {
   document.documentElement.setAttribute('data-theme', initialTheme);
   localStorage.setItem('theme', initialTheme);
 
-  // Mise à jour de l'icône du thème 
+  // Mise à jour de l'icône du thème
   const themeIcon = document.querySelector('.theme-icon');
   themeIcon.classList.remove('fa-sun', 'fa-moon');
   themeIcon.classList.add(initialTheme === 'dark' ? 'fa-moon' : 'fa-sun');
 
   // Écoute des changements du thème système pour ajuster dynamiquement
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if (!localStorage.getItem('theme')) { // S'applique uniquement en l'absence de préférence utilisateur
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      // S'applique uniquement en l'absence de préférence utilisateur
       const newTheme = e.matches ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', newTheme);
       themeIcon.classList.remove('fa-sun', 'fa-moon');
@@ -175,7 +179,7 @@ function init() {
 
   // Masquer le contenu principal durant le chargement
   document.querySelector('.container').style.visibility = 'hidden';
-  
+
   // Fonction pour masquer l'écran de chargement une fois que tout est prêt
   function hideLoadingScreen() {
     const loadingScreen = document.querySelector('.loading-screen');
@@ -192,8 +196,8 @@ function init() {
 
   // Masquer l'écran de chargement une fois les aperçus et les polices chargés
   // (affiché au moins 1 s pour l'animation, au plus 5 s si le réseau est lent)
-  const minDelay = new Promise(resolve => setTimeout(resolve, 1000));
-  const maxDelay = new Promise(resolve => setTimeout(resolve, 5000));
+  const minDelay = new Promise((resolve) => setTimeout(resolve, 1000));
+  const maxDelay = new Promise((resolve) => setTimeout(resolve, 5000));
   Promise.race([Promise.all([imagesLoaded, document.fonts.ready, minDelay]), maxDelay]).then(hideLoadingScreen);
 
   // Création de la scène Three.js
@@ -205,13 +209,13 @@ function init() {
   app.camera.lookAt(0, 0, 0);
 
   // Configuration du renderer avec antialiasing et transparence
-  app.renderer = new THREE.WebGLRenderer({ 
+  app.renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true,
     precision: 'highp',
-    powerPreference: "high-performance"
+    powerPreference: 'high-performance',
   });
-  
+
   // Ajustement de la résolution en fonction du pixelRatio de l'appareil
   const pixelRatio = window.devicePixelRatio;
   app.renderer.setPixelRatio(pixelRatio);
@@ -250,9 +254,9 @@ function init() {
   // NOTE: le code précédent tentant d'élargir minPolarAngle/maxPolarAngle a été retiré
   // car il ne fonctionnait pas comme attendu. Conserver le comportement par défaut
   // d'OrbitControls pour éviter des effets indésirables.
-  
+
   // Confetti animation (simple, injectée dynamiquement). Appel: triggerConfetti(durationMs)
-  app.triggerConfetti = function(duration = 3000) {
+  app.triggerConfetti = function (duration = 3000) {
     const container = document.createElement('div');
     container.className = 'confetti-container';
     container.style.position = 'fixed';
@@ -275,7 +279,7 @@ function init() {
       el.style.width = `${size}px`;
       el.style.height = `${size * 0.6}px`;
       el.style.left = Math.random() * 100 + '%';
-      el.style.top = (-10 - Math.random() * 20) + '%';
+      el.style.top = -10 - Math.random() * 20 + '%';
       el.style.background = colors[Math.floor(Math.random() * colors.length)];
       el.style.opacity = (0.6 + Math.random() * 0.4).toString();
       el.style.transform = `rotate(${Math.random() * 360}deg)`;
@@ -286,14 +290,21 @@ function init() {
       const fall = 1500 + Math.random() * 2000;
       const horizontal = (Math.random() - 0.5) * 200; // px
 
-      el.animate([
-        { transform: `translate3d(0,0,0) rotate(${Math.random() * 360}deg)`, top: el.style.top, opacity: 1 },
-        { transform: `translate3d(${horizontal}px, 100vh, 0) rotate(${Math.random() * 720}deg)`, top: '100vh', opacity: 0.8 }
-      ], {
-        duration: fall + Math.random() * 800,
-        iterations: 1,
-        easing: 'cubic-bezier(.2,.7,.2,1)'
-      });
+      el.animate(
+        [
+          { transform: `translate3d(0,0,0) rotate(${Math.random() * 360}deg)`, top: el.style.top, opacity: 1 },
+          {
+            transform: `translate3d(${horizontal}px, 100vh, 0) rotate(${Math.random() * 720}deg)`,
+            top: '100vh',
+            opacity: 0.8,
+          },
+        ],
+        {
+          duration: fall + Math.random() * 800,
+          iterations: 1,
+          easing: 'cubic-bezier(.2,.7,.2,1)',
+        },
+      );
 
       container.appendChild(el);
     }
@@ -302,7 +313,7 @@ function init() {
     setTimeout(() => {
       if (container && container.parentNode) container.parentNode.removeChild(container);
     }, duration + 1000);
-  }
+  };
 
   // Ajout de l'éclairage à la scène
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -315,12 +326,12 @@ function init() {
   app.scene.add(fillLight);
 
   // Logs de débogage pour vérifier la scène et la position de la caméra
-  console.log("Scene créée:", app.scene);
-  console.log("Camera position:", app.camera.position);
-  
+  console.log('Scene créée:', app.scene);
+  console.log('Camera position:', app.camera.position);
+
   // Création et positionnement du Rubik's Cube
   createRubiksCube();
-  console.log("Nombre de cubies:", app.cubies.length);
+  console.log('Nombre de cubies:', app.cubies.length);
   console.log("Position du Rubik's Cube:", app.rubiksCube.position);
 
   // Gestion de l'événement de redimensionnement de l'écran
@@ -331,9 +342,9 @@ function init() {
     const cubeSection = document.getElementById('cube-section');
     const rect = cubeSection.getBoundingClientRect();
     // Vérifier si la section cube occupe toute la hauteur de la fenêtre
-  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
-  const _eps = 2; // tolérance en pixels
-  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
+    // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+    const _eps = 2; // tolérance en pixels
+    const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
 
     if (!isCubeVisible) return;
 
@@ -374,9 +385,9 @@ function init() {
   window.addEventListener('mousemove', (e) => {
     const cubeSection = document.getElementById('cube-section');
     const rect = cubeSection.getBoundingClientRect();
-  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
-  const _eps = 2; // tolérance en pixels
-  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
+    // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+    const _eps = 2; // tolérance en pixels
+    const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
 
     if (!isCubeVisible) return;
 
@@ -389,7 +400,7 @@ function init() {
     if (app.isPlayable && dragStartIntersect) {
       const dx = e.clientX - dragStartPoint.x;
       const dy = e.clientY - dragStartPoint.y;
-      if (Math.sqrt(dx*dx + dy*dy) > 8) {
+      if (Math.sqrt(dx * dx + dy * dy) > 8) {
         isGameDragging = true;
       }
     }
@@ -398,9 +409,9 @@ function init() {
   window.addEventListener('mouseup', (e) => {
     const cubeSection = document.getElementById('cube-section');
     const rect = cubeSection.getBoundingClientRect();
-  // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
-  const _eps = 2; // tolérance en pixels
-  const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
+    // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
+    const _eps = 2; // tolérance en pixels
+    const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
 
     if (!isCubeVisible) return;
 
@@ -415,7 +426,9 @@ function init() {
 
       const pos = dragStartIntersect.object.userData.gridPos;
 
-      function roundNum(v) { return Math.round(v); }
+      function roundNum(v) {
+        return Math.round(v);
+      }
 
       // Build camera-based directions
       const camDir = new THREE.Vector3();
@@ -430,7 +443,9 @@ function init() {
       const rotAxis = new THREE.Vector3().crossVectors(normal, dragWorld).normalize();
 
       // Pick principal axis (x -> col, y -> row, z -> depth)
-      const ax = Math.abs(rotAxis.x), ay = Math.abs(rotAxis.y), az = Math.abs(rotAxis.z);
+      const ax = Math.abs(rotAxis.x),
+        ay = Math.abs(rotAxis.y),
+        az = Math.abs(rotAxis.z);
       let layer, number, orientation;
       if (ax >= ay && ax >= az) {
         layer = 'col';
@@ -466,7 +481,9 @@ function init() {
       dragStartPoint = null;
 
       // toujours réactiver la rotation entière du cube après la fin du drag
-      try { if (app.controls) app.controls.enableRotate = true; } catch(e){}
+      try {
+        if (app.controls) app.controls.enableRotate = true;
+      } catch (e) {}
       dragStartedOnCubie = false;
 
       return;
@@ -487,13 +504,13 @@ function init() {
   // Initialisation du gestionnaire de langue
   const langManager = new LanguageManager();
   app.langManager = langManager;
-  
+
   // Fonction utilitaire pour appliquer les traductions au DOM
   function applyTranslations(lang) {
     try {
       const t = langManager.translations[lang] || langManager.translations[langManager.currentLang] || {};
       const ui = t.ui || {};
-  
+
       // Mise à jour du bouton shuffle/solve
       if (app.isPlayable) {
         app.shuffleSolveButton.textContent = ui.solveBtn || app.shuffleSolveButton.textContent || 'Résoudre';
@@ -502,10 +519,11 @@ function init() {
         app.shuffleSolveButton.textContent = ui.shuffleBtn || 'Mélanger';
         app.shuffleSolveButton.setAttribute('aria-label', ui.shuffleBtn || 'Mélanger');
       }
-  
+
       // Reset button aria-label
-      if (app.resetButton) app.resetButton.setAttribute('aria-label', ui.resetBtn || app.resetButton.getAttribute('aria-label'));
-  
+      if (app.resetButton)
+        app.resetButton.setAttribute('aria-label', ui.resetBtn || app.resetButton.getAttribute('aria-label'));
+
       // Hints
       const clickHintText = document.querySelector('#click-hint .hint-text');
       if (clickHintText) clickHintText.textContent = ui.clickHint || clickHintText.textContent;
@@ -513,20 +531,22 @@ function init() {
       if (navHintText) navHintText.textContent = ui.navHint || navHintText.textContent;
       const scrollTextEl = document.querySelector('.scroll-text');
       if (scrollTextEl) scrollTextEl.textContent = ui.scrollText || scrollTextEl.textContent;
-  
+
       // Menu items (order in DOM: top, front, right, back, left, bottom)
-      const menuKeysOrder = ['top','front','right','back','left','bottom'];
-      const descKeys = ['about','skills','projects','experience','education','resume'];
+      const menuKeysOrder = ['top', 'front', 'right', 'back', 'left', 'bottom'];
+      const descKeys = ['about', 'skills', 'projects', 'experience', 'education', 'resume'];
       document.querySelectorAll('.menu-item').forEach((item, idx) => {
         const key = menuKeysOrder[idx];
         // ensure menu items have a stable data-face key (used to map regardless of language)
-        try { item.dataset.face = key; } catch(e){}
+        try {
+          item.dataset.face = key;
+        } catch (e) {}
         const h3 = item.querySelector('h3');
         const p = item.querySelector('p');
         if (h3 && t.categories && t.categories[key]) h3.textContent = t.categories[key];
         if (p && ui.menuDesc && ui.menuDesc[descKeys[idx]]) p.textContent = ui.menuDesc[descKeys[idx]];
       });
-  
+
       // Page level texts from SITE_I18N (intro, loading, device note)
       try {
         const site = SITE_I18N[lang] || SITE_I18N[langManager.currentLang] || SITE_I18N['fr'];
@@ -542,11 +562,13 @@ function init() {
           const introText = document.querySelector('.intro-text');
           if (introText && site.intro && Array.isArray(site.intro.paragraphs)) {
             // join with '<br>' between paragraphs to avoid trailing <br> at the end
-            introText.innerHTML = site.intro.paragraphs.map(p => `<p>${p}</p>`).join('<br>');
+            introText.innerHTML = site.intro.paragraphs.map((p) => `<p>${p}</p>`).join('<br>');
           }
         }
-      } catch(e) { console.warn('[applyTranslations] SITE_I18N update failed', e); }
-  
+      } catch (e) {
+        console.warn('[applyTranslations] SITE_I18N update failed', e);
+      }
+
       // Footer titles
       const footTitles = document.querySelectorAll('.footer-title');
       if (footTitles.length >= 3) {
@@ -565,7 +587,7 @@ function init() {
       }
 
       // Quick links
-      document.querySelectorAll('.quick-link').forEach(a => {
+      document.querySelectorAll('.quick-link').forEach((a) => {
         const face = a.getAttribute('data-face');
         if (!face) {
           a.textContent = ui.homeLabel || (lang === 'fr' ? 'Accueil' : 'Home');
@@ -573,42 +595,55 @@ function init() {
           if (t.categories && t.categories[face]) a.textContent = t.categories[face];
         }
       });
-  
+
       // Update language button label if present
       if (app.langBtn) {
         const codeEl = app.langBtn.querySelector('.lang-code');
         if (codeEl) codeEl.textContent = (lang || langManager.currentLang).toUpperCase();
       }
-  
+
       // reposition hints if necessary
-      try { app._hints && typeof app._hints.positionHints === 'function' && app._hints.positionHints(); } catch(e){}
-    } catch(e) { console.warn('[applyTranslations] failed', e); }
+      try {
+        app._hints && typeof app._hints.positionHints === 'function' && app._hints.positionHints();
+      } catch (e) {}
+    } catch (e) {
+      console.warn('[applyTranslations] failed', e);
+    }
   }
-  
+
   // Initialiser et lier le LanguageManager avant les hints pour que setupHints puisse utiliser les traductions
-  langManager.init().then(() => {
-    applyTranslations(langManager.currentLang);
-    langManager.onLanguageChange((lang) => applyTranslations(lang));
-    // initialiser les hints après avoir appliqué les traductions
-    try { setupHints(); } catch(e) { console.warn('[setupHints] failed to start', e); }
-  }).catch(e => console.warn('LanguageManager init failed', e));
-  
+  langManager
+    .init()
+    .then(() => {
+      applyTranslations(langManager.currentLang);
+      langManager.onLanguageChange((lang) => applyTranslations(lang));
+      // initialiser les hints après avoir appliqué les traductions
+      try {
+        setupHints();
+      } catch (e) {
+        console.warn('[setupHints] failed to start', e);
+      }
+    })
+    .catch((e) => console.warn('LanguageManager init failed', e));
+
   // Création du bouton langue (à côté du thème)
   try {
     const themeBtn = document.querySelector('.theme-btn');
     const langBtn = document.createElement('button');
     langBtn.className = 'lang-btn';
     langBtn.setAttribute('aria-label', 'Langue');
-    langBtn.innerHTML = `<span class="lang-code">${(langManager.currentLang||'fr').toUpperCase()}</span>`;
+    langBtn.innerHTML = `<span class="lang-code">${(langManager.currentLang || 'fr').toUpperCase()}</span>`;
     langBtn.addEventListener('click', (ev) => {
-      const next = (langManager.currentLang === 'fr') ? 'en' : 'fr';
+      const next = langManager.currentLang === 'fr' ? 'en' : 'fr';
       langManager.setLanguage(next);
     });
     // insert after theme button when available
     if (themeBtn && themeBtn.parentElement) themeBtn.parentElement.insertBefore(langBtn, themeBtn.nextSibling);
     else document.body.appendChild(langBtn);
     app.langBtn = langBtn;
-  } catch(e) { console.warn('[langBtn] creation failed', e); }
+  } catch (e) {
+    console.warn('[langBtn] creation failed', e);
+  }
 }
 
 // Ajustement de la scène lors du redimensionnement de la fenêtre
@@ -625,16 +660,19 @@ function handleClick(event) {
   // Tolérance sur la détection "plein écran" pour éviter les faux négatifs
   const _eps = 2; // tolérance en pixels
   const isCubeVisible = rect.top <= 1 && rect.bottom >= window.innerHeight - _eps;
-  
-  if (!isCubeVisible || app.isModalOpen) return; 
+
+  if (!isCubeVisible || app.isModalOpen) return;
 
   // Si on est en mode jeu, ignorer totalement les clics sur les cubies / UI portfolio
   if (app.isPlayable) {
     // Empêcher aussi la propagation vers d'autres handlers
-    try { event.stopPropagation(); event.preventDefault(); } catch(e){}
+    try {
+      event.stopPropagation();
+      event.preventDefault();
+    } catch (e) {}
     return;
   }
-  
+
   // Calcul des coordonnées normalisées de la souris
   app.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   app.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -646,23 +684,23 @@ function handleClick(event) {
     const intersection = intersects[0];
     const normal = intersection.face.normal.clone();
     normal.transformDirection(intersection.object.matrixWorld);
-    
+
     let faceType;
-    const epsilon = 0.1;  // Tolérance pour la détection de la face
+    const epsilon = 0.1; // Tolérance pour la détection de la face
     if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
     else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
     else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
 
     const centralCubie = getCentralCubie(faceType);
-    
+
     if (centralCubie) {
       if (app.isZoomed) {
         // Si on est déjà zoomé, gérer le clic sur un cubie pour afficher une info ou ouvrir un lien
         const clickedCubie = intersection.object;
         const pos = clickedCubie.userData.gridPos;
-        
+
         let position;
-        switch(faceType) {
+        switch (faceType) {
           case 'right':
             // Inversion de la rangée et de la colonne pour la face droite
             const rowR = 2 - Math.floor(pos.y + 1);
@@ -671,7 +709,7 @@ function handleClick(event) {
             console.log('Position calculée (back):', {
               x: pos.y,
               z: pos.x,
-              position: position
+              position: position,
             });
             break;
           case 'left':
@@ -682,7 +720,7 @@ function handleClick(event) {
             console.log('Position calculée (right/left):', {
               x: pos.y,
               z: pos.x,
-              position: position
+              position: position,
             });
             break;
           case 'back':
@@ -693,7 +731,7 @@ function handleClick(event) {
             console.log('Position calculée (back):', {
               x: pos.y,
               z: pos.x,
-              position: position
+              position: position,
             });
             break;
           case 'front':
@@ -704,7 +742,7 @@ function handleClick(event) {
             console.log('Position calculée (front/back):', {
               x: pos.y,
               z: pos.x,
-              position: position
+              position: position,
             });
             break;
           case 'top':
@@ -716,22 +754,26 @@ function handleClick(event) {
             console.log('Position calculée (top/bottom):', {
               x: pos.z,
               z: pos.x,
-              position: position
+              position: position,
             });
             break;
         }
-        
+
         // Affiche l'info ou ouvre le lien associé si disponible
         if (CUBE_CONTENT[faceType] && CUBE_CONTENT[faceType][position] && CUBE_CONTENT[faceType][position].hasContent) {
           showInfoCard(event, faceType, position);
-        } else if (CUBE_CONTENT[faceType] && CUBE_CONTENT[faceType][position] && CUBE_CONTENT[faceType][position].link) {
-          window.open(CUBE_CONTENT[faceType][position].link, "_blank");
+        } else if (
+          CUBE_CONTENT[faceType] &&
+          CUBE_CONTENT[faceType][position] &&
+          CUBE_CONTENT[faceType][position].link
+        ) {
+          window.open(CUBE_CONTENT[faceType][position].link, '_blank');
         }
       } else {
         // Sinon, zoomer sur la face cliquée
         const container = document.querySelector('.container');
         container.style.overflow = 'hidden';
-        
+
         zoomToFace(centralCubie, normal, faceType);
         app.isZoomed = true;
 
@@ -745,18 +787,22 @@ function handleClick(event) {
           }
 
           // Activation de l'élément de menu correspondant à la face
-          document.querySelectorAll('.menu-item').forEach(item => {
+          document.querySelectorAll('.menu-item').forEach((item) => {
             item.classList.remove('active');
             try {
               if (item.dataset && item.dataset.face === faceType) {
                 item.classList.add('active');
                 item.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }
-            } catch(e) {}
+            } catch (e) {}
           });
         } else {
           // En mode jeu, s'assurer que le menu reste fermé
-          try { app.menu.classList.remove('active'); app.menuBtn.classList.remove('open'); app.menuOpen = false; } catch(e){}
+          try {
+            app.menu.classList.remove('active');
+            app.menuBtn.classList.remove('open');
+            app.menuOpen = false;
+          } catch (e) {}
         }
       }
     }
@@ -766,18 +812,18 @@ function handleClick(event) {
 // Boucle d'animation continue pour le rendu de la scène
 function animate() {
   requestAnimationFrame(animate);
-  
+
   if (app.controls) {
     app.controls.update();
   }
-  
+
   if (app.scene && app.camera && app.renderer) {
     app.renderer.render(app.scene, app.camera);
   } else {
-    console.error("Éléments manquants pour le rendu:", {
+    console.error('Éléments manquants pour le rendu:', {
       scene: !!app.scene,
       camera: !!app.camera,
-      renderer: !!app.renderer
+      renderer: !!app.renderer,
     });
   }
 }
@@ -786,19 +832,25 @@ function animate() {
 init();
 animate();
 
-
 // Comportement du bouton Mélanger / Assembler
 function enterGameModeUI() {
   // Fermer le menu et masquer les interactions de portfolio
   if (app.menu) {
     app.menu.classList.remove('active');
     // disable pointer events on the menu while in game mode
-    try { app.menu.style.pointerEvents = 'none'; app.menu.setAttribute('aria-hidden', 'true'); } catch(e){}
+    try {
+      app.menu.style.pointerEvents = 'none';
+      app.menu.setAttribute('aria-hidden', 'true');
+    } catch (e) {}
   }
   if (app.menuBtn) {
     app.menuBtn.classList.remove('open');
     // hide and disable pointer on menu button to avoid opening
-    try { app.menuBtn.style.display = 'none'; app.menuBtn.style.pointerEvents = 'none'; app.menuBtn.setAttribute('aria-hidden', 'true'); } catch(e){}
+    try {
+      app.menuBtn.style.display = 'none';
+      app.menuBtn.style.pointerEvents = 'none';
+      app.menuBtn.setAttribute('aria-hidden', 'true');
+    } catch (e) {}
   }
   app.menuOpen = false;
 
@@ -812,16 +864,21 @@ function enterGameModeUI() {
   }
 
   // masquer le bouton menu pendant le mode jeu
-  try { if (app.menuBtn) app.menuBtn.style.display = 'none'; } catch(e){}
+  try {
+    if (app.menuBtn) app.menuBtn.style.display = 'none';
+  } catch (e) {}
   // masquer le bouton langue
-  try { if (app.langBtn) app.langBtn.style.display = 'none'; } catch(e){}
+  try {
+    if (app.langBtn) app.langBtn.style.display = 'none';
+  } catch (e) {}
 }
 
 function exitGameModeUI() {
   // Remettre l'UI du portfolio en place
   app.isPlayable = false;
   app.shuffleSolveButton.disabled = false;
-  app.shuffleSolveButton.textContent = (app.langManager && app.langManager.translate) ? app.langManager.translate('shuffleBtn','ui') : 'Mélanger';
+  app.shuffleSolveButton.textContent =
+    app.langManager && app.langManager.translate ? app.langManager.translate('shuffleBtn', 'ui') : 'Mélanger';
 
   // réactiver contrôles caméra
   if (app.controls) {
@@ -832,50 +889,73 @@ function exitGameModeUI() {
   }
 
   // restaurer menu btn visibility via navigation.updateUI (no direct style)
-  try { if (app.menuBtn) { app.menuBtn.style.display = ''; app.menuBtn.style.pointerEvents = ''; app.menuBtn.removeAttribute('aria-hidden'); } } catch(e){}
-  try { if (app.menu) { app.menu.style.pointerEvents = ''; app.menu.removeAttribute('aria-hidden'); } } catch(e){}
+  try {
+    if (app.menuBtn) {
+      app.menuBtn.style.display = '';
+      app.menuBtn.style.pointerEvents = '';
+      app.menuBtn.removeAttribute('aria-hidden');
+    }
+  } catch (e) {}
+  try {
+    if (app.menu) {
+      app.menu.style.pointerEvents = '';
+      app.menu.removeAttribute('aria-hidden');
+    }
+  } catch (e) {}
 
   // restaurer le bouton langue
-  try { if (app.langBtn) app.langBtn.style.display = ''; } catch(e){}
+  try {
+    if (app.langBtn) app.langBtn.style.display = '';
+  } catch (e) {}
 
   // Recalibrer l'orientation globale du Rubik afin que les faces correspondent au portfolio
   try {
     const recalibrated = typeof recalibrateRubikOrientation === 'function' && recalibrateRubikOrientation();
     if (recalibrated) {
       // Mettre à jour les textures de chaque face pour refléter la nouvelle orientation
-      const faces = ['right','left','top','bottom','front','back'];
-      faces.forEach(faceType => {
-        app.cubies.forEach(cubie => {
-          try { updateFaceTextures(cubie, faceType, false); } catch(e) {}
+      const faces = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+      faces.forEach((faceType) => {
+        app.cubies.forEach((cubie) => {
+          try {
+            updateFaceTextures(cubie, faceType, false);
+          } catch (e) {}
         });
       });
     }
-  } catch(e) { console.warn('[exitGameModeUI] recalibration failed', e); }
+  } catch (e) {
+    console.warn('[exitGameModeUI] recalibration failed', e);
+  }
 }
 
 // Empêcher toute ouverture programmatique du menu pendant le mode jeu
 // (observer + blocage des clics). Ceci renforce le guard dans le click handler.
-(function setupMenuGameBlocker(){
+(function setupMenuGameBlocker() {
   try {
     if (!app.menu) return;
 
     // Block clicks inside the menu while game mode is active
-    app.menu.addEventListener('click', (ev) => {
-      if (app.isPlayable) {
-        ev.stopPropagation();
-        ev.preventDefault();
-      }
-    }, true);
+    app.menu.addEventListener(
+      'click',
+      (ev) => {
+        if (app.isPlayable) {
+          ev.stopPropagation();
+          ev.preventDefault();
+        }
+      },
+      true,
+    );
 
     // Also block pointer events on the whole menu (defensive, in case styles are changed)
     // MutationObserver to revert any programmatic attempts to add 'active' class
     const observer = new MutationObserver((mutations) => {
       if (!app.isPlayable) return;
-      mutations.forEach(m => {
+      mutations.forEach((m) => {
         if (m.type === 'attributes' && m.attributeName === 'class') {
           if (app.menu.classList.contains('active')) {
             app.menu.classList.remove('active');
-            try { if (app.menuBtn) app.menuBtn.classList.remove('open'); } catch(e){}
+            try {
+              if (app.menuBtn) app.menuBtn.classList.remove('open');
+            } catch (e) {}
             app.menuOpen = false;
             console.log('[debug] Menu opening reverted because game-mode is active');
           }
@@ -887,22 +967,31 @@ function exitGameModeUI() {
 
     // expose observer so it can be disconnected later if needed
     app._menuGameObserver = observer;
-  } catch(e) { console.warn('[menu blocker] failed to setup', e); }
+  } catch (e) {
+    console.warn('[menu blocker] failed to setup', e);
+  }
 })();
 
 app.shuffleSolveButton.addEventListener('click', async (e) => {
   if (isBusy()) return; // attendre la fin des animations
 
   const label = app.shuffleSolveButton.textContent;
-  const shuffleLabel = (app.langManager && app.langManager.translate) ? app.langManager.translate('shuffleBtn','ui') : 'Mélanger';
-  const solvingLabel = (app.langManager && app.langManager.translate) ? app.langManager.translate('solveBtn','ui') : 'Résoudre';
+  const shuffleLabel =
+    app.langManager && app.langManager.translate ? app.langManager.translate('shuffleBtn', 'ui') : 'Mélanger';
+  const solvingLabel =
+    app.langManager && app.langManager.translate ? app.langManager.translate('solveBtn', 'ui') : 'Résoudre';
   if (label === shuffleLabel) {
     // clear previous move history to avoid huge scrambles
-    try { resetMoves(); } catch(e) { console.warn('resetMoves failed before shuffle', e); }
+    try {
+      resetMoves();
+    } catch (e) {
+      console.warn('resetMoves failed before shuffle', e);
+    }
 
     // Démarrer le mélange
     app.shuffleSolveButton.disabled = true;
-    app.shuffleSolveButton.textContent = (app.langManager && app.langManager.translate) ? app.langManager.translate('shuffling','ui') : 'Mélange...';
+    app.shuffleSolveButton.textContent =
+      app.langManager && app.langManager.translate ? app.langManager.translate('shuffling', 'ui') : 'Mélange...';
     enterGameModeUI();
     shuffle(25);
 
@@ -916,17 +1005,26 @@ app.shuffleSolveButton.addEventListener('click', async (e) => {
         try {
           if (app._hints && typeof app._hints.showRotateHintOnce === 'function') {
             // positionner d'abord correctement
-            try { app._hints.positionHints(); } catch(e){}
-            try { app._hints.showRotateHintOnce(); } catch(e){ console.warn('[hints] showRotateHintOnce failed', e); }
+            try {
+              app._hints.positionHints();
+            } catch (e) {}
+            try {
+              app._hints.showRotateHintOnce();
+            } catch (e) {
+              console.warn('[hints] showRotateHintOnce failed', e);
+            }
           }
-        } catch(e) { console.warn('[hints] failed to trigger rotate hint', e); }
+        } catch (e) {
+          console.warn('[hints] failed to trigger rotate hint', e);
+        }
       }
     }, 150);
   } else if (label === solvingLabel) {
     // Lancer la résolution automatique
     if (isBusy()) return;
     app.shuffleSolveButton.disabled = true;
-    app.shuffleSolveButton.textContent = (app.langManager && app.langManager.translate) ? app.langManager.translate('solving','ui') : 'Résolution...';
+    app.shuffleSolveButton.textContent =
+      app.langManager && app.langManager.translate ? app.langManager.translate('solving', 'ui') : 'Résolution...';
     app.isAutoSolving = true; // Indiquer que la résolution automatique est en cours
     solve();
     // onSolved callback gèrera le retour d'UI
@@ -955,17 +1053,37 @@ if (typeof app.isAutoSolving === 'undefined') app.isAutoSolving = false;
 // Pré-calcul des 24 matrices de rotation propres (déterminant = +1)
 function generate24RotationMatrices() {
   const perms = [
-    [0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]
+    [0, 1, 2],
+    [0, 2, 1],
+    [1, 0, 2],
+    [1, 2, 0],
+    [2, 0, 1],
+    [2, 1, 0],
   ];
-  const signs = [[1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],[-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]];
+  const signs = [
+    [1, 1, 1],
+    [1, 1, -1],
+    [1, -1, 1],
+    [1, -1, -1],
+    [-1, 1, 1],
+    [-1, 1, -1],
+    [-1, -1, 1],
+    [-1, -1, -1],
+  ];
   const mats = [];
   for (const p of perms) {
     for (const s of signs) {
       // construire la matrice 3x3 en colonnes
       const m = [
-        s[0] * (p[0] === 0 ? 1 : 0), s[1] * (p[0] === 1 ? 1 : 0), s[2] * (p[0] === 2 ? 1 : 0),
-        s[0] * (p[1] === 0 ? 1 : 0), s[1] * (p[1] === 1 ? 1 : 0), s[2] * (p[1] === 2 ? 1 : 0),
-        s[0] * (p[2] === 0 ? 1 : 0), s[1] * (p[2] === 1 ? 1 : 0), s[2] * (p[2] === 2 ? 1 : 0)
+        s[0] * (p[0] === 0 ? 1 : 0),
+        s[1] * (p[0] === 1 ? 1 : 0),
+        s[2] * (p[0] === 2 ? 1 : 0),
+        s[0] * (p[1] === 0 ? 1 : 0),
+        s[1] * (p[1] === 1 ? 1 : 0),
+        s[2] * (p[1] === 2 ? 1 : 0),
+        s[0] * (p[2] === 0 ? 1 : 0),
+        s[1] * (p[2] === 1 ? 1 : 0),
+        s[2] * (p[2] === 2 ? 1 : 0),
       ];
       // calcul du déterminant via colonnes
       const col0 = new THREE.Vector3(m[0], m[3], m[6]);
@@ -988,14 +1106,14 @@ function isCubeSolvedRobust(epsilon = 0.25) {
     app.rubiksCube.getWorldPosition(cubeCenter);
 
     // positions courantes centrées (world-space) des cubies
-    const currents = app.cubies.map(c => {
+    const currents = app.cubies.map((c) => {
       const w = new THREE.Vector3();
       c.getWorldPosition(w);
       return w.sub(cubeCenter);
     });
 
     // positions home attendues (locales, relatives au centre)
-    const homes = app.cubies.map(c => {
+    const homes = app.cubies.map((c) => {
       if (!c.userData || !c.userData.homePos) throw new Error('homePos manquant');
       return c.userData.homePos.clone();
     });
@@ -1007,11 +1125,14 @@ function isCubeSolvedRobust(epsilon = 0.25) {
       for (let i = 0; i < homes.length; i++) {
         const h = homes[i];
         const r = new THREE.Vector3(
-          m[0]*h.x + m[1]*h.y + m[2]*h.z,
-          m[3]*h.x + m[4]*h.y + m[5]*h.z,
-          m[6]*h.x + m[7]*h.y + m[8]*h.z
+          m[0] * h.x + m[1] * h.y + m[2] * h.z,
+          m[3] * h.x + m[4] * h.y + m[5] * h.z,
+          m[6] * h.x + m[7] * h.y + m[8] * h.z,
         );
-        if (r.distanceTo(currents[i]) > epsilon) { ok = false; break; }
+        if (r.distanceTo(currents[i]) > epsilon) {
+          ok = false;
+          break;
+        }
       }
       if (ok) {
         // positions correctes : vérifier aussi l'orientation des coins et des arêtes
@@ -1021,10 +1142,12 @@ function isCubeSolvedRobust(epsilon = 0.25) {
         const q = new THREE.Quaternion();
         const oriented = app.cubies.every((c, i) => {
           const h = homes[i];
-          if ([h.x, h.y, h.z].filter(v => v !== 0).length < 2) return true; // centres et cubie central
+          if ([h.x, h.y, h.z].filter((v) => v !== 0).length < 2) return true; // centres et cubie central
           c.getWorldQuaternion(q);
-          return new THREE.Vector3(1, 0, 0).applyQuaternion(q).distanceTo(mx) <= epsilon &&
-                 new THREE.Vector3(0, 1, 0).applyQuaternion(q).distanceTo(my) <= epsilon;
+          return (
+            new THREE.Vector3(1, 0, 0).applyQuaternion(q).distanceTo(mx) <= epsilon &&
+            new THREE.Vector3(0, 1, 0).applyQuaternion(q).distanceTo(my) <= epsilon
+          );
         });
         if (oriented) return true;
       }
@@ -1065,21 +1188,37 @@ setInterval(() => {
     console.log('[debug] cube detected as SOLVED (manual). isAutoSolving=', !!app.isAutoSolving);
     if (!app.isAutoSolving) {
       // Reset the cube to its initial physical positions to avoid orientation/overlay issues
-      try { typeof resetRubikToHome === 'function' && resetRubikToHome(); } catch (e) { console.warn('[manual-solved] resetRubikToHome failed', e); }
+      try {
+        typeof resetRubikToHome === 'function' && resetRubikToHome();
+      } catch (e) {
+        console.warn('[manual-solved] resetRubikToHome failed', e);
+      }
 
       // Confetti and UI reset
-      try { app.triggerConfetti && app.triggerConfetti(3500); } catch (e) { console.warn(e); }
-      try { app.shuffleSolveButton.textContent = 'Mélanger'; app.shuffleSolveButton.disabled = false;
-            console.log('[debug] UI button reset to Mélanger'); } catch (e) { console.warn(e); }
+      try {
+        app.triggerConfetti && app.triggerConfetti(3500);
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        app.shuffleSolveButton.textContent = 'Mélanger';
+        app.shuffleSolveButton.disabled = false;
+        console.log('[debug] UI button reset to Mélanger');
+      } catch (e) {
+        console.warn(e);
+      }
 
       // restore portfolio UI and reset move history so future solve uses only new scramble
       try {
         resetMoves();
-      } catch (e) { console.warn('resetMoves failed on manual solved', e); }
+      } catch (e) {
+        console.warn('resetMoves failed on manual solved', e);
+      }
       try {
         exitGameModeUI();
-      } catch (e) { console.warn('exitGameModeUI failed on manual solved', e); }
-
+      } catch (e) {
+        console.warn('exitGameModeUI failed on manual solved', e);
+      }
     }
   } else if (!isSolved) {
     __lastSolvedState = false;
@@ -1090,21 +1229,26 @@ setInterval(() => {
 function resetRubikToHome() {
   try {
     if (!app.cubies || app.cubies.length === 0 || !app.rubiksCube) return false;
-    const spacing = (typeof app.cubeSize !== 'undefined' ? app.cubeSize : 1) + (typeof app.gap !== 'undefined' ? app.gap : 0.05);
+    const spacing =
+      (typeof app.cubeSize !== 'undefined' ? app.cubeSize : 1) + (typeof app.gap !== 'undefined' ? app.gap : 0.05);
 
     // Reset groupe rotation/position
-    app.rubiksCube.position.set(0,0,0);
-    app.rubiksCube.rotation.set(0,0,0);
+    app.rubiksCube.position.set(0, 0, 0);
+    app.rubiksCube.rotation.set(0, 0, 0);
     app.rubiksCube.quaternion.identity();
     app.rubiksCube.updateMatrixWorld(true);
 
     // Reset each cubie to its home grid position and reset orientation
-    app.cubies.forEach(cubie => {
+    app.cubies.forEach((cubie) => {
       try {
-        const h = cubie.userData.homePos ? cubie.userData.homePos.clone() : (cubie.userData.gridPos ? cubie.userData.gridPos.clone() : new THREE.Vector3());
+        const h = cubie.userData.homePos
+          ? cubie.userData.homePos.clone()
+          : cubie.userData.gridPos
+            ? cubie.userData.gridPos.clone()
+            : new THREE.Vector3();
         cubie.position.set(h.x * spacing, h.y * spacing, h.z * spacing);
         cubie.userData.gridPos = h.clone();
-        cubie.rotation.set(0,0,0);
+        cubie.rotation.set(0, 0, 0);
         cubie.quaternion.identity();
         cubie.updateMatrixWorld(true);
       } catch (e) {
@@ -1113,10 +1257,12 @@ function resetRubikToHome() {
     });
 
     // Refresh textures for all faces
-    const faces = ['right','left','top','bottom','front','back'];
-    faces.forEach(faceType => {
-      app.cubies.forEach(cubie => {
-        try { updateFaceTextures(cubie, faceType, false); } catch(e) {}
+    const faces = ['right', 'left', 'top', 'bottom', 'front', 'back'];
+    faces.forEach((faceType) => {
+      app.cubies.forEach((cubie) => {
+        try {
+          updateFaceTextures(cubie, faceType, false);
+        } catch (e) {}
       });
     });
 
@@ -1129,7 +1275,7 @@ function resetRubikToHome() {
 }
 
 // Ajout d'événements sur le menu pour réagir aux clics sur les catégories
-document.querySelectorAll('.menu-item').forEach(item => {
+document.querySelectorAll('.menu-item').forEach((item) => {
   item.addEventListener('click', () => {
     // Bloquer toute interaction du menu lorsque le mode jeu est activé
     if (app.isPlayable) {
@@ -1141,9 +1287,9 @@ document.querySelectorAll('.menu-item').forEach(item => {
     let faceType = item.dataset && item.dataset.face ? item.dataset.face : null;
     if (!faceType) {
       const category = item.querySelector('h3') ? item.querySelector('h3').textContent : '';
-      faceType = Object.keys(CATEGORIES).find(key => CATEGORIES[key] === category);
+      faceType = Object.keys(CATEGORIES).find((key) => CATEGORIES[key] === category);
     }
-    
+
     if (faceType) {
       const centralCubie = getCentralCubie(faceType);
       if (centralCubie) {
@@ -1155,7 +1301,7 @@ document.querySelectorAll('.menu-item').forEach(item => {
         }
         // Définir un vecteur normal pour la face concernée
         let normal = new THREE.Vector3();
-        switch(faceType) {
+        switch (faceType) {
           case 'front':
           case 'back':
           case 'right':
@@ -1164,15 +1310,17 @@ document.querySelectorAll('.menu-item').forEach(item => {
           case 'bottom':
             normal.set(0, 0, 0); // Valeur par défaut, ne devrait pas arriver
         }
-        
+
         zoomToFace(centralCubie, normal, faceType);
         app.isZoomed = true;
 
         // Activation visuelle du menu sélectionné
-        document.querySelectorAll('.menu-item').forEach(menuItem => {
+        document.querySelectorAll('.menu-item').forEach((menuItem) => {
           menuItem.classList.remove('active');
         });
-        try { item.classList.add('active'); } catch(e){}
+        try {
+          item.classList.add('active');
+        } catch (e) {}
       }
     }
   });
@@ -1195,7 +1343,10 @@ function setupHints() {
     rotate.id = 'rotate-hint';
     rotate.className = 'cube-hint rotate-hint';
     // Use translated text if available
-    const txt = (app.langManager && typeof app.langManager.translate === 'function') ? app.langManager.translate('rotateHint','ui') : 'Faites glisser une face pour la pivoter';
+    const txt =
+      app.langManager && typeof app.langManager.translate === 'function'
+        ? app.langManager.translate('rotateHint', 'ui')
+        : 'Faites glisser une face pour la pivoter';
     rotate.innerHTML = `
       <div class="hint-icon" aria-hidden="true">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1218,8 +1369,8 @@ function setupHints() {
 
       // positionner clickHint CENTRÉ sur le cube (au milieu du bounding box)
       clickHint.style.position = 'fixed';
-      clickHint.style.left = (rect.left + rect.width / 2) + 'px';
-      clickHint.style.top = (rect.top + rect.height / 2) + 'px';
+      clickHint.style.left = rect.left + rect.width / 2 + 'px';
+      clickHint.style.top = rect.top + rect.height / 2 + 'px';
       clickHint.style.transform = 'translate(-50%, -50%)';
 
       // positionner navHint à gauche, aligné au centre des boutons de navigation si possible
@@ -1227,7 +1378,7 @@ function setupHints() {
       if (navButtons && navButtons.length > 0) {
         const nbRect = navButtons[0].getBoundingClientRect();
         navHint.style.position = 'fixed';
-        navHint.style.left = (nbRect.left + nbRect.width + 18) + 'px';
+        navHint.style.left = nbRect.left + nbRect.width + 18 + 'px';
         // centre vertical sur la pile de boutons
         const topMost = navButtons[0].getBoundingClientRect().top;
         const bottomMost = navButtons[navButtons.length - 1].getBoundingClientRect().bottom;
@@ -1237,7 +1388,7 @@ function setupHints() {
       } else {
         navHint.style.position = 'fixed';
         navHint.style.left = '80px';
-        navHint.style.top = (rect.top + rect.height * 0.4) + 'px';
+        navHint.style.top = rect.top + rect.height * 0.4 + 'px';
         navHint.style.transform = 'translateY(-50%)';
       }
 
@@ -1245,18 +1396,21 @@ function setupHints() {
       // positionner rotateHint au-dessus du bouton "Mélanger/Résoudre" si présent,
       // sinon fallback centré en bas du cube (avec léger offset pour éviter superposition)
       rotateHint.style.position = 'fixed';
-      const solveBtn = (typeof app !== 'undefined' && app.shuffleSolveButton) ? app.shuffleSolveButton : document.querySelector('.shuffle-solve-btn, #shuffle-solve-btn, .solve-btn, .shuffle-btn');
+      const solveBtn =
+        typeof app !== 'undefined' && app.shuffleSolveButton
+          ? app.shuffleSolveButton
+          : document.querySelector('.shuffle-solve-btn, #shuffle-solve-btn, .solve-btn, .shuffle-btn');
       if (solveBtn) {
         const sRect = solveBtn.getBoundingClientRect();
         const rRect = rotateHint.getBoundingClientRect();
         // centrer horizontalement sur le bouton et placer juste au-dessus avec un gap
-        rotateHint.style.left = (sRect.left + sRect.width / 2) + 'px';
-        rotateHint.style.top = (sRect.top - (rRect.height || 84) - 12) + 'px';
+        rotateHint.style.left = sRect.left + sRect.width / 2 + 'px';
+        rotateHint.style.top = sRect.top - (rRect.height || 84) - 12 + 'px';
         rotateHint.style.transform = 'translateX(-50%)';
         rotateHint.style.zIndex = '250';
       } else {
-        rotateHint.style.left = (rect.left + rect.width / 2) + 'px';
-        rotateHint.style.top = (rect.bottom - Math.min(180, rect.height * 0.28) - 18) + 'px';
+        rotateHint.style.left = rect.left + rect.width / 2 + 'px';
+        rotateHint.style.top = rect.bottom - Math.min(180, rect.height * 0.28) - 18 + 'px';
         rotateHint.style.transform = 'translateX(-50%)';
       }
     } catch (e) {
@@ -1266,9 +1420,16 @@ function setupHints() {
 
   // Masque toutes les aides visibles
   function hideAllHints() {
-    try { clickHint.classList.remove('visible'); } catch(e){}
-    try { navHint.classList.remove('visible'); } catch(e){}
-    try { rotateHint.classList.remove('visible'); rotateHint.classList.remove('pulse-rotate'); } catch(e){}
+    try {
+      clickHint.classList.remove('visible');
+    } catch (e) {}
+    try {
+      navHint.classList.remove('visible');
+    } catch (e) {}
+    try {
+      rotateHint.classList.remove('visible');
+      rotateHint.classList.remove('pulse-rotate');
+    } catch (e) {}
   }
 
   // Affiche le rotate-hint une seule fois après le shuffle (si l'utilisateur ne l'a pas déjà vu)
@@ -1277,13 +1438,15 @@ function setupHints() {
       if (localStorage.getItem('hasSeenRotateHint')) return;
       // on ne montre le hint que si l'utilisateur est en mode jeu et que le cube est visible
       const rect = cubeSection.getBoundingClientRect();
-  // Tolérance sur la détection "plein écran"
-  const _eps_local = 2;
-  if (!(rect.top <= 1 && rect.bottom >= window.innerHeight - _eps_local)) return;
+      // Tolérance sur la détection "plein écran"
+      const _eps_local = 2;
+      if (!(rect.top <= 1 && rect.bottom >= window.innerHeight - _eps_local)) return;
 
       positionHints();
       // refresh text in case language changed since creation
-      try { rotateHint.querySelector('.hint-text').textContent = app.langManager.translate('rotateHint','ui'); } catch(e){}
+      try {
+        rotateHint.querySelector('.hint-text').textContent = app.langManager.translate('rotateHint', 'ui');
+      } catch (e) {}
       rotateHint.classList.add('visible');
       // petite animation d'attention
       rotateHint.classList.add('pulse-rotate');
@@ -1300,17 +1463,19 @@ function setupHints() {
       window.addEventListener('mousedown', onInteract, { once: true });
       window.addEventListener('touchstart', onInteract, { once: true });
       setTimeout(() => dismiss(), 8000);
-    } catch (e) { console.warn('[showRotateHintOnce] failed', e); }
+    } catch (e) {
+      console.warn('[showRotateHintOnce] failed', e);
+    }
   }
 
   // Display initial hints only on first visit (existing behaviour improved)
   const hasSeenHints = localStorage.getItem('hasSeenCubeHints');
   if (!hasSeenHints) {
-    const onContainerScroll = function() {
+    const onContainerScroll = function () {
       const rect = cubeSection.getBoundingClientRect();
-  // Tolérance sur la détection "plein écran"
-  const _eps_local2 = 2;
-  if (rect.top <= 1 && rect.bottom >= window.innerHeight - _eps_local2) {
+      // Tolérance sur la détection "plein écran"
+      const _eps_local2 = 2;
+      if (rect.top <= 1 && rect.bottom >= window.innerHeight - _eps_local2) {
         // position then show
         positionHints();
         setTimeout(() => {
@@ -1333,7 +1498,9 @@ function setupHints() {
       localStorage.setItem('hasSeenCubeHints', 'true');
     };
     cubeSection.addEventListener('click', dismissHints, { once: true });
-    document.querySelectorAll('.nav-button').forEach(btn => btn.addEventListener('click', dismissHints, { once: true }));
+    document
+      .querySelectorAll('.nav-button')
+      .forEach((btn) => btn.addEventListener('click', dismissHints, { once: true }));
   } else {
     // ensure hints are hidden if already seen
     hideAllHints();
@@ -1348,12 +1515,21 @@ function setupHints() {
     if (repositionInterval) return;
     repositionInterval = setInterval(() => positionHints(), 250);
   }
-  function stopRepositionLoop() { if (repositionInterval) { clearInterval(repositionInterval); repositionInterval = null; } }
+  function stopRepositionLoop() {
+    if (repositionInterval) {
+      clearInterval(repositionInterval);
+      repositionInterval = null;
+    }
+  }
 
   // start reposition loop only while any hint is visible
   const observer = new MutationObserver(() => {
-    const anyVisible = clickHint.classList.contains('visible') || navHint.classList.contains('visible') || rotateHint.classList.contains('visible');
-    if (anyVisible) startRepositionLoop(); else stopRepositionLoop();
+    const anyVisible =
+      clickHint.classList.contains('visible') ||
+      navHint.classList.contains('visible') ||
+      rotateHint.classList.contains('visible');
+    if (anyVisible) startRepositionLoop();
+    else stopRepositionLoop();
   });
   observer.observe(clickHint, { attributes: true, attributeFilter: ['class'] });
   observer.observe(navHint, { attributes: true, attributeFilter: ['class'] });
@@ -1363,7 +1539,7 @@ function setupHints() {
   app._hints = {
     showRotateHintOnce,
     positionHints,
-    hideAllHints
+    hideAllHints,
   };
 }
 
