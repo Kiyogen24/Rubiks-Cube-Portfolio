@@ -37,9 +37,11 @@ export async function open(page) {
 }
 
 // Fait défiler jusqu'à la section du cube et attend qu'elle occupe l'écran
+// (et que l'interface de la section soit à jour : le bouton du menu n'apparaît qu'après le défilement)
 export async function toCube(page) {
   await page.evaluate(() => document.getElementById('cube-section').scrollIntoView());
   await page.waitForFunction(() => Math.abs(document.getElementById('cube-section').getBoundingClientRect().top) < 2);
+  await page.locator('.menu-btn').waitFor({ state: 'visible' });
   await page.waitForTimeout(300);
 }
 
