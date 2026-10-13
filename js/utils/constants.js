@@ -42,7 +42,7 @@ export const CUBE_CONTENT = {
       description: "Maîtrise du langage et des bibliothèques liées à la data science et à l'IA",
       details: ['NumPy', 'Pandas', 'Scikit-Learn', 'PyTorch', 'TensorFlow', 'Keras'],
       icon: 'fa-brands fa-python',
-      preview: 'assets/previews/skills/python.jpg',
+      preview: 'assets/previews/skills/python.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -56,7 +56,7 @@ export const CUBE_CONTENT = {
     1: {
       title: 'JavaScript',
       icon: 'fa-brands fa-js',
-      preview: 'assets/previews/skills/javascript.png',
+      preview: 'assets/previews/skills/javascript.webp',
       hasContent: false,
     },
     2: {
@@ -68,25 +68,25 @@ export const CUBE_CONTENT = {
     3: {
       title: 'Node.js',
       icon: 'fa-brands fa-node-js',
-      preview: 'assets/previews/skills/node.png',
+      preview: 'assets/previews/skills/node.webp',
       hasContent: false,
     },
     4: {
       title: 'Java',
       icon: 'fa-brands fa-java',
-      preview: 'assets/previews/skills/java.png',
+      preview: 'assets/previews/skills/java.webp',
       hasContent: false,
     },
     5: {
       title: 'C',
       icon: 'fa-regular fa-file-code',
-      preview: 'assets/previews/skills/c.png',
+      preview: 'assets/previews/skills/c.webp',
       hasContent: false,
     },
     6: {
       title: 'HTML/CSS',
       icon: 'fa-brands fa-html5',
-      preview: 'assets/previews/skills/html.png',
+      preview: 'assets/previews/skills/html.webp',
       hasContent: false,
     },
     7: {
@@ -95,7 +95,7 @@ export const CUBE_CONTENT = {
       infos: 'Liste',
       details: ['SQL', 'MongoDB'],
       icon: 'fa-solid fa-database',
-      preview: 'assets/previews/skills/data_b.png',
+      preview: 'assets/previews/skills/data_b.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -111,7 +111,7 @@ export const CUBE_CONTENT = {
       icon: 'fa-regular fa-file-word',
       description: 'Maîtrise du Pack Office',
       details: ['Word', 'Excel', 'PowerPoint'],
-      preview: 'assets/previews/skills/office.png',
+      preview: 'assets/previews/skills/office.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -136,7 +136,7 @@ export const CUBE_CONTENT = {
         'Recherche sur les GNN et les algorithmes évolutionnaires (CMA-ES).',
       ],
       icon: 'fa-solid fa-gears',
-      preview: 'assets/previews/exp/dassault.png',
+      preview: 'assets/previews/exp/dassault.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -163,7 +163,7 @@ export const CUBE_CONTENT = {
         "Production et validation de données d'entraînement ; stress-tests des modèles pour détecter biais et failles de raisonnement.",
       ],
       icon: 'fa-solid fa-laptop-code',
-      preview: 'assets/previews/exp/labelbox.png',
+      preview: 'assets/previews/exp/labelbox.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -188,7 +188,7 @@ export const CUBE_CONTENT = {
         'Rédaction de rapports détaillés en anglais.',
       ],
       icon: 'fa-solid fa-robot',
-      preview: 'assets/previews/exp/outlier.png',
+      preview: 'assets/previews/exp/outlier.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -213,7 +213,7 @@ export const CUBE_CONTENT = {
         'Garantie de la qualité et du respect des délais.',
       ],
       icon: 'fa-solid fa-briefcase',
-      preview: 'assets/previews/exp/junior.jpg',
+      preview: 'assets/previews/exp/junior.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -237,7 +237,7 @@ export const CUBE_CONTENT = {
         'Développement de compétences pédagogiques et de communication.',
       ],
       icon: 'fa-solid fa-chalkboard-user',
-      preview: 'assets/previews/exp/tutorat.jpg',
+      preview: 'assets/previews/exp/tutorat.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -262,7 +262,7 @@ export const CUBE_CONTENT = {
         'Bases en VBA et gestion de projets.',
       ],
       icon: 'fa-solid fa-industry',
-      preview: 'assets/previews/exp/siemens.jpg',
+      preview: 'assets/previews/exp/siemens.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -294,7 +294,7 @@ export const CUBE_CONTENT = {
         '<strong>Permis B</strong>',
       ],
       icon: 'fa-regular fa-user',
-      preview: 'assets/previews/about/person.jpg',
+      preview: 'assets/previews/about/person.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -322,7 +322,7 @@ export const CUBE_CONTENT = {
         "<strong>Sport :</strong> J'essaye d'aller à la salle 3 fois par semaine et de courir et nager au moins une fois par semaine. La santé, c'est important !",
       ],
       icon: 'fa-regular fa-heart',
-      preview: 'assets/previews/about/hobbies.png',
+      preview: 'assets/previews/about/hobbies.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -341,7 +341,7 @@ export const CUBE_CONTENT = {
       title: 'Soft Skills',
       details: ['Curiosité', 'Persévérance', 'Résolution des problèmes', 'Organisé', 'Gestion de Projet'],
       icon: 'fa-regular fa-lightbulb',
-      preview: 'assets/previews/about/soft.jpg',
+      preview: 'assets/previews/about/soft.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -354,7 +354,7 @@ export const CUBE_CONTENT = {
       title: 'GitHub',
       description: 'Mon profil GitHub',
       icon: 'fa-brands fa-github',
-      preview: 'assets/previews/about/github.png',
+      preview: 'assets/previews/about/github.webp',
       hasContent: false,
       link: 'https://github.com/Kiyogen24',
     },
@@ -362,7 +362,7 @@ export const CUBE_CONTENT = {
       title: 'LinkedIn',
       description: 'Mon profil LinkedIn',
       icon: 'fa-brands fa-linkedin',
-      preview: 'assets/previews/about/linkedin.png',
+      preview: 'assets/previews/about/linkedin.webp',
       hasContent: false,
       link: 'https://www.linkedin.com/in/romain-goldenchtein/',
     },
@@ -373,7 +373,7 @@ export const CUBE_CONTENT = {
       details: [],
       icon: 'fa-regular fa-file-pdf',
       file: 'assets/previews/cv.pdf',
-      preview: 'assets/previews/cv_pr.png',
+      preview: 'assets/previews/cv_pr.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -389,7 +389,7 @@ export const CUBE_CONTENT = {
       title: 'Résolution du Rubik’s Cube par Apprentissage par Renforcement',
       icon: 'fa-solid fa-cube',
       period: '02/2025 - 07/2025',
-      preview: 'assets/previews/projects/pe3_1.png',
+      preview: 'assets/previews/projects/pe3_1.webp',
       hasContent: true,
       htmlContent: `
           <div class="card-header">
@@ -411,14 +411,14 @@ export const CUBE_CONTENT = {
 
               <h3>Méthodologie</h3>
               <p>Notre approche combine celles de <em>DeepCube</em> et <em>AlphaZero</em> avec l'<strong>Autodidactic Iteration</strong> pour générer des données d’entraînement par auto-jeu, et le <strong>Monte Carlo Tree Search (MCTS)</strong> pour guider l’exploration des états.</p>
-              <figure class="project-figure"><img src="assets/previews/projects/pe3_3.png" alt="Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube" class="project-image"><figcaption>Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/pe3_3.webp" alt="Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube" class="project-image"><figcaption>Schéma de l'ADI et du MCTS appliqués au Rubik’s Cube d'après DeepCube</figcaption></figure>
 
               <p>Le réseau neuronal (implémenté sous TensorFlow) sert d’estimateur de valeur pour les états, ce qui oriente les décisions dans MCTS, qui lui-même vient affiner les valeurs des états. L’apprentissage a mis en évidence les difficultés liées à la convergence et à l’exploration dans un espace d’états aussi vaste.</p>
-              <figure class="project-figure"><img src="assets/previews/projects/pe3_2.png" alt="Visualisation du fonctionnement précis de l'ADI d'après DeepCube" class="project-image"><figcaption>Visualisation du fonctionnement précis de l'ADI d'après DeepCube</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/pe3_2.webp" alt="Visualisation du fonctionnement précis de l'ADI d'après DeepCube" class="project-image"><figcaption>Visualisation du fonctionnement précis de l'ADI d'après DeepCube</figcaption></figure>
 
               <h3>Implémentation robotique</h3>
               <p>En complément de la partie logicielle, nous avons conçu un prototype robotique basé sur l'architecture de <em>RCR3D</em>. Le robot se compose d'une structure imprimée en 3D, d'une Raspberry Pi et de servomoteurs, capable d’exécuter les solutions proposées par l’agent.</p>
-              <figure class="project-figure"><img src="assets/previews/projects/pe3_0.png" alt="Robot physique pour résoudre un Rubik’s Cube" class="project-image"><figcaption>Robot physique pour résoudre un Rubik’s Cube basé sur RCR3D</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/pe3_0.webp" alt="Robot physique pour résoudre un Rubik’s Cube" class="project-image"><figcaption>Robot physique pour résoudre un Rubik’s Cube basé sur RCR3D</figcaption></figure>
 
               <h3>Technologies utilisées</h3>
               <ul>
@@ -456,14 +456,14 @@ export const CUBE_CONTENT = {
 
                   <h3>Methodology</h3>
                   <p>Our approach combined the method of <em>DeepCube</em> and <em>AlphaZero</em> with the <strong>Autodidactic Iteration</strong> to generate training data through self-play, and the <strong>Monte Carlo Tree Search (MCTS)</strong> to guide state exploration.</p>
-                  <figure class="project-figure"><img src="assets/previews/projects/pe3_3.png" alt="ADI and MCTS scheme applied to the Rubik’s Cube from DeepCube" class="project-image"><figcaption>ADI + MCTS pipeline applied to the Rubik’s Cube (based on DeepCube)</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe3_3.webp" alt="ADI and MCTS scheme applied to the Rubik’s Cube from DeepCube" class="project-image"><figcaption>ADI + MCTS pipeline applied to the Rubik’s Cube (based on DeepCube)</figcaption></figure>
 
                   <p>The neural network (implemented in TensorFlow) and ADI served as a value estimator for states, guiding MCTS decisions, which in turn refine the states' values. Training highlighted the difficulties of convergence and exploration in such a vast state space.</p>
-                  <figure class="project-figure"><img src="assets/previews/projects/pe3_2.png" alt="Detailed ADI process visualization from DeepCube" class="project-image"><figcaption>Detailed ADI visualization (based on DeepCube)</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe3_2.webp" alt="Detailed ADI process visualization from DeepCube" class="project-image"><figcaption>Detailed ADI visualization (based on DeepCube)</figcaption></figure>
 
                   <h3>Robotic Implementation</h3>
                   <p>In addition to the software, we made a robotic prototype based on <em>RCR3D</em>. The architecture, 3D printed, uses a Raspberry Pi and servomotors, to execute the solutions generated by the agent.</p>
-                  <figure class="project-figure"><img src="assets/previews/projects/pe3_0.png" alt="Physical robot solving a Rubik’s Cube" class="project-image"><figcaption>Physical Rubik’s Cube solving robot inspired by RCR3D</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe3_0.webp" alt="Physical robot solving a Rubik’s Cube" class="project-image"><figcaption>Physical Rubik’s Cube solving robot inspired by RCR3D</figcaption></figure>
 
                   <h3>Technologies</h3>
                   <ul>
@@ -487,7 +487,7 @@ export const CUBE_CONTENT = {
       title: 'Classification d’images et détection de chutes',
       icon: 'fa-solid fa-brain',
       period: '05/2025 - 06/2025',
-      preview: 'assets/previews/projects/ia02_0.png',
+      preview: 'assets/previews/projects/ia02_0.webp',
       hasContent: true,
       htmlContent: `
           <div class="card-header">
@@ -515,7 +515,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Architecture inspirée de MCDNN :</strong> réseau multi-colonnes, plus coûteux mais performant (~83% accuracy).</li>
                 <li><strong>Modèle hybride MobileNetV2 :</strong> transfert learning avec fine-tuning partiel, rapidité d’entraînement et bons résultats.</li>
               </ul>
-              <figure class="project-figure"><img src="assets/previews/projects/ia02_1.png" alt="Exemple de classification sur CIFAR-10" class="project-image"><figcaption>Exemple de classification sur CIFAR-10</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/ia02_1.webp" alt="Exemple de classification sur CIFAR-10" class="project-image"><figcaption>Exemple de classification sur CIFAR-10</figcaption></figure>
 
               <h3>Partie 2 – Détection de chutes</h3>
               <p>À partir du dataset ENetFall (757 signaux multidimensionnels, répartis selon leurs environnements sources), nous avions deux scénarios : prédire les chutes dans un environnement connu ou les prédire dans un environnement inconnu. Pour aborder les deux approches, nous avons conçu plusieurs modèles :</p>
@@ -526,7 +526,7 @@ export const CUBE_CONTENT = {
               </ul>
               <p>Nous avons aussi intégré des techniques d’augmentation de données (bruit, décalage temporel, masquage) 
               pour améliorer la robustesse en conditions réelles.</p>
-              <figure class="project-figure"><img src="assets/previews/projects/ia02_2.png" alt="Exemple de signaux pour la détection de chutes" class="project-image"><figcaption>Représentation de signaux pour la détection de chutes</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/ia02_2.webp" alt="Exemple de signaux pour la détection de chutes" class="project-image"><figcaption>Représentation de signaux pour la détection de chutes</figcaption></figure>
 
               <h3>Technologies utilisées</h3>
               <ul>
@@ -570,7 +570,7 @@ export const CUBE_CONTENT = {
                     <li><strong>MCDNN-inspired architecture:</strong> multi-column network, more costly but achieved ~83% accuracy.</li>
                     <li><strong>Hybrid MobileNetV2 model:</strong> transfer learning with partial fine-tuning, fast training and strong performance.</li>
                   </ul>
-                  <figure class="project-figure"><img src="assets/previews/projects/ia02_1.png" alt="CIFAR-10 classification example" class="project-image"><figcaption>Example of CIFAR-10 classification</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/ia02_1.webp" alt="CIFAR-10 classification example" class="project-image"><figcaption>Example of CIFAR-10 classification</figcaption></figure>
 
                   <h3>Part 2 – Fall Detection</h3>
                   <p>Using the ENetFall dataset (757 multidimensional signals, from several environments), we had two scenarios: predict the falls in a known environment or predict them in an unknown one. To approach these two tasks, we tested several models:</p>
@@ -580,7 +580,7 @@ export const CUBE_CONTENT = {
                     <li><strong>CNN-LSTM:</strong> spatio-temporal modeling, but weaker results (~80% accuracy, for the first scenario but ~60% accuracy for the second).</li>
                   </ul>
                   <p>We also implemented data augmentation techniques (Gaussian noise, temporal shifts, dropout masking) to increase robustness in real conditions.</p>
-                  <figure class="project-figure"><img src="assets/previews/projects/ia02_2.png" alt="Signals used for fall detection" class="project-image"><figcaption>Signal representation for fall detection</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/ia02_2.webp" alt="Signals used for fall detection" class="project-image"><figcaption>Signal representation for fall detection</figcaption></figure>
 
                   <h3>Technologies</h3>
                   <ul>
@@ -604,7 +604,7 @@ export const CUBE_CONTENT = {
       title: 'Portfolio',
       icon: 'fa-solid fa-cube',
       period: '02/2025 - 09/2025',
-      preview: 'assets/previews/projects/portfolio_0.png',
+      preview: 'assets/previews/projects/portfolio_0.webp',
       hasContent: true,
       htmlContent: `
         <div class="card-header">
@@ -631,9 +631,9 @@ export const CUBE_CONTENT = {
               <li><strong>Design responsive <em>(en développement)</em> :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
             </ul>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.png" alt="Aperçu du Rubik's Cube en 3D" class="project-image"><figcaption>Aperçu de la page du Rubik's Cube en 3D</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="Aperçu du Rubik's Cube en 3D" class="project-image"><figcaption>Aperçu de la page du Rubik's Cube en 3D</figcaption></figure>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.png" alt="Cube mélangé et mode jeu" class="project-image"><figcaption>Aperçu du cube mélangé en mode jeu</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Cube mélangé et mode jeu" class="project-image"><figcaption>Aperçu du cube mélangé en mode jeu</figcaption></figure>
 
             <h3>Technologie utilisée :</h3>
             <ul>
@@ -641,7 +641,7 @@ export const CUBE_CONTENT = {
               <li><strong>Bibliothèque 3D :</strong> Three.js</li>
             </ul>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.png" alt="Aperçu d'une des faces" class="project-image"><figcaption>Aperçu d'une des faces avec effet de survolement</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Aperçu d'une des faces" class="project-image"><figcaption>Aperçu d'une des faces avec effet de survolement</figcaption></figure>
             <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
             <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le projet sur GitHub</a>
           </article>
@@ -673,9 +673,9 @@ export const CUBE_CONTENT = {
                   <li><strong>EN/FR toggle button:</strong> Dynamic language switch for a bilingual experience.</li>
                   <li><strong>Responsive design <em>(in progress)</em>:</strong> Adapts the display for an optimal experience across devices and screen sizes.</li>
                 </ul>
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.png" alt="Shuffled cube in play mode" class="project-image"><figcaption>Preview of the shuffled cube in play mode</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Shuffled cube in play mode" class="project-image"><figcaption>Preview of the shuffled cube in play mode</figcaption></figure>
 
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.png" alt="Rubik's Cube 3D preview" class="project-image"><figcaption>Preview of the 3D Rubik's Cube page</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="Rubik's Cube 3D preview" class="project-image"><figcaption>Preview of the 3D Rubik's Cube page</figcaption></figure>
 
                 <h3>Technology used:</h3>
                 <ul>
@@ -683,7 +683,7 @@ export const CUBE_CONTENT = {
                   <li><strong>3D library:</strong> Three.js</li>
                 </ul>
 
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.png" alt="Preview of a face" class="project-image"><figcaption>Preview of one face with hover effect</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Preview of a face" class="project-image"><figcaption>Preview of one face with hover effect</figcaption></figure>
                 <p>The site is built with a 3D-first approach, offering an immersive user experience and intuitive navigation through my various projects and skills.</p>
                 <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View the project on GitHub</a>
               </article>
@@ -697,7 +697,7 @@ export const CUBE_CONTENT = {
       title: 'Prédiction de défauts de paiement',
       icon: 'fa-solid fa-chart-simple',
       period: '11/2024 - 01/2025',
-      preview: 'assets/previews/projects/ia01_1.png',
+      preview: 'assets/previews/projects/ia01_1.webp',
       hasContent: true,
       htmlContent: `
         <div class="card-header">
@@ -716,7 +716,7 @@ export const CUBE_CONTENT = {
           <article class="project-content">
             <p>À partir de données clients, l’objectif est d’identifier les facteurs influençant le risque de crédit et d’entraîner différents modèles pour améliorer la précision des prédictions.</p>
   
-            <figure class="project-figure"><img src="assets/previews/projects/ia01_1.png" alt="Données du dataset" class="project-image"><figcaption>Données du dataset</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_1.webp" alt="Données du dataset" class="project-image"><figcaption>Données du dataset</figcaption></figure>
             <h3>Fonctionnalités principales :</h3>
             <ul>
               <li><strong>Exploration et prétraitement des données :</strong> Nettoyage des données, gestion des valeurs manquantes et analyse des distributions.</li>
@@ -731,7 +731,7 @@ export const CUBE_CONTENT = {
               <li><strong>Bibliothèques :</strong> Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn</li>
             </ul>
   
-            <figure class="project-figure"><img src="assets/previews/projects/ia01_2.png" alt="Comparaison des modèles" class="project-image"><figcaption>Comparaison des modèles</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_2.webp" alt="Comparaison des modèles" class="project-image"><figcaption>Comparaison des modèles</figcaption></figure>
   
             <p>Ce projet met en œuvre une approche complète du machine learning appliqué à la finance, de l’analyse exploratoire des données à l’optimisation des modèles.</p>
             
@@ -758,7 +758,7 @@ export const CUBE_CONTENT = {
         <article class="project-content">
           <p>Using client data, the goal is to identify factors influencing credit risk and train different models to improve prediction accuracy.</p>
   
-            <figure class="project-figure"><img src="assets/previews/projects/ia01_1.png" alt="Dataset preview" class="project-image"><figcaption>Dataset preview</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_1.webp" alt="Dataset preview" class="project-image"><figcaption>Dataset preview</figcaption></figure>
             <h3>Main features:</h3>
             <ul>
               <li><strong>Exploration and preprocessing:</strong> Data cleaning, handling missing values and distribution analysis.</li>
@@ -772,7 +772,7 @@ export const CUBE_CONTENT = {
               <li><strong>Libraries:</strong> Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn</li>
             </ul>
   
-            <figure class="project-figure"><img src="assets/previews/projects/ia01_2.png" alt="Model comparison" class="project-image"><figcaption>Model comparison</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/ia01_2.webp" alt="Model comparison" class="project-image"><figcaption>Model comparison</figcaption></figure>
   
             <p>This project implements a complete ML workflow applied to finance, from exploratory data analysis to model optimization.</p>
             
@@ -787,7 +787,7 @@ export const CUBE_CONTENT = {
       title: 'Pocket Imperium',
       icon: 'fa-brands fa-space-awesome',
       period: '09/2024 - 01/2025',
-      preview: 'assets/previews/projects/lo02_1.png',
+      preview: 'assets/previews/projects/lo02_1.webp',
       hasContent: true,
       htmlContent: `
       <div class="card-header">
@@ -808,9 +808,9 @@ export const CUBE_CONTENT = {
           <ul>
           <li><strong>Technologies utilisées :</strong> Java 21, JavaFX 21, Maven 3.13+</li>
           </ul>
-          <figure class="project-figure"><img src="assets/previews/projects/lo02_1.png" alt="Aperçu du projet PocketImperium" class="project-image"><figcaption>Aperçu du menu du jeu</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_1.webp" alt="Aperçu du projet PocketImperium" class="project-image"><figcaption>Aperçu du menu du jeu</figcaption></figure>
           <p>Le jeu intègre une interface graphique complète, un journal des actions pour suivre chaque événement, ainsi qu’un système de sauvegarde et chargement des parties. Les effets sonores et musiques ajoutent une immersion supplémentaire.</p>
-          <figure class="project-figure"><img src="assets/previews/projects/lo02_2.png" alt="Aperçu du projet PocketImperium" class="project-image"><figcaption>Plateau de PocketImperium, historiques des coups et choix des actions</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_2.webp" alt="Aperçu du projet PocketImperium" class="project-image"><figcaption>Plateau de PocketImperium, historiques des coups et choix des actions</figcaption></figure>
           <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">Voir le projet sur GitHub</a>
         </article>
         </div>
@@ -836,9 +836,9 @@ export const CUBE_CONTENT = {
           <ul>
           <li><strong>Technologies used:</strong> Java 21, JavaFX 21, Maven 3.13+</li>
           </ul>
-          <figure class="project-figure"><img src="assets/previews/projects/lo02_1.png" alt="PocketImperium preview" class="project-image"><figcaption>Preview of the game menu</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_1.webp" alt="PocketImperium preview" class="project-image"><figcaption>Preview of the game menu</figcaption></figure>
           <p>The game includes a full GUI, an action log to track events, and a save/load system. Sound effects and music add immersion.</p>
-          <figure class="project-figure"><img src="assets/previews/projects/lo02_2.png" alt="PocketImperium preview" class="project-image"><figcaption>Board of PocketImperium, move history and action choices</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/lo02_2.webp" alt="PocketImperium preview" class="project-image"><figcaption>Board of PocketImperium, move history and action choices</figcaption></figure>
           <a href="https://github.com/Kiyogen24/PocketImperium" target="_blank" class="project-link">View the project on GitHub</a>
         </article>
         </div>
@@ -850,7 +850,7 @@ export const CUBE_CONTENT = {
       title: 'Messagerie Web sécurisée : Neutrino',
       icon: 'fa-solid fa-comments',
       period: '02/2024 - 07/2024',
-      preview: 'assets/previews/projects/pe2_0.png',
+      preview: 'assets/previews/projects/pe2_0.webp',
       hasContent: true,
       htmlContent: `
       <div class="card-header">
@@ -875,7 +875,7 @@ export const CUBE_CONTENT = {
           <li><strong>Discussions de groupe :</strong> participation à des discussions de groupe avec des noms et photos de profil affichés en couleurs différentes.</li>
           <li><strong>Personnalisation du profil :</strong> possibilité de changer sa photo de profil.</li>
           </ul>
-          <figure class="project-figure"><img src="assets/previews/projects/pe2_1.png" alt="Aperçu de la page de connexion" class="project-image"><figcaption>Aperçu de la page de connexion</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_1.webp" alt="Aperçu de la page de connexion" class="project-image"><figcaption>Aperçu de la page de connexion</figcaption></figure>
           <h3>Technologie utilisée :</h3>
           <ul>
           <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
@@ -883,7 +883,7 @@ export const CUBE_CONTENT = {
           <li><strong>Base de données :</strong> MongoDB</li>
           <li><strong>Sécurité :</strong> chiffrement RSA-OAEP, gestion sécurisée des sessions</li>
           </ul>
-          <figure class="project-figure"><img src="assets/previews/projects/pe2_2.png" alt="Aperçu d'une discussion de groupe" class="project-image"><figcaption>Aperçu d'une discussion de groupe</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_2.webp" alt="Aperçu d'une discussion de groupe" class="project-image"><figcaption>Aperçu d'une discussion de groupe</figcaption></figure>
           <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">Voir le projet sur GitHub</a>
         </article>
         </div>
@@ -913,7 +913,7 @@ export const CUBE_CONTENT = {
           <li><strong>Group chats:</strong> participate in groups with colored names and avatars.</li>
           <li><strong>Profile customization:</strong> ability to change your avatar.</li>
           </ul>
-          <figure class="project-figure"><img src="assets/previews/projects/pe2_1.png" alt="Login page preview" class="project-image"><figcaption>Login page preview</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_1.webp" alt="Login page preview" class="project-image"><figcaption>Login page preview</figcaption></figure>
           <h3>Technology used:</h3>
           <ul>
           <li><strong>Frontend:</strong> HTML, CSS, JavaScript</li>
@@ -921,7 +921,7 @@ export const CUBE_CONTENT = {
           <li><strong>Database:</strong> MongoDB</li>
           <li><strong>Security:</strong> RSA-OAEP encryption, secure session management</li>
           </ul>
-          <figure class="project-figure"><img src="assets/previews/projects/pe2_2.png" alt="Group chat preview" class="project-image"><figcaption>Group chat preview</figcaption></figure>
+          <figure class="project-figure"><img src="assets/previews/projects/pe2_2.webp" alt="Group chat preview" class="project-image"><figcaption>Group chat preview</figcaption></figure>
           <a href="https://github.com/Kiyogen24/Neutrino" target="_blank" class="project-link">View the project on GitHub</a>
         </article>
         </div>
@@ -933,7 +933,7 @@ export const CUBE_CONTENT = {
       title: 'Tracé d’un Réseau Ferroviaire',
       icon: 'fa-solid fa-train',
       period: '11/2023 - 01/2024',
-      preview: 'assets/previews/projects/nf06_0.png',
+      preview: 'assets/previews/projects/nf06_0.webp',
       hasContent: true,
       htmlContent: `
         <div class="card-header">
@@ -959,7 +959,7 @@ export const CUBE_CONTENT = {
               <li><strong>Visualisation du réseau :</strong> Génération d'une carte interactive affichant le réseau ferroviaire et les trajets optimisés.</li>
             </ul>
       
-            <figure class="project-figure"><img src="assets/previews/projects/nf06_1.png" alt="Visualisation du réseau ferroviaire" class="project-image"><figcaption>Visualisation du réseau ferroviaire</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_1.webp" alt="Visualisation du réseau ferroviaire" class="project-image"><figcaption>Visualisation du réseau ferroviaire</figcaption></figure>
       
             <h3>Technologies utilisées :</h3>
             <ul>
@@ -968,7 +968,7 @@ export const CUBE_CONTENT = {
             </ul>
     
       
-            <figure class="project-figure"><img src="assets/previews/projects/nf06_2.png" alt="Illustration de la distance entre 2 chemins" class="project-image"><figcaption>Illustration de la distance entre 2 chemins</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_2.webp" alt="Illustration de la distance entre 2 chemins" class="project-image"><figcaption>Illustration de la distance entre 2 chemins</figcaption></figure>
       
             <p>Ce projet met en œuvre des concepts avancés de théorie des graphes et démontre l'intégration efficace entre des modules C performants et une interface Python conviviale pour la modélisation de réseaux complexes.</p>
             
@@ -1002,7 +1002,7 @@ export const CUBE_CONTENT = {
               <li><strong>Network visualization:</strong> Generates an interactive map showing the railway network and optimized routes.</li>
             </ul>
 
-            <figure class="project-figure"><img src="assets/previews/projects/nf06_1.png" alt="Rail network visualization" class="project-image"><figcaption>Rail network visualization</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_1.webp" alt="Rail network visualization" class="project-image"><figcaption>Rail network visualization</figcaption></figure>
 
             <h3>Technologies used:</h3>
             <ul>
@@ -1010,7 +1010,7 @@ export const CUBE_CONTENT = {
               <li><strong>Libraries:</strong> ctypes for C–Python interfacing, Tkinter for the GUI, and Folium for the interactive map</li>
             </ul>
 
-            <figure class="project-figure"><img src="assets/previews/projects/nf06_2.png" alt="Illustration of the distance between two paths" class="project-image"><figcaption>Illustration of the distance between two paths</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/nf06_2.webp" alt="Illustration of the distance between two paths" class="project-image"><figcaption>Illustration of the distance between two paths</figcaption></figure>
 
             <p>This project applies advanced graph theory concepts and demonstrates efficient integration between high-performance C modules and a user-friendly Python interface for modeling complex networks.</p>
 
@@ -1025,7 +1025,7 @@ export const CUBE_CONTENT = {
       title: "Recherche d'algorithmes pour jouer aux échecs",
       icon: 'fa-solid fa-chess',
       period: '02/2023 - 06/2023',
-      preview: 'assets/previews/projects/pe1_0.png',
+      preview: 'assets/previews/projects/pe1_0.webp',
       hasContent: true,
       htmlContent: `
           <div class="card-header">
@@ -1054,7 +1054,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Interface graphique :</strong> Visualisation des deux algorithmes s'affrontant aux échecs.</li>
               </ul>
 
-              <figure class="project-figure"><img src="assets/previews/projects/pe1_2.png" alt="Illustration de l'algorithme Minimax" class="project-image"><figcaption>Illustration de l'algorithme Minimax</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/pe1_2.webp" alt="Illustration de l'algorithme Minimax" class="project-image"><figcaption>Illustration de l'algorithme Minimax</figcaption></figure>
               
               <h3>Technologies utilisées :</h3>
               <ul>
@@ -1063,7 +1063,7 @@ export const CUBE_CONTENT = {
                 <li><strong>Moteur d’échecs :</strong> Stockfish</li>
               </ul>
 
-              <figure class="project-figure"><img src="assets/previews/projects/pe1_1.png" alt="Illustration de l'algorithme MCTS" class="project-image"><figcaption>Simulations de l'algorithme MCTS</figcaption></figure>
+              <figure class="project-figure"><img src="assets/previews/projects/pe1_1.webp" alt="Illustration de l'algorithme MCTS" class="project-image"><figcaption>Simulations de l'algorithme MCTS</figcaption></figure>
 
               <p>Ce projet a permis d’étudier l’approche décisionnelle des IA d’échecs et d’optimiser leur stratégie contre un adversaire de référence. L'objectif était initialement d'ajouter un réseau de neurones au MCTS pour s'inspirer du modèle d'AlphaZero Chess. Mais par manque de temps et de connaissances au moment de la réalisation de ce projet, cela n'a pas été fait.</p>
             </article>
@@ -1098,7 +1098,7 @@ export const CUBE_CONTENT = {
                     <li><strong>Graphical interface:</strong> Visualization of both algorithms competing against each other in chess.</li>
                   </ul>
 
-                  <figure class="project-figure"><img src="assets/previews/projects/pe1_2.png" alt="Minimax algorithm illustration" class="project-image"><figcaption>Minimax algorithm illustration</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe1_2.webp" alt="Minimax algorithm illustration" class="project-image"><figcaption>Minimax algorithm illustration</figcaption></figure>
 
                   <h3>Technologies used:</h3>
                   <ul>
@@ -1107,7 +1107,7 @@ export const CUBE_CONTENT = {
                     <li><strong>Chess engine:</strong> Stockfish</li>
                   </ul>
 
-                  <figure class="project-figure"><img src="assets/previews/projects/pe1_1.png" alt="MCTS algorithm simulation" class="project-image"><figcaption>MCTS algorithm simulations</figcaption></figure>
+                  <figure class="project-figure"><img src="assets/previews/projects/pe1_1.webp" alt="MCTS algorithm simulation" class="project-image"><figcaption>MCTS algorithm simulations</figcaption></figure>
 
                   <p>This project made it possible to study the decision-making approach of chess AIs and to optimize their strategy against a reference opponent. The initial goal was to add a neural network to MCTS to follow the AlphaZero Chess model, but due to lack of time and knowledge at the time, this was not implemented.</p>
                 </article>
@@ -1127,7 +1127,7 @@ export const CUBE_CONTENT = {
         "Projet de recherche au laboratoire du Pr. Shinsuke Murakami : Multi-Agent RL (MARL) pour simuler les décisions d'agents économiques et sociaux dans des modèles agent-based (ABM) de gestion des ressources et d'économie circulaire.",
       ],
       icon: 'fa-solid fa-building-columns',
-      preview: 'assets/previews/formation/todai.png',
+      preview: 'assets/previews/formation/todai.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -1151,7 +1151,7 @@ export const CUBE_CONTENT = {
         'Spécialisation Intelligence Artificielle et Data Science (machine learning, deep learning, systèmes intelligents)',
       ],
       icon: 'fa-solid fa-graduation-cap',
-      preview: 'assets/previews/formation/utt.jpg',
+      preview: 'assets/previews/formation/utt.webp',
       hasContent: true,
       i18n: {
         en: {
@@ -1172,7 +1172,7 @@ export const CUBE_CONTENT = {
       description: 'Baccalauréat Scientifique | Mention <strong>Très Bien</strong>',
       details: ['Mathématiques', "Numérique et sciences de l'informatique"],
       icon: 'fa-solid fa-school',
-      preview: 'assets/previews/formation/lycee.png',
+      preview: 'assets/previews/formation/lycee.webp',
       hasContent: true,
       i18n: {
         en: {

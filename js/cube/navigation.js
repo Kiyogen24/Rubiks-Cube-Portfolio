@@ -6,6 +6,7 @@ import { dropAll, updateLifts } from './lift.js';
 import { onFrame } from './scene.js';
 import { showStickerButtons, hideStickerButtons } from './sticker-buttons.js';
 import { closeMenu } from '../ui/menu-state.js';
+import { preloadPreviews } from '../ui/loader.js';
 import { app } from '../globals.js';
 
 // Stockage du cubie survolé (initialisé à null)
@@ -137,6 +138,7 @@ export function zoomToFace(face, faceType) {
 
   // Sauvegarde la position de la caméra lors du premier zoom
   if (!app.isZoomed) app.lastCameraPosition = app.camera.position.clone();
+  preloadPreviews(faceType);
 
   app.controls.enabled = false;
   app.cameraAnimating = true;
