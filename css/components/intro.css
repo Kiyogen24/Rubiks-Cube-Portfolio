@@ -57,7 +57,7 @@
   border-right: 2px solid var(--light-text);
   white-space: nowrap;
   overflow: hidden;
-  width: 0;
+  max-width: 0;
   animation:
     typing 3s steps(30, end) forwards,
     blink-caret 0.75s step-end infinite;
@@ -163,10 +163,10 @@ body.loaded .typing-text {
 /* Animations */
 @keyframes typing {
   from {
-    width: 0;
+    max-width: 0;
   }
   to {
-    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -202,13 +202,22 @@ body.loaded .typing-text {
   }
 }
 
+/* Écrans peu hauts : l'indicateur passe sous le texte au lieu de le recouvrir */
+@media screen and (max-height: 900px) {
+  .scroll-indicator {
+    position: static;
+    transform: none;
+    margin-top: 2rem;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .typing-text {
     font-size: clamp(1.5rem, 5vw, 2.5rem);
     margin: 20px 0;
     white-space: normal;
     overflow: visible;
-    width: auto;
+    max-width: none;
     border-right: none;
     animation: none;
   }

@@ -16,7 +16,7 @@ export function createScene() {
     precision: 'highp',
     powerPreference: 'high-performance',
   });
-  app.renderer.setPixelRatio(window.devicePixelRatio);
+  app.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // au-delà, coût élevé pour un gain invisible
   app.renderer.setSize(window.innerWidth, window.innerHeight);
   app.renderer.shadowMap.enabled = true;
   app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -45,9 +45,6 @@ export function createScene() {
     app.camera.aspect = window.innerWidth / window.innerHeight;
     app.camera.updateProjectionMatrix();
     app.renderer.setSize(window.innerWidth, window.innerHeight);
-    app.controls.enableZoom = true;
-    app.controls.rotateSpeed = 0.5;
-    app.controls.enablePan = true;
   });
 }
 

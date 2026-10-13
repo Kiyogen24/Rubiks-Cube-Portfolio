@@ -2,6 +2,7 @@ import { app } from '../globals.js';
 import { zoomToFace, dezoom, getCentralCubie } from '../cube/navigation.js';
 
 export function openMenu() {
+  if (app.isPlayable) return;
   app.menuBtn.classList.add('open');
   app.menu.classList.add('active');
   app.menuOpen = true;
@@ -25,7 +26,7 @@ export function highlightMenuItem(faceType, { scroll = false } = {}) {
 // Zoom sur une face depuis le menu ou un lien rapide
 function zoomFromMenu(faceType) {
   const centralCubie = getCentralCubie(faceType);
-  if (!centralCubie) return false;
+  if (!centralCubie || app.isPlayable) return false;
   zoomToFace(centralCubie, faceType);
   app.isZoomed = true;
   return true;

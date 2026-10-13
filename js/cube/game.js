@@ -48,7 +48,6 @@ function exitGameMode() {
   app.controls.enabled = true;
   app.controls.enableZoom = true;
   app.controls.enableRotate = true;
-  app.controls.enablePan = true;
 
   app.menuBtn.style.display = '';
   app.menuBtn.style.pointerEvents = '';

@@ -100,17 +100,16 @@ function onMouseUp(e) {
 
   if (app.isPlayable && isGameDragging && dragStartIntersect) {
     rotateDraggedLayer(e.clientX - dragStartPoint.x, e.clientY - dragStartPoint.y);
-    dragStartIntersect = null;
-    dragStartPoint = null;
-    isGameDragging = false;
-    // toujours réactiver la rotation du cube entier après le glissement
-    app.controls.enableRotate = true;
-    return;
+  } else if (!app.isDragging) {
+    handleClick(e); // sans glissement, c'est un simple clic
   }
 
-  // sans glissement, c'est un simple clic
-  if (!app.isDragging) handleClick(e);
+  dragStartIntersect = null;
+  dragStartPoint = null;
+  isGameDragging = false;
   app.isDragging = false;
+  // la rotation du cube entier est toujours rétablie à la fin du geste
+  app.controls.enableRotate = true;
 }
 
 // Clic sur le cube : zoom sur la face touchée, ou ouverture du contenu d'un sticker une fois zoomé
@@ -127,7 +126,7 @@ function handleClick(event) {
     const position = calculateCubiePosition(intersection.object.userData.gridPos, faceType);
     const content = CUBE_CONTENT[faceType]?.[position];
     if (content?.hasContent) showInfoCard(event, faceType, position);
-    else if (content?.link) window.open(content.link, '_blank');
+    else if (content?.link) window.open(content.link, '_blank', 'noopener');
   } else {
     document.querySelector('.container').style.overflow = 'hidden';
     zoomToFace(centralCubie, faceType);

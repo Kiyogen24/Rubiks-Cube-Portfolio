@@ -388,6 +388,7 @@ export function setupNavigation() {
     if (!isCubeSection && app.menu.classList.contains('active')) {
       app.menu.classList.remove('active');
       app.menuBtn.classList.remove('open');
+      app.menuOpen = false;
     }
   }
 
