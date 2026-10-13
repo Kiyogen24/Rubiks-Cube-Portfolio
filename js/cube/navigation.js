@@ -2,6 +2,8 @@
 import * as THREE from 'three';
 import { updateFaceTextures, createFaceTexture, setFaceMap } from './cube.js';
 import { updateCubieHoverState, hidePreview } from '../cards/preview.js';
+import { dropAll, updateLifts } from './lift.js';
+import { onFrame } from './scene.js';
 import { app } from '../globals.js';
 
 // Stockage du cubie survolé (initialisé à null)
@@ -44,6 +46,83 @@ function setShuffleButtonVisible(visible) {
   if (btn) btn.style.display = visible ? '' : 'none';
 }
 
+const ZOOM_DISTANCE = 6; // de la face à la caméra
+const ZOOM_DURATION = 0.9; // s
+const DEZOOM_DURATION = 0.8; // s
+const FACE_NORMALS = {
+  front: new THREE.Vector3(0, 0, 1),
+  back: new THREE.Vector3(0, 0, -1),
+  right: new THREE.Vector3(1, 0, 0),
+  left: new THREE.Vector3(-1, 0, 0),
+  top: new THREE.Vector3(0, 1, 0),
+  bottom: new THREE.Vector3(0, -1, 0),
+};
+const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+// Orientation d'une caméra placée en `eye` et tournée vers `target`
+function lookRotation(eye, target, up) {
+  return new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(eye, target, up));
+}
+
+// Vol de la caméra : sur un arc autour du cube (jamais au travers), toujours tournée vers son centre.
+// Le haut de l'écran suit l'arc, et l'écart restant avec l'orientation d'arrivée (roulis) est rattrapé
+// progressivement : pas de bascule brusque, même entre la vue de dessus et une face de côté.
+// Un nouveau vol remplace celui en cours.
+let flight = null;
+const IDENTITY = new THREE.Quaternion();
+const turnStep = new THREE.Quaternion();
+const rollStep = new THREE.Quaternion();
+const forward = new THREE.Vector3();
+
+function flyCamera(endPosition, endQuaternion, duration, onDone) {
+  const startDir = app.camera.position.clone().normalize();
+  const endDir = endPosition.clone().normalize();
+  const turn = new THREE.Quaternion().setFromUnitVectors(startDir, endDir);
+  const carriedUp = new THREE.Vector3(0, 1, 0).applyQuaternion(app.camera.quaternion).applyQuaternion(turn);
+  const wantedUp = new THREE.Vector3(0, 1, 0).applyQuaternion(endQuaternion);
+  const endForward = endDir.clone().negate();
+  flight = {
+    startDir,
+    turn,
+    roll: Math.atan2(new THREE.Vector3().crossVectors(carriedUp, wantedUp).dot(endForward), carriedUp.dot(wantedUp)),
+    startRadius: app.camera.position.length(),
+    endRadius: endPosition.length(),
+    startQuaternion: app.camera.quaternion.clone(),
+    endQuaternion,
+    endPosition,
+    duration,
+    elapsed: 0,
+    onDone,
+  };
+}
+
+// Appelé à chaque image après OrbitControls, qui ne doit pas reprendre la main pendant le vol
+function updateFlight(dt) {
+  if (!flight) return;
+  flight.elapsed += dt;
+  const progress = Math.min(flight.elapsed / flight.duration, 1);
+  const eased = easeOutCubic(progress);
+  turnStep.slerpQuaternions(IDENTITY, flight.turn, eased);
+  app.camera.position
+    .copy(flight.startDir)
+    .applyQuaternion(turnStep)
+    .multiplyScalar(THREE.MathUtils.lerp(flight.startRadius, flight.endRadius, eased));
+  forward.copy(app.camera.position).normalize().negate();
+  rollStep.setFromAxisAngle(forward, flight.roll * eased);
+  app.camera.quaternion.copy(flight.startQuaternion).premultiply(turnStep).premultiply(rollStep);
+  if (progress < 1) return;
+
+  // inertie résiduelle d'OrbitControls appliquée tout de suite, sinon la caméra dériverait après le vol
+  app.controls.enableDamping = false;
+  app.controls.update();
+  app.controls.enableDamping = true;
+  app.camera.position.copy(flight.endPosition);
+  app.camera.quaternion.copy(flight.endQuaternion);
+  const { onDone } = flight;
+  flight = null;
+  onDone();
+}
+
 // Zoom sur une face du cube en fonction de son type : top, bottom, front, back, right ou left
 export function zoomToFace(face, faceType) {
   // Prevent zoom when game mode is active
@@ -52,15 +131,9 @@ export function zoomToFace(face, faceType) {
   // Hide the shuffle/solve button immediately to avoid interactions during zoom
   setShuffleButtonVisible(false);
 
-  // Sauvegarde la position et rotation initiale de la caméra lors du premier zoom
-  if (!app.isZoomed) {
-    app.lastCameraPosition = app.camera.position.clone();
-    app.lastCameraRotation = app.camera.quaternion.clone();
-  }
+  // Sauvegarde la position de la caméra lors du premier zoom
+  if (!app.isZoomed) app.lastCameraPosition = app.camera.position.clone();
 
-  // Calcul de la position cible de zoom
-  const targetPosition = face.position.clone();
-  const distance = 6;
   app.controls.enabled = false;
   app.cameraAnimating = true;
 
@@ -69,127 +142,16 @@ export function zoomToFace(face, faceType) {
     btn.classList.add('disabled');
   });
 
-  // Si la face est 'top' ou 'bottom', animation en deux étapes
-  if (faceType === 'top' || faceType === 'bottom') {
-    const startPos = app.camera.position.clone();
-
-    // Calcul des angles par rapport aux 4 côtés du cube
-    const angles = [
-      { x: distance, z: 0 }, // droite
-      { x: -distance, z: 0 }, // gauche
-      { x: 0, z: distance }, // avant
-      { x: 0, z: -distance }, // arrière
-    ].map((pos) => ({
-      position: pos,
-      angle: new THREE.Vector3(pos.x, 0, pos.z).angleTo(
-        new THREE.Vector3(app.camera.position.x - targetPosition.x, 0, app.camera.position.z - targetPosition.z),
-      ),
-    }));
-
-    // Choix du côté le plus proche de la position actuelle
-    const closestSide = angles.reduce((prev, current) => (prev.angle < current.angle ? prev : current));
-
-    // Position intermédiaire selon le côté sélectionné
-    const intermediatePos = new THREE.Vector3(
-      targetPosition.x + closestSide.position.x,
-      app.camera.position.y,
-      targetPosition.z + closestSide.position.z,
-    );
-
-    // Position finale en hauteur, selon 'top' ou 'bottom'
-    const finalPos = new THREE.Vector3(
-      targetPosition.x,
-      targetPosition.y + (faceType === 'top' ? distance : -distance),
-      targetPosition.z,
-    );
-
-    // Durées pour les deux étapes de l'animation
-    const step1Duration = 500;
-    const step2Duration = 1000;
-    let startTime = Date.now();
-
-    // Animation de l'étape intermédiaire
-    function animateStep1() {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / step1Duration, 1);
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-      app.camera.position.lerpVectors(startPos, intermediatePos, easeProgress);
-      app.camera.lookAt(targetPosition);
-
-      if (progress < 1) {
-        requestAnimationFrame(animateStep1);
-      } else {
-        startTime = Date.now();
-        animateStep2();
-      }
-    }
-
-    // Animation finale : mouvement vers la position finale et rotation
-    function animateStep2() {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / step2Duration, 1);
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-      app.camera.position.lerpVectors(intermediatePos, finalPos, easeProgress);
-
-      const upVector = faceType === 'top' ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 0, 1);
-      const lookMatrix = new THREE.Matrix4().lookAt(finalPos, targetPosition, upVector);
-      const targetQuat = new THREE.Quaternion().setFromRotationMatrix(lookMatrix);
-      app.camera.quaternion.slerpQuaternions(app.camera.quaternion, targetQuat, easeProgress);
-
-      if (progress < 1) {
-        requestAnimationFrame(animateStep2);
-      } else {
-        finishZoom(faceType);
-      }
-    }
-
-    animateStep1();
-  } else {
-    // Pour les autres faces, une animation simple est utilisée
-    let cameraOffset;
-
-    // Définition de l'offset selon le type de face
-    switch (faceType) {
-      case 'front':
-        cameraOffset = new THREE.Vector3(0, 0, distance);
-        break;
-      case 'back':
-        cameraOffset = new THREE.Vector3(0, 0, -distance);
-        break;
-      case 'right':
-        cameraOffset = new THREE.Vector3(distance, 0, 0);
-        break;
-      case 'left':
-        cameraOffset = new THREE.Vector3(-distance, 0, 0);
-        break;
-    }
-
-    // Calcul de la position cible de la caméra
-    const targetCameraPos = targetPosition.clone().add(cameraOffset);
-    const startPos = app.camera.position.clone();
-    const duration = 1000;
-    const startTime = Date.now();
-
-    // Animation de la transition
-    function animate() {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-      app.camera.position.lerpVectors(startPos, targetCameraPos, easeProgress);
-      app.camera.lookAt(targetPosition);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        finishZoom(faceType);
-      }
-    }
-
-    animate();
-  }
+  // Caméra face à la face, à distance fixe ; vue de dessus avec l'avant en bas, de dessous avec l'avant en haut
+  const target = face.position.clone();
+  const endPosition = target.clone().addScaledVector(FACE_NORMALS[faceType], ZOOM_DISTANCE);
+  const up =
+    faceType === 'top'
+      ? new THREE.Vector3(0, 0, -1)
+      : faceType === 'bottom'
+        ? new THREE.Vector3(0, 0, 1)
+        : new THREE.Vector3(0, 1, 0);
+  flyCamera(endPosition, lookRotation(endPosition, target, up), ZOOM_DURATION, () => finishZoom(faceType));
 }
 
 // Finalisation du zoom : mise à jour de l'interface et des textures de la face
@@ -239,10 +201,19 @@ export function dezoom() {
   // Restaurer le bouton Mélanger/Résoudre
   setShuffleButtonVisible(true);
 
-  // Réinitialisation progressive des cubies et de la caméra
+  // Retour de la caméra à sa position d'avant le zoom
+  const endPosition = app.lastCameraPosition.clone();
+  if (endPosition.length() < 7) endPosition.normalize().multiplyScalar(7);
+  const endQuaternion = lookRotation(endPosition, new THREE.Vector3(), new THREE.Vector3(0, 1, 0));
+  flyCamera(endPosition, endQuaternion, DEZOOM_DURATION, () => {
+    app.controls.enabled = true;
+    app.cameraAnimating = false;
+  });
+
+  // Réinitialisation des cubies (position et textures)
+  dropAll();
   requestAnimationFrame(() => {
     app.cubies.forEach((cubie) => {
-      cubie.scale.set(1, 1, 1);
       // On ne réinitialise pas le cubie central top
       if (
         cubie.userData.gridPos &&
@@ -259,34 +230,6 @@ export function dezoom() {
         setFaceMap(cubie.material[faceIndex], texture);
       });
     });
-
-    // Animation de retour de la caméra à sa position d'origine
-    const startPos = app.camera.position.clone();
-    const endPos = app.lastCameraPosition.clone();
-    if (endPos.length() < 7) endPos.normalize().multiplyScalar(7);
-
-    const duration = 1000;
-    const startTime = Date.now();
-
-    function update() {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-      app.camera.position.lerpVectors(startPos, endPos, easeProgress);
-      app.camera.lookAt(0, 0, 0);
-
-      if (progress < 1) {
-        requestAnimationFrame(update);
-      } else {
-        app.camera.position.copy(endPos);
-        app.camera.lookAt(0, 0, 0);
-        app.controls.enabled = true;
-        app.cameraAnimating = false;
-      }
-    }
-
-    requestAnimationFrame(update);
   });
 
   // Réinitialisation de l'effet sur le cubie survolé
@@ -398,6 +341,10 @@ export function setupNavigation() {
       sections[index].scrollIntoView({ behavior: 'smooth' });
     });
   });
+
+  // Vol de la caméra et soulèvement des cubies survolés, à chaque image
+  onFrame(updateFlight);
+  onFrame(updateLifts);
 
   // Mise à jour de l'UI lors du défilement
   container.addEventListener(

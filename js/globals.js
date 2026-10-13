@@ -10,7 +10,6 @@ export const app = {
   raycaster: new THREE.Raycaster(),
   mouse: new THREE.Vector2(),
   lastCameraPosition: null,
-  lastCameraRotation: null,
   isZoomed: false,
   cameraAnimating: false, // vrai pendant les animations de zoom / dézoom
   isModalOpen: false,

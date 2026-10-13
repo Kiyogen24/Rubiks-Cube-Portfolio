@@ -42,6 +42,7 @@ function labelsAllowed() {
 
 function update() {
   const allowed = labelsAllowed();
+  app.camera.updateMatrixWorld(); // projection avec la position de la caméra de cette image
   app.rubiksCube.getWorldQuaternion(cubeRotation);
   up.set(0, 1, 0).applyQuaternion(app.camera.quaternion); // haut de l'écran, dans le monde
   let appearing = 0;

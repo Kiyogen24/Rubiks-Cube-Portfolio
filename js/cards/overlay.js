@@ -2,6 +2,7 @@
 import { hidePreview } from './preview.js';
 import { CATEGORIES, CUBE_CONTENT } from '../utils/constants.js';
 import { updateFaceTextures } from '../cube/cube.js';
+import { dropCubie } from '../cube/lift.js';
 import { app } from '../globals.js';
 
 // Variables globales pour l'overlay et la carte d'information active
@@ -39,7 +40,7 @@ export function showInfoCard(event, faceType, cubePosition) {
 
   // Réinitialiser l'effet de survol (hover) s'il est actif
   if (app.hoveredCubie) {
-    app.hoveredCubie.scale.set(1, 1, 1);
+    dropCubie(app.hoveredCubie);
     updateFaceTextures(app.hoveredCubie, app.hoveredCubie.userData.hoveredFace);
     app.hoveredCubie.userData.hoveredFace = null;
     app.hoveredCubie = null;

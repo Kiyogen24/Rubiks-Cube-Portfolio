@@ -1,22 +1,26 @@
 import * as THREE from 'three';
 import { CUBE_CONTENT, stickerColors } from '../utils/constants.js';
 import { calculateCubiePosition, faceFromNormal, updateFaceTextures, setFaceMap } from '../cube/cube.js';
+import { liftCubie, dropCubie } from '../cube/lift.js';
 import { app } from '../globals.js';
 
 let previewElement = null;
 let previewFrame = null; // affichage en attente (annulé si la popup est masquée entre-temps)
 
-// Affiche une popup de prévisualisation à la position donnée avec une image en fond
-export function displayPreview(imageSrc, event) {
+// Affiche une popup de prévisualisation à la position donnée, avec une image en fond et le titre du contenu
+export function displayPreview(imageSrc, event, title = '') {
   // Crée l'élément de prévisualisation s'il n'existe pas déjà
   if (!previewElement) {
     previewElement = document.createElement('div');
     previewElement.className = 'preview-popup';
+    previewElement.innerHTML = '<span class="preview-popup__title"></span>';
     document.body.appendChild(previewElement);
   }
 
   previewElement.style.display = 'block';
   previewElement.style.backgroundImage = `url(${imageSrc})`;
+  previewElement.firstElementChild.textContent = title;
+  previewElement.classList.toggle('has-title', Boolean(title));
 
   // Calculer la position centrée en fonction de l'événement de survol
   const cubieCenterX = event.clientX;
@@ -66,6 +70,7 @@ export function updateCubieHoverState(cubie, isHovered) {
     if (content?.preview) {
       cubie.userData.hoveredFace = faceType;
       applyHoverEffects(cubie, faceType, content);
+      liftCubie(cubie, faceType);
       // Change le curseur si le contenu est interactif
       if (content?.hasContent || content?.link) {
         app.renderer.domElement.style.cursor = 'pointer';
@@ -73,6 +78,7 @@ export function updateCubieHoverState(cubie, isHovered) {
     }
   } else {
     // Réinitialise l'état de la face survolée et remet le curseur par défaut
+    dropCubie(cubie);
     if (cubie.userData.hoveredFace) {
       updateFaceTextures(cubie, cubie.userData.hoveredFace);
       cubie.userData.hoveredFace = null;
@@ -130,11 +136,10 @@ function applyHoverEffects(cubie, faceType, content) {
     const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
     const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
 
-    // Affiche la prévisualisation avec un ajustement de position
-    displayPreview(content.preview, {
-      clientX: x - 80,
-      clientY: y - 80,
-    });
+    // Affiche la prévisualisation avec un ajustement de position, et le titre dans la langue choisie
+    const lang = app.langManager?.currentLang || 'fr';
+    const title = content.i18n?.[lang]?.title || content.title;
+    displayPreview(content.preview, { clientX: x - 80, clientY: y - 80 }, title);
   }
 
   // Ajoute un symbole "+" si le contenu est interactif

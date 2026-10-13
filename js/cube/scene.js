@@ -48,7 +48,7 @@ export function createScene() {
   });
 }
 
-// Fonctions appelées à chaque image, avant le rendu : callback(dt en secondes, temps en ms)
+// Fonctions appelées à chaque image, après OrbitControls et avant le rendu : callback(dt en secondes, temps en ms)
 const frameCallbacks = [];
 
 export function onFrame(callback) {
@@ -61,8 +61,8 @@ export function startRenderLoop() {
     requestAnimationFrame(frame);
     const dt = Math.min((now - last) / 1000, 0.1);
     last = now;
-    frameCallbacks.forEach((callback) => callback(dt, now));
     app.controls.update();
+    frameCallbacks.forEach((callback) => callback(dt, now));
     app.renderer.render(app.scene, app.camera);
   }
   requestAnimationFrame(frame);
