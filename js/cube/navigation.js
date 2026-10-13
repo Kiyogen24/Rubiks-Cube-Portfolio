@@ -1,6 +1,6 @@
 // Importation des modules nécessaires depuis Three.js et nos fichiers internes
 import * as THREE from 'three';
-import { calculateCubiePosition, updateFaceTextures, createFaceTexture, setFaceMap } from './cube.js';
+import { updateFaceTextures, createFaceTexture, setFaceMap } from './cube.js';
 import { updateCubieHoverState, hidePreview } from '../cards/preview.js';
 import { app } from '../globals.js';
 
@@ -38,16 +38,19 @@ export function onMouseMove(event) {
   }
 }
 
+// Affiche ou masque le bouton Mélanger / Résoudre
+function setShuffleButtonVisible(visible) {
+  const btn = document.querySelector('.shuffle-btn');
+  if (btn) btn.style.display = visible ? '' : 'none';
+}
+
 // Zoom sur une face du cube en fonction de son type : top, bottom, front, back, right ou left
-export function zoomToFace(face, normal, faceType) {
+export function zoomToFace(face, faceType) {
   // Prevent zoom when game mode is active
   if (app.isPlayable) return;
 
   // Hide the shuffle/solve button immediately to avoid interactions during zoom
-  try {
-    const btn = document.querySelector('.shuffle-btn');
-    if (btn) btn.style.display = 'none';
-  } catch (e) {}
+  setShuffleButtonVisible(false);
 
   // Sauvegarde la position et rotation initiale de la caméra lors du premier zoom
   if (!app.isZoomed) {
@@ -69,7 +72,6 @@ export function zoomToFace(face, normal, faceType) {
   // Si la face est 'top' ou 'bottom', animation en deux étapes
   if (faceType === 'top' || faceType === 'bottom') {
     const startPos = app.camera.position.clone();
-    const startQuat = app.camera.quaternion.clone();
 
     // Calcul des angles par rapport aux 4 côtés du cube
     const angles = [
@@ -147,7 +149,6 @@ export function zoomToFace(face, normal, faceType) {
   } else {
     // Pour les autres faces, une animation simple est utilisée
     let cameraOffset;
-    let upVector = new THREE.Vector3(0, 1, 0);
 
     // Définition de l'offset selon le type de face
     switch (faceType) {
@@ -199,17 +200,14 @@ export function finishZoom(faceType) {
   // Mise à jour des textures pour chaque cubie de la face
   const faceCubies = getFaceCubies(faceType);
   faceCubies.forEach((cubie) => {
-    updateFaceTextures(cubie, faceType, true);
+    updateFaceTextures(cubie, faceType);
   });
 
   app.isZoomed = true;
   app.resetButton.style.display = 'block';
 
   // Masquer le bouton Mélanger/Résoudre quand on est en zoom
-  try {
-    const btn = document.querySelector('.shuffle-btn');
-    if (btn) btn.style.display = 'none';
-  } catch (e) {}
+  setShuffleButtonVisible(false);
 }
 
 // Réinitialise la scène en sortant du mode zoom
@@ -233,17 +231,13 @@ export function dezoom() {
   app.menu.classList.remove('active');
   app.menuOpen = false;
   app.resetButton.style.display = 'none';
-  titleElement.style.opacity = '0';
 
   // Suppression du contenu de la face s'il existe
   const container = document.getElementById('face-content');
   if (container) container.remove();
 
   // Restaurer le bouton Mélanger/Résoudre
-  try {
-    const btn = document.querySelector('.shuffle-btn');
-    if (btn) btn.style.display = '';
-  } catch (e) {}
+  setShuffleButtonVisible(true);
 
   // Réinitialisation progressive des cubies et de la caméra
   requestAnimationFrame(() => {
@@ -329,23 +323,6 @@ function getFaceCubies(faceType) {
   return cubiesOnFace;
 }
 
-// Configure les paramètres de contrôle de la caméra
-export function setupControls() {
-  app.controls.enableDamping = true;
-  app.controls.dampingFactor = 0.05;
-  app.controls.screenSpacePanning = false;
-  app.controls.minDistance = 5;
-  app.controls.maxDistance = 15;
-  app.controls.maxPolarAngle = Math.PI;
-}
-
-// Ajuste les contrôles de navigation dans la scène
-export function adaptNavigation() {
-  app.controls.enableZoom = true;
-  app.controls.rotateSpeed = 0.5;
-  app.controls.enablePan = true;
-}
-
 // Retourne le cubie central correspondant à une face donnée
 export function getCentralCubie(faceType) {
   // Définition de la position centrale attendue
@@ -380,8 +357,6 @@ export function setupNavigation() {
   const container = document.querySelector('.container');
   const sections = Array.from(document.querySelectorAll('section'));
   const buttons = document.querySelectorAll('.nav-button');
-  app.menuBtn = document.querySelector('.menu-btn');
-  app.menu = document.querySelector('.menu');
 
   // Met à jour l'UI en fonction de la position de scroll
   function updateUI() {
@@ -407,10 +382,7 @@ export function setupNavigation() {
     themeBtn.classList.toggle('hidden', isCubeSection);
 
     // Show shuffle button only on cube section and only when not zoomed
-    try {
-      const shuffleBtn = document.querySelector('.shuffle-btn');
-      if (shuffleBtn) shuffleBtn.style.display = isCubeSection && !app.isZoomed ? '' : 'none';
-    } catch (e) {}
+    setShuffleButtonVisible(isCubeSection && !app.isZoomed);
 
     // Ferme le menu si on quitte la section du cube
     if (!isCubeSection && app.menu.classList.contains('active')) {
@@ -423,65 +395,6 @@ export function setupNavigation() {
   buttons.forEach((button, index) => {
     button.addEventListener('click', () => {
       sections[index].scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-
-  // Configuration des liens rapides vers une face du cube
-  document.querySelectorAll('.quick-link[data-face]').forEach((link) => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const faceType = link.getAttribute('data-face');
-
-      // Scroll vers la section du cube
-      document.getElementById('cube-section').scrollIntoView({ behavior: 'smooth' });
-
-      // Délai avant d'exécuter le zoom
-      setTimeout(() => {
-        const centralCubie = getCentralCubie(faceType);
-        if (centralCubie) {
-          let normal = new THREE.Vector3();
-          switch (faceType) {
-            case 'front':
-              normal.set(0, 0, 1);
-              break;
-            case 'back':
-              normal.set(0, 0, -1);
-              break;
-            case 'right':
-              normal.set(1, 0, 0);
-              break;
-            case 'left':
-              normal.set(-1, 0, 0);
-              break;
-            case 'top':
-              normal.set(0, 1, 0);
-              break;
-            case 'bottom':
-              normal.set(0, -1, 0);
-              break;
-          }
-
-          // Ouvre le menu si nécessaire et active l'élément correspondant
-          if (!app.menuOpen) {
-            app.menuBtn.classList.add('open');
-            app.menu.classList.add('active');
-            app.menuOpen = true;
-          }
-
-          // Active l'élément de menu lié à la catégorie (data-face, indépendant de la langue)
-          document.querySelectorAll('.menu-item').forEach((item) => {
-            item.classList.remove('active');
-            if (item.dataset.face === faceType) {
-              item.classList.add('active');
-              item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          });
-
-          // Lancement du zoom sur la face
-          zoomToFace(centralCubie, normal, faceType);
-          app.isZoomed = true;
-        }
-      }, 1000); // Délai pour terminer le scroll avant le zoom
     });
   });
 

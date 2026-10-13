@@ -15,6 +15,8 @@ export const app = {
   cameraAnimating: false, // vrai pendant les animations de zoom / dézoom
   isModalOpen: false,
   isDragging: false,
+  isPlayable: false, // mode jeu, après un mélange
+  isAutoSolving: false,
   menuOpen: false,
   cubeSize: 1,
   gap: 0.001,

@@ -212,8 +212,8 @@ export function setFaceMap(material, texture) {
   material.needsUpdate = true;
 }
 
-// Met à jour les textures d'une face d'un cubie selon son statut actif
-export function updateFaceTextures(cubie, faceType, isActive) {
+// Met à jour la texture d'une face d'un cubie (avec reflet si la vue est zoomée et le sticker a du contenu)
+export function updateFaceTextures(cubie, faceType) {
   // Ne pas mettre à jour si c'est le cubie central de la face "top"
   if (
     cubie.userData.gridPos &&
@@ -238,6 +238,14 @@ export function updateFaceTextures(cubie, faceType, isActive) {
   const texture = createFaceTexture(faceType, hasContent);
 
   setFaceMap(cubie.material[faceIndex], texture);
+}
+
+// Face du cube correspondant à une normale exprimée dans le repère du monde
+export function faceFromNormal(normal, epsilon = 0.1) {
+  if (Math.abs(normal.z) > 1 - epsilon) return normal.z > 0 ? 'front' : 'back';
+  if (Math.abs(normal.x) > 1 - epsilon) return normal.x > 0 ? 'right' : 'left';
+  if (Math.abs(normal.y) > 1 - epsilon) return normal.y > 0 ? 'top' : 'bottom';
+  return undefined;
 }
 
 // Calcule la position d'un cubie sur une face donnée

@@ -1,7 +1,6 @@
 // Importation des modules nécessaires
-import * as THREE from 'three';
 import { hidePreview } from './preview.js';
-import { CATEGORIES, CUBE_CONTENT, stickerColors } from '../utils/constants.js';
+import { CATEGORIES, CUBE_CONTENT } from '../utils/constants.js';
 import { updateFaceTextures } from '../cube/cube.js';
 import { app } from '../globals.js';
 
@@ -41,7 +40,7 @@ export function showInfoCard(event, faceType, cubePosition) {
   // Réinitialiser l'effet de survol (hover) s'il est actif
   if (app.hoveredCubie) {
     app.hoveredCubie.scale.set(1, 1, 1);
-    updateFaceTextures(app.hoveredCubie, app.hoveredCubie.userData.hoveredFace, true);
+    updateFaceTextures(app.hoveredCubie, app.hoveredCubie.userData.hoveredFace);
     app.hoveredCubie.userData.hoveredFace = null;
     app.hoveredCubie = null;
   }
@@ -169,16 +168,6 @@ export function showInfoCard(event, faceType, cubePosition) {
   if (isMobile) {
     card.style.width = '95vw';
     card.style.margin = '10px';
-    // Ajuster le contenu affiché pour mobile si disponible
-    if (dataHtml) {
-      // simplifyContentForMobile peut ne pas exister dans tous les contextes, vérifier avant d'appeler
-      if (typeof simplifyContentForMobile === 'function') {
-        const mobileContent = simplifyContentForMobile(dataHtml);
-        content.innerHTML = mobileContent;
-      } else {
-        content.innerHTML = dataHtml;
-      }
-    }
   }
 
   // Attribuer un type de face à la carte pour la stylisation potentielle

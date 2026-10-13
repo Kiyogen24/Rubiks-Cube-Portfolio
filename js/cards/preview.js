@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CUBE_CONTENT, stickerColors } from '../utils/constants.js';
-import { calculateCubiePosition, updateFaceTextures, setFaceMap } from '../cube/cube.js';
+import { calculateCubiePosition, faceFromNormal, updateFaceTextures, setFaceMap } from '../cube/cube.js';
 import { app } from '../globals.js';
 
 let previewElement = null;
@@ -15,8 +15,6 @@ export function displayPreview(imageSrc, event) {
     document.body.appendChild(previewElement);
   }
 
-  // Récupère la position du cube sur l'écran (utile si le cube est décalé)
-  const rect = document.querySelector('#cube-section').getBoundingClientRect();
   previewElement.style.display = 'block';
   previewElement.style.backgroundImage = `url(${imageSrc})`;
 
@@ -57,12 +55,8 @@ export function updateCubieHoverState(cubie, isHovered) {
     const normal = intersects[0].face.normal.clone();
     normal.transformDirection(cubie.matrixWorld);
 
-    let faceType;
-    const epsilon = 0.1;
     // Détermine la face concernée en fonction de la direction du vecteur normal
-    if (Math.abs(normal.z) > 1 - epsilon) faceType = normal.z > 0 ? 'front' : 'back';
-    else if (Math.abs(normal.x) > 1 - epsilon) faceType = normal.x > 0 ? 'right' : 'left';
-    else if (Math.abs(normal.y) > 1 - epsilon) faceType = normal.y > 0 ? 'top' : 'bottom';
+    const faceType = faceFromNormal(normal);
 
     // Calcule la position du cubie pour la face identifiée
     const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
@@ -80,7 +74,7 @@ export function updateCubieHoverState(cubie, isHovered) {
   } else {
     // Réinitialise l'état de la face survolée et remet le curseur par défaut
     if (cubie.userData.hoveredFace) {
-      updateFaceTextures(cubie, cubie.userData.hoveredFace, true);
+      updateFaceTextures(cubie, cubie.userData.hoveredFace);
       cubie.userData.hoveredFace = null;
       app.renderer.domElement.style.cursor = 'default';
     }
@@ -163,10 +157,4 @@ function applyHoverEffects(cubie, faceType, content) {
     ctx.textBaseline = 'middle';
     ctx.fillText('+', centerX, centerY + 5);
   }
-}
-
-// Fonction utilitaire pour obtenir l'index de la face dans le tableau
-function getFaceIndex(faceType) {
-  const faceNames = ['right', 'left', 'top', 'bottom', 'front', 'back'];
-  return faceNames.indexOf(faceType);
 }

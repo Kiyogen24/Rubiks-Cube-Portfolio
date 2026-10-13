@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepare, open, toCube } from './helpers.mjs';
+import { prepare, open, toCube, cellPos, cameraPosition, drag } from './helpers.mjs';
 
 // Le cube est-il exactement dans sa position d'origine (positions et orientations) ?
 const cubeAtHome = (page) =>
@@ -31,6 +31,26 @@ test('mélanger puis résoudre avec le solveur de Kociemba', async ({ page }) =>
   expect(logs.some((l) => l.includes('solution cubejs'))).toBe(true);
   await expect(page.locator('.confetti-container')).toHaveCount(0);
   expect(await cubeAtHome(page)).toBe(true);
+});
+
+test('en mode jeu, glisser sur un sticker tourne une couche et non le cube', async ({ page }) => {
+  await prepare(page);
+  await open(page);
+  await toCube(page);
+  const button = page.locator('#shuffle-solve');
+  await button.click();
+  await expect(button).toHaveText('Résoudre', { timeout: 30_000 });
+
+  const moves = () => page.evaluate(async () => (await import('/js/cube/animator.js')).getCompletedMoves().length);
+  const before = await moves();
+  const camera = await cameraPosition(page);
+  await drag(page, await cellPos(page, 'front', 4), { x: 120, y: 0 });
+  await expect.poll(moves).toBe(before + 1);
+  expect(await cameraPosition(page)).toEqual(camera);
+
+  // en dehors du cube, le glissement fait tourner tout le cube
+  await drag(page, { x: 150, y: 150 });
+  expect(await cameraPosition(page)).not.toEqual(camera);
 });
 
 test("un coin tourné sur place n'est pas considéré comme résolu", async ({ page }) => {

@@ -134,7 +134,7 @@ function rotateVecGrid(pos, axis, angle) {
 }
 
 // anime la rotation d'une couche donnée (turns = 2 pour un demi-tour)
-function animateRotation(layer, number, orientation, duration = 400, recordMove = true, highlight = true, turns = 1) {
+function animateRotation(layer, number, orientation, duration = 400, highlight = true, turns = 1) {
   return new Promise((resolve) => {
     if (!app.scene || !app.rubiksCube) return resolve();
 
@@ -152,9 +152,7 @@ function animateRotation(layer, number, orientation, duration = 400, recordMove 
             if (m && m.emissive !== undefined) {
               m.userData_prevEmissive = m.emissive.clone ? m.emissive.clone() : null;
               m.userData_prevEmissiveIntensity = m.emissiveIntensity || 0;
-              try {
-                m.emissive.setHex(0xffffff);
-              } catch (e) {}
+              m.emissive.setHex(0xffffff);
               m.emissiveIntensity = 0.25;
             }
           });
@@ -194,9 +192,7 @@ function animateRotation(layer, number, orientation, duration = 400, recordMove 
           if (highlight && Array.isArray(c.material)) {
             c.material.forEach((m) => {
               if (m && m.emissive !== undefined) {
-                try {
-                  if (m.userData_prevEmissive) m.emissive.copy(m.userData_prevEmissive);
-                } catch (e) {}
+                if (m.userData_prevEmissive) m.emissive.copy(m.userData_prevEmissive);
                 m.emissiveIntensity = m.userData_prevEmissiveIntensity || 0;
                 delete m.userData_prevEmissive;
                 delete m.userData_prevEmissiveIntensity;
@@ -234,7 +230,6 @@ async function processQueue() {
     move.number,
     move.orientation,
     move.duration || 400,
-    move.recordMove,
     move.highlight !== undefined ? move.highlight : true,
     move.turns || 1,
   );
@@ -290,7 +285,6 @@ export function shuffle(nMoves = 25) {
 
       // règle additionnelle : éviter de faire un mouvement qui annule le mouvement d'il y a 2 pas
       if (algParts.length >= 2) {
-        const lastAlg = algParts[algParts.length - 1];
         const prevPrevAlg = algParts[algParts.length - 2];
         // simple heuristique : si on génère la même notation que prevPrevAlg, éviter
         const candidateAlg = moveToAlg({ layer: axis, number, orientation });

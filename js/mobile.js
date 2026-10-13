@@ -1,4 +1,4 @@
-import { CATEGORIES, CUBE_CONTENT } from './utils/constants.js';
+import { CUBE_CONTENT } from './utils/constants.js';
 import { showInfoCard } from './cards/overlay.js';
 
 // État global pour la navigation
@@ -115,7 +115,6 @@ function navigateFace(direction) {
 
   // Centrer l'item de navigation actif
   const navItem = document.querySelector(`.cube-nav-item[data-face="${nextFace}"]`);
-  const navScroll = document.querySelector('.cube-nav-scroll');
 
   navItem.scrollIntoView({
     behavior: 'smooth',
