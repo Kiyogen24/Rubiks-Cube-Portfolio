@@ -1,7 +1,10 @@
 // Outils communs aux tests : préparation de la page et interactions avec le cube 3D
 
-// Langue, thème et aides déjà vues, posés une seule fois avant le premier chargement
-export async function prepare(page, { lang = 'fr', theme = 'light' } = {}) {
+// Langue, thème et aides déjà vues, posés une seule fois avant le premier chargement.
+// Sans `motion`, l'utilisateur préfère réduire les animations : pas d'ouverture ni de mouvement au repos,
+// pour que les tests ne dépendent pas du temps passé sans interaction.
+export async function prepare(page, { lang = 'fr', theme = 'light', motion = false } = {}) {
+  if (!motion) await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(
     ({ lang, theme }) => {
       if (sessionStorage.getItem('test-init')) return;
@@ -108,6 +111,21 @@ export async function openCard(page, face, index) {
 export async function closeCard(page) {
   await page.click('.info-card.active .close-button');
   await page.locator('.info-card').waitFor({ state: 'detached' });
+}
+
+// Le cube est-il exactement dans sa position d'origine (positions et orientations) ?
+export function cubeAtHome(page) {
+  return page.evaluate(async () => {
+    const { app } = await import('/js/globals.js');
+    return app.cubies.every(
+      (c) => c.userData.gridPos.equals(c.userData.homePos) && Math.abs(Math.abs(c.quaternion.w) - 1) < 1e-6,
+    );
+  });
+}
+
+// Textes des étiquettes de faces visibles
+export function visibleLabels(page) {
+  return page.locator('.face-label__pill.visible').allTextContents();
 }
 
 export function cameraPosition(page) {

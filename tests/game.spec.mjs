@@ -1,14 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepare, open, toCube, cellPos, cameraPosition, drag } from './helpers.mjs';
-
-// Le cube est-il exactement dans sa position d'origine (positions et orientations) ?
-const cubeAtHome = (page) =>
-  page.evaluate(async () => {
-    const { app } = await import('/js/globals.js');
-    return app.cubies.every(
-      (c) => c.userData.gridPos.equals(c.userData.homePos) && Math.abs(Math.abs(c.quaternion.w) - 1) < 1e-6,
-    );
-  });
+import { prepare, open, toCube, cellPos, cameraPosition, drag, cubeAtHome } from './helpers.mjs';
 
 test('mélanger puis résoudre avec le solveur de Kociemba', async ({ page }) => {
   const logs = [];

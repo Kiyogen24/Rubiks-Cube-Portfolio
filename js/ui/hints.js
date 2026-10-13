@@ -91,27 +91,34 @@ export function setupHints() {
   rotateHint = createRotateHint();
 
   if (!localStorage.getItem('hasSeenCubeHints')) {
-    // première visite : aides affichées à l'arrivée sur le cube, pendant 6 s
-    const onContainerScroll = () => {
-      if (!isCubeSectionInView()) return;
-      positionHints();
-      setTimeout(() => {
-        clickHint.classList.add('visible');
-        navHint.classList.add('visible');
-        setTimeout(() => {
-          hideAllHints();
-          localStorage.setItem('hasSeenCubeHints', 'true');
-        }, 6000);
-      }, 800);
-      container.removeEventListener('scroll', onContainerScroll);
-    };
-    container.addEventListener('scroll', onContainerScroll, { passive: true });
-
-    // masquées au premier clic sur le cube ou les boutons de navigation
+    // première visite : les étiquettes des faces attendent la fin des aides
+    app.hintsShowing = true;
+    let dismissed = false;
     const dismissHints = () => {
+      dismissed = true;
       hideAllHints();
       localStorage.setItem('hasSeenCubeHints', 'true');
+      app.hintsShowing = false;
     };
+
+    // aides affichées à l'arrivée sur le cube (après l'ouverture), pendant 6 s
+    const onContainerScroll = () => {
+      if (!isCubeSectionInView()) return;
+      container.removeEventListener('scroll', onContainerScroll);
+      app.openingDone.then(() =>
+        setTimeout(() => {
+          if (dismissed) return;
+          positionHints();
+          clickHint.classList.add('visible');
+          navHint.classList.add('visible');
+          setTimeout(dismissHints, 6000);
+        }, 800),
+      );
+    };
+    container.addEventListener('scroll', onContainerScroll, { passive: true });
+    onContainerScroll(); // page rechargée directement sur le cube
+
+    // masquées au premier clic sur le cube ou les boutons de navigation
     cubeSection.addEventListener('click', dismissHints, { once: true });
     document
       .querySelectorAll('.nav-button')

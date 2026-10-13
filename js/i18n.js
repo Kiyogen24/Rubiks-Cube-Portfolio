@@ -3,6 +3,7 @@ import { LanguageManager } from './language-manager.js';
 import { CUBE_CONTENT, SITE_I18N } from './utils/constants.js';
 import { updateGameButton } from './cube/game.js';
 import { setupHints, positionHints } from './ui/hints.js';
+import { setLabelTexts } from './cube/labels.js';
 
 // Clé de la description de chaque entrée du menu
 const MENU_DESC = {
@@ -30,6 +31,8 @@ function applyTranslations(lang) {
   setText('#click-hint .hint-text', ui.clickHint);
   setText('#nav-hint .hint-text', ui.navHint);
   setText('.scroll-text', ui.scrollText);
+
+  setLabelTexts(t.categories);
 
   // Menu
   document.querySelectorAll('.menu-item').forEach((item) => {

@@ -73,7 +73,7 @@ export function resetRubikToHome() {
 }
 
 function onGameButtonClick() {
-  if (isBusy()) return; // attendre la fin des animations
+  if (isBusy() || app.openingPlaying) return; // attendre la fin des animations
 
   if (!app.isPlayable) {
     // nouveau mélange : « Résoudre » ne doit défaire que celui-ci
@@ -118,7 +118,9 @@ export function setupGame() {
   });
 
   // Contrôle régulier de l'état résolu, pour détecter une résolution à la main
+  // (ignoré pendant l'ouverture et les torsions au repos, qui reviennent d'elles-mêmes à l'état résolu)
   setInterval(() => {
+    if (app.openingPlaying || app.idleTwisting) return;
     const solved = isCubeSolved();
     if (lastSolved === null) {
       lastSolved = solved;

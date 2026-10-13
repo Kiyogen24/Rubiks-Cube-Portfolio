@@ -1,0 +1,63 @@
+/* Étiquettes des faces du cube (voir js/cube/labels.js) */
+.face-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.face-label__pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 10px;
+  border-radius: 999px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--light-text);
+  background: rgba(251, 251, 254, 0.86);
+  border: 1px solid rgba(47, 39, 206, 0.16);
+  box-shadow: 0 6px 18px rgba(5, 3, 21, 0.12);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translate(-50%, -50%) translateY(6px) scale(0.92);
+  /* sortie plus rapide que l'entrée */
+  transition:
+    opacity 140ms ease-out,
+    transform 140ms ease-out;
+}
+
+.face-label__pill.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition:
+    opacity 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* pastille de la couleur de la face, bordée pour rester visible en blanc et en jaune */
+.face-label__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(5, 3, 21, 0.25);
+}
+
+[data-theme='dark'] .face-label__pill {
+  color: var(--dark-text);
+  background: rgba(4, 0, 41, 0.74);
+  border-color: rgba(235, 233, 252, 0.14);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face-label__pill,
+  .face-label__pill.visible {
+    transform: translate(-50%, -50%);
+  }
+}

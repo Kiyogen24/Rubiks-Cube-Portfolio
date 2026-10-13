@@ -6,6 +6,7 @@ let isSolving = false;
 let moveQueue = [];
 let completedMoves = [];
 let onSolvedCallback = null;
+let onDrained = []; // promesses de playMoves, résolues quand la file est vide
 
 // Correspondance notation standard <-> représentation interne { layer, number, orientation }.
 // orientation 1 = rotation de +90° autour de l'axe (col: x, row: y, depth: z) ;
@@ -122,13 +123,12 @@ function roundGridVal(v) {
   return 0;
 }
 
+const AXIS_VECTORS = { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
+
 // fait tourner une position de grille autour d'un axe et renvoie la nouvelle position arrondie
 function rotateVecGrid(pos, axis, angle) {
   const v = new THREE.Vector3(pos.x, pos.y, pos.z);
-  const q = new THREE.Quaternion();
-  if (axis === 'x') q.setFromAxisAngle(new THREE.Vector3(1, 0, 0), angle);
-  if (axis === 'y') q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
-  if (axis === 'z') q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+  const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(...AXIS_VECTORS[axis]), angle);
   v.applyQuaternion(q);
   return new THREE.Vector3(roundGridVal(v.x), roundGridVal(v.y), roundGridVal(v.z));
 }
@@ -160,10 +160,9 @@ function animateRotation(layer, number, orientation, duration = 400, highlight =
       });
     }
 
-    // créer un pivot à l'origine du monde
+    // pivot au centre du cube (dans son groupe, pour suivre le groupe s'il bouge)
     const pivot = new THREE.Object3D();
-    pivot.position.set(0, 0, 0);
-    app.scene.add(pivot);
+    app.rubiksCube.add(pivot);
 
     // attacher les cubies au pivot tout en préservant leurs transforms mondiaux
     cubies.forEach((c) => pivot.attach(c));
@@ -201,7 +200,7 @@ function animateRotation(layer, number, orientation, duration = 400, highlight =
           }
         });
 
-        app.scene.remove(pivot);
+        app.rubiksCube.remove(pivot);
         isAnimating = false;
 
         // NOTE: ne pas pousser dans completedMoves ici — processQueue gère l'enregistrement
@@ -222,6 +221,8 @@ async function processQueue() {
       isSolving = false;
       if (onSolvedCallback) onSolvedCallback();
     }
+    onDrained.forEach((resolve) => resolve());
+    onDrained = [];
     return;
   }
   const move = moveQueue.shift();
@@ -364,6 +365,37 @@ export function queueMove(layer, number, orientation, duration = 400, options = 
   const highlight = options.highlight !== undefined ? options.highlight : true;
   moveQueue.push({ layer, number, orientation, duration, recordMove: true, highlight });
   processQueue();
+}
+
+// joue des mouvements sans les enregistrer (animation d'ouverture) ; résolue une fois la file vide
+export function playMoves(moves, duration = 200) {
+  moves.forEach((m) => {
+    moveQueue.push({ ...m, duration: duration * (m.turns || 1), recordMove: false, highlight: false });
+  });
+  const drained = new Promise((resolve) => onDrained.push(resolve));
+  processQueue();
+  return drained;
+}
+
+// accélère les mouvements encore en attente (passer une animation)
+export function hurryMoves(duration = 40) {
+  moveQueue.forEach((m) => {
+    m.duration = duration * (m.turns || 1);
+  });
+}
+
+// applique des mouvements d'un coup, sans animation ni enregistrement
+export function applyMovesInstantly(moves) {
+  moves.forEach(({ layer, number, orientation, turns = 1 }) => {
+    const axis = layer === 'col' ? 'x' : layer === 'row' ? 'y' : 'z';
+    const angle = ((orientation === 1 ? 1 : -1) * turns * Math.PI) / 2;
+    const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(...AXIS_VECTORS[axis]), angle);
+    getLayerCubies(layer, number).forEach((c) => {
+      c.position.applyQuaternion(q);
+      c.quaternion.premultiply(q);
+      c.userData.gridPos.copy(rotateVecGrid(c.userData.gridPos, axis, angle));
+    });
+  });
 }
 
 export function registerOnSolved(cb) {
