@@ -152,6 +152,7 @@ export function setupStickerImages() {
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = SIZE;
       const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace; // sinon les couleurs de l'image sont éclaircies une seconde fois (voile blanc)
       texture.anisotropy = app.renderer.capabilities.getMaxAnisotropy();
       const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, opacity: 0 });
       const mesh = new THREE.Mesh(geometry, material);

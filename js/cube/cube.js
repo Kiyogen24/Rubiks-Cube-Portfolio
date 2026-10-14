@@ -76,6 +76,7 @@ export function createStickerMaterial(faceName, gridPosition) {
       ctx.restore();
       // Met à jour la texture une fois l'image chargée
       const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace; // couleurs de la photo telles quelles, sans voile blanc
       texture.anisotropy = app.renderer.capabilities.getMaxAnisotropy();
       texture.minFilter = THREE.LinearMipMapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
