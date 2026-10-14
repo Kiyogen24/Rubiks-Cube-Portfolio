@@ -91,14 +91,12 @@ export function setupHints() {
   rotateHint = createRotateHint();
 
   if (!localStorage.getItem('hasSeenCubeHints')) {
-    // première visite : les étiquettes des faces attendent la fin des aides
-    app.hintsShowing = true;
+    // première visite
     let dismissed = false;
     const dismissHints = () => {
       dismissed = true;
       hideAllHints();
       localStorage.setItem('hasSeenCubeHints', 'true');
-      app.hintsShowing = false;
     };
 
     // aides affichées à l'arrivée sur le cube, pendant 6 s

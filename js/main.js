@@ -9,7 +9,7 @@ import { createOverlay } from './cards/overlay.js';
 import { setupNavigation } from './cube/navigation.js';
 import { setupInput } from './cube/input.js';
 import { setupIdle } from './cube/idle.js';
-import { setupLabels } from './cube/labels.js';
+import { setupStickerLabels } from './cube/sticker-labels.js';
 import { setupLanguage } from './i18n.js';
 
 setupTheme();
@@ -22,6 +22,6 @@ createOverlay(); // fond des cartes d'information
 setupNavigation(); // défilement entre les sections
 setupInput(); // souris : clics, glissements, survol
 setupIdle(); // mouvement au repos
-setupLabels(); // noms des catégories sur les faces tournées vers l'écran
+setupStickerLabels(localStorage.getItem('lang') || 'fr'); // contenus sur les stickers de la face tournée vers l'écran
 setupLanguage();
 startRenderLoop();

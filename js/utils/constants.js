@@ -1208,6 +1208,27 @@ export const CUBE_CONTENT = {
   },
 };
 
+// Noms courts écrits sur les stickers, pour les titres trop longs pour une case
+// (les autres stickers reprennent le titre du contenu)
+export const STICKER_LABELS = {
+  fr: {
+    front: { 7: 'Bases de données', 8: 'Pack Office' },
+    back: { 0: 'DELMIA', 1: 'Labelbox', 2: 'Outlier', 3: 'Junior Conseil', 4: 'Tutorat', 5: 'Siemens' },
+    top: { 6: 'À propos', 7: 'Passions', 8: 'Soft skills' },
+    bottom: { 4: 'CV' },
+    right: { 0: 'Cube RL', 1: 'CIFAR-10', 3: 'Crédit', 5: 'Neutrino', 6: 'Réseau ferré', 7: 'Échecs' },
+    left: { 0: 'Todai', 1: 'UTT', 2: 'Saint-Pierre' },
+  },
+  en: {
+    front: { 7: 'Databases', 8: 'Office' },
+    back: { 0: 'DELMIA', 1: 'Labelbox', 2: 'Outlier', 3: 'Junior Conseil', 4: 'Tutoring', 5: 'Siemens' },
+    top: { 6: 'About me', 7: 'Passions', 8: 'Soft skills' },
+    bottom: { 4: 'Resume' },
+    right: { 0: 'RL cube', 1: 'CIFAR-10', 3: 'Credit risk', 5: 'Neutrino', 6: 'Railway', 7: 'Chess' },
+    left: { 0: 'Todai', 1: 'UTT', 2: 'Saint-Pierre' },
+  },
+};
+
 // Site-level internationalized strings (page title, loading screen, device note, intro)
 export const SITE_I18N = {
   fr: {

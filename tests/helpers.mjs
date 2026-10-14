@@ -125,9 +125,9 @@ export function cubeAtHome(page) {
   });
 }
 
-// Textes des étiquettes de faces visibles
-export function visibleLabels(page) {
-  return page.locator('.face-label__pill.visible').allTextContents();
+// Faces dont les contenus sont affichés sur les stickers
+export function visibleLabelFaces(page) {
+  return page.evaluate(async () => (await import('/js/cube/sticker-labels.js')).visibleFaces());
 }
 
 export function cameraPosition(page) {

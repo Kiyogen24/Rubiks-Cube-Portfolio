@@ -17,7 +17,6 @@ export const app = {
   isPlayable: false, // mode jeu, après un mélange
   isAutoSolving: false,
   idleTwisting: false, // une face tourne pendant le mouvement au repos
-  hintsShowing: false, // aides de première visite affichées ou sur le point de l'être
   menuOpen: false,
   cubeSize: 1,
   gap: 0.001,

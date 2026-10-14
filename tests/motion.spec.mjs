@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepare, open, toCube, zoomTo, zoomOut, cubeAtHome, cameraPosition, visibleLabels } from './helpers.mjs';
+import { prepare, open, toCube, zoomTo, zoomOut, cubeAtHome, cameraPosition, visibleLabelFaces } from './helpers.mjs';
 
 test('au repos, le cube tourne seul et se remet en place dès que la souris bouge', async ({ page }) => {
   await prepare(page, { motion: true });
@@ -20,14 +20,14 @@ test('au repos, le cube tourne seul et se remet en place dès que la souris boug
   await expect(page.locator('.confetti-container')).toHaveCount(0);
 });
 
-test('les étiquettes nomment la face de devant et disparaissent en vue zoomée', async ({ page }) => {
-  await prepare(page, { lang: 'en' });
+test("les contenus apparaissent sur les stickers de la face tournée vers l'écran", async ({ page }) => {
+  await prepare(page);
   await open(page);
   await toCube(page);
-  await expect.poll(() => visibleLabels(page)).toEqual(['Skills']);
+  await expect.poll(() => visibleLabelFaces(page)).toEqual(['front']);
 
   await zoomTo(page, 'right');
-  expect(await visibleLabels(page)).toEqual([]);
+  await expect.poll(() => visibleLabelFaces(page)).toEqual(['right']);
   await zoomOut(page);
-  await expect.poll(() => visibleLabels(page)).toEqual(['Skills']);
+  await expect.poll(() => visibleLabelFaces(page)).toEqual(['front']);
 });

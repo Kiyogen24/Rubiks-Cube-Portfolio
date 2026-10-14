@@ -25,3 +25,4 @@ yarn-error.log*
 # Tests
 test-results/
 playwright-report/
+.taste-skill/

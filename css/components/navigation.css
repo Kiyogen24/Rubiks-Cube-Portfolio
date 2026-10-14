@@ -78,6 +78,7 @@
 .menu-btn__burger::after {
   content: '';
   position: absolute;
+  left: 0;
   width: 25px;
   height: 2px;
   background: var(--light-primary);
