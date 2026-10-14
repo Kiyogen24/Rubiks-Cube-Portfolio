@@ -65,9 +65,24 @@ const server = http.createServer((req, res) => {
 });
 
 if (WATCH) {
+  // Windows signale aussi les simples lectures (heure du dernier accès) : sans ce filtre, charger une image
+  // en zoomant ou ouvrir une carte rechargeait la page. On ne recharge que si la date de modification change.
+  const startedAt = Date.now();
+  const modified = new Map(); // fichier -> dernière date de modification vue
   let timer = null;
   fs.watch(ROOT, { recursive: true }, (event, name) => {
     if (!name || /^(node_modules|\.git|test-results|playwright-report)[\\/]/.test(name)) return;
+    const file = path.join(ROOT, name);
+    let mtime;
+    try {
+      const stat = fs.statSync(file);
+      if (stat.isDirectory()) return;
+      mtime = stat.mtimeMs;
+    } catch {
+      mtime = Date.now(); // fichier supprimé : c'est une modification
+    }
+    if (mtime <= (modified.get(file) ?? startedAt)) return; // simple lecture
+    modified.set(file, mtime);
     clearTimeout(timer);
     timer = setTimeout(() => clients.forEach((client) => client.write('data: reload\n\n')), 100);
   });
