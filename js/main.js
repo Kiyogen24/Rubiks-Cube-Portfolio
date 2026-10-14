@@ -8,7 +8,6 @@ import { setupMenu } from './ui/menu.js';
 import { createOverlay } from './cards/overlay.js';
 import { setupNavigation } from './cube/navigation.js';
 import { setupInput } from './cube/input.js';
-import { setupOpening } from './cube/opening.js';
 import { setupIdle } from './cube/idle.js';
 import { setupLabels } from './cube/labels.js';
 import { setupLanguage } from './i18n.js';
@@ -22,7 +21,6 @@ setupMenu(); // menu, bouton Retour, liens rapides
 createOverlay(); // fond des cartes d'information
 setupNavigation(); // défilement entre les sections
 setupInput(); // souris : clics, glissements, survol
-setupOpening(); // le cube se résout tout seul à la première arrivée
 setupIdle(); // mouvement au repos
 setupLabels(); // noms des catégories sur les faces tournées vers l'écran
 setupLanguage();

@@ -1,7 +1,7 @@
 // Outils communs aux tests : préparation de la page et interactions avec le cube 3D
 
 // Langue, thème et aides déjà vues, posés une seule fois avant le premier chargement.
-// Sans `motion`, l'utilisateur préfère réduire les animations : pas d'ouverture ni de mouvement au repos,
+// Sans `motion`, l'utilisateur préfère réduire les animations : pas de mouvement au repos,
 // pour que les tests ne dépendent pas du temps passé sans interaction.
 export async function prepare(page, { lang = 'fr', theme = 'light', motion = false } = {}) {
   if (!motion) await page.emulateMedia({ reducedMotion: 'reduce' });

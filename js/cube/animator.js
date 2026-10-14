@@ -6,7 +6,6 @@ let isSolving = false;
 let moveQueue = [];
 let completedMoves = [];
 let onSolvedCallback = null;
-let onDrained = []; // promesses de playMoves, résolues quand la file est vide
 
 // Correspondance notation standard <-> représentation interne { layer, number, orientation }.
 // orientation 1 = rotation de +90° autour de l'axe (col: x, row: y, depth: z) ;
@@ -221,8 +220,6 @@ async function processQueue() {
       isSolving = false;
       if (onSolvedCallback) onSolvedCallback();
     }
-    onDrained.forEach((resolve) => resolve());
-    onDrained = [];
     return;
   }
   const move = moveQueue.shift();
@@ -365,37 +362,6 @@ export function queueMove(layer, number, orientation, duration = 400, options = 
   const highlight = options.highlight !== undefined ? options.highlight : true;
   moveQueue.push({ layer, number, orientation, duration, recordMove: true, highlight });
   processQueue();
-}
-
-// joue des mouvements sans les enregistrer (animation d'ouverture) ; résolue une fois la file vide
-export function playMoves(moves, duration = 200) {
-  moves.forEach((m) => {
-    moveQueue.push({ ...m, duration: duration * (m.turns || 1), recordMove: false, highlight: false });
-  });
-  const drained = new Promise((resolve) => onDrained.push(resolve));
-  processQueue();
-  return drained;
-}
-
-// accélère les mouvements encore en attente (passer une animation)
-export function hurryMoves(duration = 40) {
-  moveQueue.forEach((m) => {
-    m.duration = duration * (m.turns || 1);
-  });
-}
-
-// applique des mouvements d'un coup, sans animation ni enregistrement
-export function applyMovesInstantly(moves) {
-  moves.forEach(({ layer, number, orientation, turns = 1 }) => {
-    const axis = layer === 'col' ? 'x' : layer === 'row' ? 'y' : 'z';
-    const angle = ((orientation === 1 ? 1 : -1) * turns * Math.PI) / 2;
-    const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(...AXIS_VECTORS[axis]), angle);
-    getLayerCubies(layer, number).forEach((c) => {
-      c.position.applyQuaternion(q);
-      c.quaternion.premultiply(q);
-      c.userData.gridPos.copy(rotateVecGrid(c.userData.gridPos, axis, angle));
-    });
-  });
 }
 
 export function registerOnSolved(cb) {

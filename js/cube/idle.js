@@ -5,7 +5,7 @@ import { isBusy } from './animator.js';
 import { isCubeSectionInView } from '../utils/view.js';
 
 // Mouvement au repos : sans interaction, le cube tourne lentement, flotte et tourne parfois une face.
-// Coupé en vue zoomée, en mode jeu, pendant l'ouverture et si l'utilisateur préfère réduire les animations.
+// Coupé en vue zoomée, en mode jeu et si l'utilisateur préfère réduire les animations.
 const IDLE_DELAY = 4; // s sans interaction avant de démarrer
 const SPIN_RPM = 1; // tours par minute
 const FLOAT_HEIGHT = 0.05;
@@ -98,7 +98,6 @@ function update(dt) {
     !app.cameraAnimating &&
     !app.isPlayable &&
     !app.isModalOpen &&
-    !app.openingPlaying &&
     !isBusy() &&
     isCubeSectionInView();
 

@@ -34,7 +34,6 @@ function labelsAllowed() {
     !app.cameraAnimating &&
     !app.isPlayable &&
     !app.isModalOpen &&
-    !app.openingPlaying &&
     !app.hintsShowing &&
     isCubeSectionInView()
   );

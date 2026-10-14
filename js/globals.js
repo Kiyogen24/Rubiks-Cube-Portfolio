@@ -16,8 +16,6 @@ export const app = {
   isDragging: false,
   isPlayable: false, // mode jeu, après un mélange
   isAutoSolving: false,
-  openingPlaying: false, // le cube se résout tout seul à la première arrivée
-  openingDone: Promise.resolve(),
   idleTwisting: false, // une face tourne pendant le mouvement au repos
   hintsShowing: false, // aides de première visite affichées ou sur le point de l'être
   menuOpen: false,

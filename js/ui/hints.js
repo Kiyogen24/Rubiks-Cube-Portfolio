@@ -101,19 +101,17 @@ export function setupHints() {
       app.hintsShowing = false;
     };
 
-    // aides affichées à l'arrivée sur le cube (après l'ouverture), pendant 6 s
+    // aides affichées à l'arrivée sur le cube, pendant 6 s
     const onContainerScroll = () => {
       if (!isCubeSectionInView()) return;
       container.removeEventListener('scroll', onContainerScroll);
-      app.openingDone.then(() =>
-        setTimeout(() => {
-          if (dismissed) return;
-          positionHints();
-          clickHint.classList.add('visible');
-          navHint.classList.add('visible');
-          setTimeout(dismissHints, 6000);
-        }, 800),
-      );
+      setTimeout(() => {
+        if (dismissed) return;
+        positionHints();
+        clickHint.classList.add('visible');
+        navHint.classList.add('visible');
+        setTimeout(dismissHints, 6000);
+      }, 800);
     };
     container.addEventListener('scroll', onContainerScroll, { passive: true });
     onContainerScroll(); // page rechargée directement sur le cube
