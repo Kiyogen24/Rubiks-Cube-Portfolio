@@ -1,60 +1,60 @@
 import { test, expect } from '@playwright/test';
-import { prepare, open, toCube, cameraStill } from './helpers.mjs';
+import { prepare, open, still, cardOpen } from './helpers.mjs';
 
-test('au clavier : menu, face, sticker, carte, puis retour', async ({ page }) => {
+test('au clavier : le cube, une carte, puis retour', async ({ page }) => {
   await prepare(page);
   await open(page);
-  await toCube(page);
 
-  // menu
-  await page.focus('.menu-btn');
+  // Entrée sur le cube l'amène au centre
+  await page.focus('#cube');
   await page.keyboard.press('Enter');
-  await expect(page.locator('.menu-btn')).toHaveAttribute('aria-expanded', 'true');
-  await page.keyboard.press('Tab');
-  await expect(page.locator('.menu-item[data-face="top"]')).toBeFocused();
+  await page.waitForFunction(() => window.__S.mode === 'explore');
+  await still(page);
 
-  // face des expériences
-  await page.focus('.menu-item[data-face="back"]');
+  // les flèches le tournent d'un quart de tour
+  const front = await page.evaluate(() => window.__S.front);
+  await page.keyboard.press('ArrowRight');
+  await still(page);
+  await expect.poll(() => page.evaluate(() => window.__S.front)).not.toBe(front);
+  await page.keyboard.press('ArrowLeft');
+  await still(page);
+  await expect.poll(() => page.evaluate(() => window.__S.front)).toBe(front);
+
+  // Entrée ouvre le premier contenu de la face devant, le focus va sur son titre
   await page.keyboard.press('Enter');
-  await page.waitForFunction(() => document.getElementById('cube-section').classList.contains('zoomed'));
-  await cameraStill(page);
+  await cardOpen(page);
+  await expect(page.locator('#card-title')).toBeFocused();
+  await expect(page.locator('#card')).toHaveAttribute('aria-labelledby', 'card-title');
 
-  // le sticker qui a le focus est mis en avant, Entrée ouvre sa carte
-  const sticker = page.locator('.sticker-buttons button').first();
-  await sticker.focus();
-  await expect(page.locator('.sticker-tip.visible')).toHaveCount(1);
-  await page.keyboard.press('Enter');
-  const card = page.locator('.info-card.active[role="dialog"]');
-  await expect(card).toBeFocused();
-  await expect(card).toHaveAttribute('aria-labelledby', 'info-card-title');
-
-  // Tab reste dans la carte
-  await page.keyboard.press('Tab');
-  await expect(card.locator('.close-button')).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(card.locator('.close-button')).toBeFocused();
-
-  // Échap ferme la carte et rend le focus au sticker, sans quitter le zoom
+  // Échap la ferme et rend le focus au cube
   await page.keyboard.press('Escape');
-  await expect(page.locator('.info-card')).toHaveCount(0);
-  await expect(sticker).toBeFocused();
-  await expect(page.locator('#cube-section')).toHaveClass(/zoomed/);
-
-  // Échap de nouveau : sortie du zoom, focus sur le bouton du menu
-  await page.keyboard.press('Escape');
-  await expect(page.locator('#cube-section')).not.toHaveClass(/zoomed/);
-  await expect(page.locator('.menu-btn')).toBeFocused();
+  await page.waitForFunction(() => !window.__S.card);
+  await expect(page.locator('#cube')).toBeFocused();
 });
 
 test('la langue de la page et les noms des commandes suivent le bouton FR / EN', async ({ page }) => {
   await prepare(page);
   await open(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-  await expect(page.locator('.theme-btn')).toHaveAttribute('aria-label', 'Changer de thème');
+  await expect(page.locator('#theme')).toHaveAttribute('aria-label', 'Changer de thème');
+  await expect(page.locator('.lang button[data-lang="fr"]')).toHaveAttribute('aria-pressed', 'true');
 
-  await page.click('.lang-btn');
+  await page.click('.lang button[data-lang="en"]');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('.theme-btn')).toHaveAttribute('aria-label', 'Toggle theme');
-  await expect(page.locator('.lang-btn')).toHaveAttribute('aria-label', 'Switch to French');
-  await expect(page.locator('#cube-section canvas')).toHaveAttribute('aria-label', /Interactive Rubik's Cube/);
+  await expect(page.locator('#theme')).toHaveAttribute('aria-label', 'Switch theme');
+  await expect(page.locator('.lang')).toHaveAttribute('aria-label', 'Language');
+  await expect(page.locator('.lang button[data-lang="en"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#cube')).toHaveAttribute('aria-label', /each face is a part of the portfolio/);
+  await expect(page.locator('.tagline')).toContainText('University of Tokyo');
+  expect(await page.evaluate(() => localStorage.getItem('lang'))).toBe('en');
+});
+
+test('le thème sombre se garde d’une visite à l’autre', async ({ page }) => {
+  await prepare(page);
+  await open(page);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.click('#theme');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });

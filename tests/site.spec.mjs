@@ -4,22 +4,28 @@ import {
   watchErrors,
   open,
   toCube,
-  zoomTo,
-  zoomOut,
-  openCard,
+  still,
+  openSticker,
   closeCard,
-  cellPos,
-  cameraPosition,
-  drag,
+  cardOpen,
+  stickerPoint,
   expectedAge,
 } from './helpers.mjs';
 
-test('la page se charge sans erreur', async ({ page }) => {
+test('la page se charge sans erreur, du nom jusqu’au cube', async ({ page }) => {
   const errors = watchErrors(page);
   await prepare(page, { motion: true });
   await open(page);
-  await expect(page.locator('.typing-text')).toHaveCSS('animation-play-state', /running/);
-  await toCube(page);
+  await expect(page.locator('h1')).toHaveText('Romain Goldenchtein');
+  await expect(page.locator('.tagline')).toContainText('Université de Tokyo');
+  await expect(page.locator('#cube-ui')).not.toHaveClass(/\bon\b/);
+
+  // un clic sur le cube le fait venir au centre, avec le patron et le bouton Jouer
+  const center = await page.evaluate(() => window.__scene.project(new window.__THREE.Vector3()));
+  await page.mouse.click(center.x, center.y);
+  await page.waitForFunction(() => window.__S.mode === 'explore');
+  await expect(page.locator('#cube-ui')).toHaveClass(/\bon\b/);
+  await expect(page.locator('#play')).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -28,115 +34,97 @@ test('les cartes en français reprennent le CV', async ({ page }) => {
   await open(page);
   await toCube(page);
 
-  await zoomTo(page, 'back');
-  let card = await openCard(page, 'back', 0);
-  await expect(card).toContainText('Dassault Systèmes (DELMIA)');
+  let card = await openSticker(page, 'back_0');
+  await expect(card.locator('h2')).toHaveText('Stage R&D en Deep Reinforcement Learning');
+  await expect(card.locator('#card-org')).toHaveText('Dassault Systèmes (DELMIA)');
   await expect(card).toContainText("L'agent surpasse les baselines heuristiques kanban");
-  await closeCard(page);
-  card = await openCard(page, 'back', 1);
-  await expect(card).toContainText('Labelbox (Alignerr)');
+  // « Suivant » ouvre le sticker suivant de la même face
+  await card.locator('.next').click();
+  await page.waitForFunction(() => window.__S.card?.key === 'back_1');
+  await cardOpen(page);
+  await expect(card.locator('#card-org')).toHaveText('Labelbox (Alignerr)');
   await closeCard(page);
 
-  await zoomTo(page, 'left');
-  card = await openCard(page, 'left', 0);
+  card = await openSticker(page, 'left_0');
   await expect(card).toContainText('The University of Tokyo (Todai)');
   await closeCard(page);
 
-  await zoomTo(page, 'top');
-  card = await openCard(page, 'top', 6);
-  await expect(card.locator('.card-facts > div', { hasText: 'Âge' })).toContainText(`${expectedAge()} ans`);
+  card = await openSticker(page, 'top_6');
+  await expect(card.locator('.facts > div', { hasText: 'Âge' })).toContainText(`${expectedAge()} ans`);
   await closeCard(page);
+});
 
-  await zoomTo(page, 'bottom');
-  card = await openCard(page, 'bottom', 4);
-  await expect(card.locator('iframe')).toHaveAttribute('src', 'assets/previews/cv.pdf');
+test('« Mon CV » et « À propos » s’ouvrent depuis leur bouton', async ({ page }) => {
+  await prepare(page);
+  await open(page);
+
+  await page.click('#open-cv');
+  await cardOpen(page);
+  const card = page.locator('#card');
+  await expect(card.locator('h2')).toHaveText('Mon CV');
+  await expect(card.locator('.cv-sheet img')).toHaveAttribute('src', 'assets/cv/cv-fr-1.webp');
+  expect(await card.locator('.cv-sheet img').evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(card.locator('#card-foot a')).toHaveAttribute('href', 'assets/previews/cv.pdf');
+  await closeCard(page);
+  await expect(page.locator('#open-cv')).toBeFocused();
+
+  await page.click('#open-about');
+  await cardOpen(page);
+  await expect(card.locator('#card-meta')).toContainText(`${expectedAge()} ans`);
+  await expect(card.locator('#card-foot a')).toHaveText(['LinkedIn', 'GitHub', 'Email']);
+  await closeCard(page);
 });
 
 test('la version anglaise traduit les cartes, le CV et les liens', async ({ page }) => {
   await prepare(page, { lang: 'en' });
   await open(page);
+  await expect(page.locator('#open-cv')).toHaveText('My CV');
   await toCube(page);
 
-  await zoomTo(page, 'back');
-  let card = await openCard(page, 'back', 0);
-  await expect(card).toContainText('R&D Internship in Deep Reinforcement Learning');
+  let card = await openSticker(page, 'back_0');
+  await expect(card.locator('h2')).toHaveText('R&D Internship in Deep Reinforcement Learning');
   await closeCard(page);
 
-  await zoomTo(page, 'right');
-  card = await openCard(page, 'right', 2);
-  const broken = await card
-    .locator('img')
-    .evaluateAll((imgs) => imgs.filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.getAttribute('src')));
-  expect(broken).toEqual([]);
-  await closeCard(page);
-
-  await zoomTo(page, 'bottom');
-  card = await openCard(page, 'bottom', 4);
-  await expect(card.locator('iframe')).toHaveAttribute('src', 'assets/previews/cv_en.pdf');
-  await closeCard(page);
-
-  await zoomOut(page);
-  await page.evaluate(() => document.getElementById('footer-section').scrollIntoView());
-  const cvLink = page.locator('.social-link[download]');
-  await expect(cvLink).toHaveAttribute('href', 'assets/previews/cv_en.pdf');
-  await expect(cvLink).toContainText('Download Resume');
-
-  // un lien rapide du pied de page met en avant la bonne entrée du menu
-  await page.click('.quick-link[data-face="back"]');
-  await expect(page.locator('.menu-item.active')).toHaveAttribute('data-face', 'back', { timeout: 6000 });
-});
-
-test('on ne peut pas faire tourner le cube en mode zoom après une carte', async ({ page }) => {
-  await prepare(page);
-  await open(page);
-  await toCube(page);
-  await zoomTo(page, 'back');
-  await openCard(page, 'back', 0);
-  await closeCard(page);
-
-  const before = await cameraPosition(page);
-  await drag(page);
-  expect(await cameraPosition(page)).toEqual(before);
-
-  // en sortant du zoom, la rotation revient
-  await zoomOut(page);
-  const home = await cameraPosition(page);
-  await drag(page);
-  expect(await cameraPosition(page)).not.toEqual(home);
-});
-
-test("un clic rapide sur un sticker ne laisse pas d'aperçu derrière la carte", async ({ page }) => {
-  await prepare(page);
-  await open(page);
-  await toCube(page);
-  await zoomTo(page, 'back');
-  for (const index of [0, 1, 2]) {
-    const p = await cellPos(page, 'back', index);
-    await page.mouse.click(p.x, p.y);
-    await page.locator('.info-card.active').waitFor();
-    await page.waitForTimeout(400);
-    await expect(page.locator('.sticker-tip.visible')).toHaveCount(0);
-    await closeCard(page);
-    await page.mouse.move(20, 450);
+  card = await openSticker(page, 'right_2');
+  await expect(card.locator('h2')).toHaveText('Portfolio');
+  const images = card.locator('.card-body img');
+  await expect(images).toHaveCount(3);
+  for (const img of await images.all()) {
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth > 0)).toBe(true);
   }
+  await closeCard(page);
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForFunction(() => window.__S.mode === 'intro');
+  await still(page);
+  await page.click('#open-cv');
+  await cardOpen(page);
+  await expect(card.locator('h2')).toHaveText('My Resume');
+  await expect(card.locator('.cv-sheet img')).toHaveAttribute('src', 'assets/cv/cv-en-1.webp');
+  await expect(card.locator('#card-foot a')).toHaveAttribute('href', 'assets/previews/cv_en.pdf');
+
+  // la carte ouverte change de langue avec la page
+  await page.click('.lang button[data-lang="fr"]');
+  await expect(card.locator('h2')).toHaveText('Mon CV');
+  await expect(card.locator('#card-foot a')).toHaveAttribute('href', 'assets/previews/cv.pdf');
 });
 
-test('les textures de survol sont libérées', async ({ page }) => {
+test('le survol nomme le sticker, et remonter à l’accueil ferme la carte et vide le cube', async ({ page }) => {
   await prepare(page);
   await open(page);
   await toCube(page);
-  await zoomTo(page, 'front');
-  const textures = () => page.evaluate(async () => (await import('/js/globals.js')).app.renderer.info.memory.textures);
-  const before = await textures();
-  const a = await cellPos(page, 'front', 0);
-  const b = await cellPos(page, 'front', 1);
-  for (let i = 0; i < 20; i++) {
-    await page.mouse.move(a.x, a.y);
-    await page.waitForTimeout(60);
-    await page.mouse.move(b.x, b.y);
-    await page.waitForTimeout(60);
-  }
+
+  const p = await stickerPoint(page, 'back_0');
+  await page.mouse.move(p.x, p.y);
+  await expect(page.locator('#tag')).toHaveClass(/\bon\b/);
+  await expect(page.locator('#tag')).toHaveText('Dassault Systèmes (DELMIA)');
   await page.mouse.move(20, 450);
-  await page.waitForTimeout(300);
-  expect((await textures()) - before).toBeLessThanOrEqual(2);
+  await expect(page.locator('#tag')).not.toHaveClass(/\bon\b/);
+
+  await openSticker(page, 'back_0');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForFunction(() => !window.__S.card && window.__S.mode === 'intro');
+  await expect(page.locator('#card')).toBeHidden();
+  await expect.poll(() => page.evaluate(() => window.__scene.tiles.every((t) => !t.mesh.visible))).toBe(true);
 });

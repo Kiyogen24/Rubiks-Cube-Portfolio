@@ -2,11 +2,11 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Portfolio Romain Goldenchtein</title>
     <meta
       name="description"
-      content="Portfolio de Romain Goldenchtein, étudiant ingénieur en informatique à l'UTT, spécialisé en intelligence artificielle et reinforcement learning. Compétences, expériences, projets et CV à explorer sur un Rubik's Cube en 3D."
+      content="Romain Goldenchtein, élève ingénieur en intelligence artificielle à l'Université de Tokyo : projets, expériences et CV à explorer sur un Rubik's Cube en 3D."
     />
     <link rel="canonical" href="https://goldenrom.vercel.app/" />
     <meta property="og:type" content="website" />
@@ -14,7 +14,7 @@
     <meta property="og:title" content="Romain Goldenchtein · Portfolio" />
     <meta
       property="og:description"
-      content="Portfolio de Romain Goldenchtein, étudiant ingénieur en informatique à l'UTT, spécialisé en intelligence artificielle et reinforcement learning. Compétences, expériences, projets et CV à explorer sur un Rubik's Cube en 3D."
+      content="Romain Goldenchtein, élève ingénieur en intelligence artificielle à l'Université de Tokyo : projets, expériences et CV à explorer sur un Rubik's Cube en 3D."
     />
     <meta property="og:image" content="https://goldenrom.vercel.app/assets/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -23,8 +23,8 @@
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:locale:alternate" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#fbfbfe" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#00030c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#eceafb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d0b26" media="(prefers-color-scheme: dark)" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -33,7 +33,10 @@
         "url": "https://goldenrom.vercel.app/",
         "image": "https://goldenrom.vercel.app/assets/og-image.jpg",
         "jobTitle": "Étudiant ingénieur en intelligence artificielle",
-        "affiliation": { "@type": "CollegeOrUniversity", "name": "Université de Technologie de Troyes" },
+        "affiliation": [
+          { "@type": "CollegeOrUniversity", "name": "Université de Technologie de Troyes" },
+          { "@type": "CollegeOrUniversity", "name": "The University of Tokyo" }
+        ],
         "knowsAbout": ["Reinforcement learning", "Machine learning", "Deep learning", "Python"],
         "email": "mailto:r.goldenchtein@proton.me",
         "sameAs": ["https://github.com/Kiyogen24", "https://www.linkedin.com/in/romain-goldenchtein/"]
@@ -41,249 +44,154 @@
     </script>
     <link rel="icon" type="image/png" href="assets/previews/rubik.png" />
     <script>
-      // thème appliqué avant le premier affichage, pour éviter un flash clair en mode sombre
-      document.documentElement.setAttribute(
-        'data-theme',
-        localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
-      );
+      // thème posé avant le premier affichage, pour éviter un flash clair en mode sombre
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+      }
+      document.documentElement.classList.add('js');
+      // le texte d'accueil s'affiche même si le cube ne démarre jamais
+      setTimeout(() => document.documentElement.classList.add('is-ready'), 6000);
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="css/main.css" />
     <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
     <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.152.2/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.152.2/examples/jsm/"
-        }
-      }
-    </script>
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!--
-    <div class="language-btn">
-      <button class="selected-lang">FR</button>
-      <div class="lang-dropdown">
-      <button data-lang="fr">Français</button>
-      <button data-lang="en">English</button>
-      </div>
-    </div>
-    -->
-  </head>
-  <body>
-    <header class="site-controls">
-      <button class="theme-btn" aria-label="Changer de thème">
-        <i class="theme-icon fa-solid fa-sun" aria-hidden="true"></i>
-      </button>
-    </header>
-
-    <script>
-      (function () {
-        if (
-          !localStorage.getItem('forceDesktop') &&
-          (window.innerWidth <= 768 ||
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-        ) {
-          window.location.href = 'mobile.html';
-        }
-      })();
-    </script>
-
-    <div class="loading-screen">
-      <div class="loader">
-        <div class="cube-loader">
-          <div class="cube-face front"></div>
-          <div class="cube-face back"></div>
-          <div class="cube-face right"></div>
-          <div class="cube-face left"></div>
-          <div class="cube-face top"></div>
-          <div class="cube-face bottom"></div>
-        </div>
-      </div>
-      <p class="loading-text">Chargement...</p>
-      <br /><br />
-      <p id="device-note" class="device-note">
-        Ce site est optimisé pour PC - Il est fortement recommandé de le consulter sur ordinateur pour une meilleure
-        expérience.
-      </p>
-    </div>
-    <!-- Boutons de navigation -->
-    <nav class="nav-buttons" aria-label="Sections">
-      <button class="nav-button" data-section="0" aria-label="Introduction"></button>
-      <button class="nav-button" data-section="1" aria-label="Rubik's Cube"></button>
-      <button class="nav-button" data-section="2" aria-label="Contact"></button>
-    </nav>
-
-    <main class="container">
-      <!-- Section Introduction -->
-      <section id="intro" tabindex="0" aria-labelledby="intro-title">
-        <div class="intro-content">
-          <h1 class="typing-text" id="intro-title">Bienvenue sur ce <strong>Rubik-folio</strong> !</h1>
-          <p class="device-note">
-            Ce site est optimisé pour PC - Il est fortement recommandé de le consulter sur ordinateur pour une meilleure
-            expérience.
-          </p>
-
-          <div class="intro-text">
-            <p>Salut ! Je m'appelle <strong>Romain Goldenchtein</strong> et ceci est mon portfolio.</p>
-            <br />
-            <p>
-              Ce qui me motive avant tout, c’est <strong>l’innovation</strong> et la recherche de nouvelles approches
-              pour résoudre des problèmes complexes. Passionné par l’<strong>intelligence artificielle</strong>, je
-              m’intéresse particulièrement au <strong>deep learning</strong> et à ses applications. Mais au-delà des
-              algorithmes, c’est <em>l’impact des technologies</em>
-              qui me fascine : comment elles transforment notre manière de comprendre, d’optimiser et de créer.
-            </p>
-            <br />
-            <p>
-              Curieux et toujours en quête de nouveaux défis, j’explore divers domaines liés à la <strong>data</strong>,
-              à l’<strong>IA</strong> et au <strong>développement logiciel</strong>. Que ce soit en construisant des
-              modèles de <strong>machine learning</strong>, en concevant des architectures logicielles ou en
-              expérimentant de nouvelles technologies, j’aime apprendre en faisant et repousser les limites du possible.
-            </p>
-            <br />
-            <p>
-              Ce portfolio est un aperçu de mon parcours et de mes projets, pensés pour être à la fois
-              <strong>techniques</strong> et <strong>innovants</strong>. <br /><br />
-              <em
-                >Le Rubik’s Cube que vous verrez n’est pas là pour décorer…
-                <strong>n'hésitez pas à l’explorer !</strong></em
-              >
-            </p>
-            <br />
-            <p><strong>Bonne navigation !</strong></p>
-          </div>
-          <div class="scroll-indicator">
-            <span class="mouse"></span>
-            <span class="scroll-text">Scroll</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section Cube -->
-      <section id="cube-section">
-        <div id="cube-container">
-          <!-- Le canvas Three.js sera injecté ici -->
-          <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="menu">
-            <span class="menu-btn__burger"></span>
-          </button>
-
-          <!-- Indicateurs d'aide -->
-          <div class="cube-hint" id="click-hint">
-            <div class="hint-icon"><i class="fas fa-hand-pointer" aria-hidden="true"></i></div>
-            <div class="hint-text">Cliquez sur le cube pour explorer ou faites glisser pour le pivoter</div>
-          </div>
-
-          <div class="nav-hint" id="nav-hint">
-            <div class="hint-arrow">←</div>
-            <div class="hint-text">Utilisez ces boutons pour naviguer entre les sections</div>
-          </div>
-
-          <nav class="menu" id="menu" aria-label="Catégories">
-            <button class="menu-item" data-face="top">
-              <span class="menu-item__title">À propos</span>
-              <span class="menu-item__desc">Qui suis-je ?</span>
-            </button>
-            <button class="menu-item" data-face="front">
-              <span class="menu-item__title">Compétences</span>
-              <span class="menu-item__desc">Les hard skills</span>
-            </button>
-            <button class="menu-item" data-face="right">
-              <span class="menu-item__title">Projets</span>
-              <span class="menu-item__desc">Mes réalisations</span>
-            </button>
-            <button class="menu-item" data-face="back">
-              <span class="menu-item__title">Expériences</span>
-              <span class="menu-item__desc">Mon parcours professionnel</span>
-            </button>
-            <button class="menu-item" data-face="left">
-              <span class="menu-item__title">Formation</span>
-              <span class="menu-item__desc">Mon parcours académique</span>
-            </button>
-            <button class="menu-item" data-face="bottom">
-              <span class="menu-item__title">Mon CV</span>
-              <span class="menu-item__desc">Pour voir le CV</span>
-            </button>
-          </nav>
-        </div>
-      </section>
-
-      <!-- Section Footer -->
-      <section id="footer-section">
-        <footer>
-          <div class="footer-content">
-            <!-- Colonne Contact -->
-            <div class="footer-column">
-              <div class="footer-card">
-                <h2 class="footer-title">Contact</h2>
-                <div class="info-item">
-                  <i class="fas fa-envelope" aria-hidden="true"></i>
-                  <span>r.goldenchtein@proton.me</span>
-                </div>
-                <div class="info-item">
-                  <i class="fas fa-phone" aria-hidden="true"></i>
-                  <span>+33 7 83 23 23 70</span>
-                </div>
-                <div class="info-item">
-                  <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                  <span>Troyes, France</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Colonne Réseaux Sociaux -->
-            <div class="footer-column">
-              <div class="footer-card">
-                <h2 class="footer-title">Réseaux Sociaux</h2>
-                <div class="social-links">
-                  <a href="https://github.com/Kiyogen24" class="social-link" target="_blank" rel="noopener">
-                    <i class="fab fa-github" aria-hidden="true"></i>
-                    <span>GitHub</span>
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/romain-goldenchtein/"
-                    class="social-link"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <i class="fab fa-linkedin" aria-hidden="true"></i>
-                    <span>LinkedIn</span>
-                  </a>
-                  <a href="assets/previews/cv.pdf" class="social-link" target="_blank" rel="noopener" download>
-                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
-                    <span>Télécharger CV</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Colonne Navigation Rapide -->
-            <div class="footer-column">
-              <div class="footer-card">
-                <h2 class="footer-title">Navigation</h2>
-                <div class="quick-links">
-                  <a href="#intro" class="quick-link">Accueil</a>
-                  <a href="#cube-section" class="quick-link" data-face="front">Compétences</a>
-                  <a href="#cube-section" class="quick-link" data-face="back">Expériences</a>
-                  <a href="#cube-section" class="quick-link" data-face="right">Projets</a>
-                  <a href="#cube-section" class="quick-link" data-face="left">Formation</a>
-                  <a href="#cube-section" class="quick-link" data-face="top">À propos</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </footer>
-      </section>
-    </main>
-    <script>
-      const deviceNote = document.getElementById('device-note');
-      if (
-        window.innerWidth <= 768 ||
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      ) {
-        deviceNote.style.display = 'block';
-      } else {
-        deviceNote.style.display = 'none';
-      }
+      { "imports": { "three": "https://unpkg.com/three@0.152.2/build/three.module.js" } }
     </script>
     <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="brand" href="./" id="home"
+        ><span class="mark" id="mark" aria-hidden="true"
+          ><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span
+          ><span></span></span
+        >Rubik-folio</a
+      >
+      <div class="tools">
+        <div class="lang" role="group" data-i18n-label="language">
+          <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button type="button" class="icon-btn" id="theme" data-i18n-label="theme">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <circle cx="12" cy="12" r="4.2" />
+            <path
+              d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- le cube, derrière la page ; son cadrage suit le défilement -->
+    <canvas id="cube" tabindex="0" role="img"></canvas>
+
+    <main>
+      <section class="page" id="intro" aria-labelledby="name">
+        <div class="intro-text">
+          <h1 id="name" class="lines">
+            <span class="line"><span data-line style="--i: 0">Romain</span></span>
+            <span class="line"><span data-line style="--i: 1">Goldenchtein</span></span>
+          </h1>
+          <p class="tagline" data-rise style="--i: 0" data-i18n="tagline"></p>
+          <p class="actions" data-rise style="--i: 1">
+            <button type="button" class="btn primary" id="open-cv" data-i18n="cv"></button>
+            <button type="button" class="btn secondary" id="open-about" data-i18n="about"></button>
+          </p>
+        </div>
+        <nav class="contacts" id="contacts" aria-label="Contact">
+          <span class="contacts-row" data-rise style="--i: 3">
+            <a href="https://www.linkedin.com/in/romain-goldenchtein/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://github.com/Kiyogen24" target="_blank" rel="noopener">GitHub</a>
+            <a href="mailto:r.goldenchtein@proton.me">r.goldenchtein@proton.me</a>
+          </span>
+        </nav>
+      </section>
+      <section class="page" id="cube-view" aria-labelledby="cube-title">
+        <h2 class="visually-hidden" id="cube-title" data-i18n="cubeTitle"></h2>
+      </section>
+    </main>
+
+    <!-- sous le cube : le patron et la face devant, puis les commandes du jeu -->
+    <div class="cube-ui" id="cube-ui">
+      <div class="cube-row" id="row-explore" hidden>
+        <div class="readout">
+          <div class="net" id="net" role="group">
+            <button type="button" class="u" data-face="top" style="--c: var(--face-top)"></button>
+            <button type="button" class="f" data-face="front" style="--c: var(--face-front)"></button>
+            <button type="button" class="r" data-face="right" style="--c: var(--face-right)"></button>
+            <button type="button" class="b" data-face="back" style="--c: var(--face-back)"></button>
+            <button type="button" class="l" data-face="left" style="--c: var(--face-left)"></button>
+            <button type="button" class="d" data-face="bottom" style="--c: var(--face-bottom)"></button>
+          </div>
+          <p class="readout-text" aria-live="polite">
+            <span class="readout-face" id="face-name"></span><span class="readout-count" id="face-count"></span>
+          </p>
+        </div>
+        <button type="button" class="btn secondary small" id="play">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.4" fill="currentColor" />
+            <rect x="9" y="1.5" width="5.5" height="5.5" rx="1.4" fill="currentColor" opacity=".55" />
+            <rect x="1.5" y="9" width="5.5" height="5.5" rx="1.4" fill="currentColor" opacity=".55" />
+            <rect x="9" y="9" width="5.5" height="5.5" rx="1.4" fill="currentColor" />
+          </svg>
+          <span data-i18n="play"></span>
+        </button>
+      </div>
+      <div class="cube-row" id="row-play" hidden>
+        <div class="play-panel">
+          <p class="status" id="status" aria-live="polite"></p>
+          <div class="play-actions">
+            <button type="button" class="btn primary small" id="shuffle" data-i18n="shuffle"></button>
+            <button type="button" class="btn secondary small" id="solve" data-i18n="solve"></button>
+            <button type="button" class="btn quiet small" id="done" data-i18n="done"></button>
+          </div>
+          <p class="hint" data-i18n="playHint"></p>
+        </div>
+      </div>
+    </div>
+
+    <article class="card" id="card" hidden aria-labelledby="card-title">
+      <button type="button" class="icon-btn card-close" id="card-close" data-i18n-label="close">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+        </svg>
+      </button>
+      <div class="card-scroll" id="card-scroll">
+        <header class="card-head">
+          <div class="socket">
+            <div class="tile" id="card-tile"><img id="card-img" alt="" /></div>
+          </div>
+          <div>
+            <h2 id="card-title" tabindex="-1"></h2>
+            <p class="card-org" id="card-org"></p>
+            <p class="card-meta" id="card-meta"></p>
+          </div>
+        </header>
+        <div class="card-body" id="card-body"></div>
+      </div>
+      <footer class="card-foot" id="card-foot"></footer>
+    </article>
+
+    <div class="tag" id="tag" aria-hidden="true"></div>
+    <p class="loading" id="loading" hidden data-i18n="loading"></p>
   </body>
 </html>

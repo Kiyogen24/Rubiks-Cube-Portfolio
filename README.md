@@ -24,13 +24,16 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 
 ### Fonctionnalités Avancées  
 
+- Accueil sur une page : le nom, une phrase, « Mon CV » et « À propos » ; en défilant (ou d'un clic), le cube vient au centre et ses contenus apparaissent sur la face tournée vers soi
+- Patron du cube sous le cube pour passer d'une face à l'autre
+- Nom du contenu au survol d'un sticker
+- Cartes détaillées qui sortent de leur sticker, la face d'abord tournée vers soi
+- Le CV affiché dans sa carte, avec le PDF à ouvrir
 - Mode sombre/clair avec sauvegarde des préférences
-- Menu de navigation responsive
-- Aperçus des contenus au survol
-- Cartes d'information détaillées
-- Design responsive avec optimisations mobiles
 - Changement de langue dynamique (FR/EN) via le bouton de langue
-- Contrôles interactifs pour "jouer" avec le cube (mélange, résolution et rotations de faces)
+- Même site sur téléphone (cartes en bas de l'écran)
+- Mode jeu : rotations de rangées au doigt, mélange, résolution automatique, zoom à la molette ou en pinçant
+- Navigation au clavier (flèches, Entrée, Échap)
 
 ## Technologies Utilisées
 
@@ -44,7 +47,7 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 
 - Three.js pour les graphiques 3D
 - cubejs (algorithme de Kociemba) pour la résolution automatique du cube, exécuté dans un Web Worker
-- Font Awesome pour les icônes
+- Polices Bricolage Grotesque et Instrument Sans (Google Fonts)
 
 ## Installation
 
@@ -66,49 +69,59 @@ npm install
 npm start
 ```
 
+4. Vérifier le code (comme la CI) :
+
+```bash
+npm run lint
+npm run format:check
+npm test
+```
+
+### Mettre à jour le CV
+
+Remplacer `assets/previews/cv.pdf` et `cv_en.pdf`, puis régénérer les images affichées dans la carte « Mon CV » :
+
+```bash
+pip install pymupdf pillow
+python scripts/cv-images.py
+```
+
 ## Structure du Projet
 
 ```plaintext
 ├── assets/              # Images et ressources
+│   ├── cv/              # Le CV en images (scripts/cv-images.py)
+│   ├── og-image.jpg     # Aperçu de partage
 │   ├── pp.png
-│   └── previews/
-│       ├── about/
-│       │   ├── github.png
-│       │   ├── hobbies.png
-│       │   └── … 
-│       ├── cv_pr.png
-│       ├── cv.pdf
-│       ├── cv_en.pdf
-│       ├── exp/
-│       ├── formation/
-│       ├── projects/
-│       ├── rubik.png
-│       └── skills/
-├── css/                 
-│   ├── components/      # Composants CSS spécifiques
-│   │   ├── cube.css
-│   │   ├── footer.css
-│   │   ├── intro.css
-│   │   ├── loading.css
-│   │   ├── modal.css
-│   │   ├── navigation.css
-│   │   └── theme.css
+│   └── previews/        # Images des contenus, CV en PDF (cv.pdf, cv_en.pdf)
+├── css/
 │   └── main.css
-├── index.html           # Page principale
-├── mobile.html          # Version mobile
+├── index.html           # La page
+├── mobile.html          # Ancienne page mobile, renvoie à l'accueil
 ├── js/
+│   ├── main.js          # Chargement, boucle d'animation, langue, thème, boutons
+│   ├── state.js         # État partagé
+│   ├── i18n.js          # Textes de l'interface (FR/EN)
+│   ├── content.js       # Contenu des stickers et sa mise en forme
 │   ├── cards/
-│   │   ├── overlay.js
-│   │   └── preview.js
+│   │   └── card.js      # Cartes des stickers, « À propos » et « Mon CV »
 │   ├── cube/
-│   │   ├── cube.js
-│   │   ├── animator.js
-│   │   ├── navigation.js
-│   │   └── solver-worker.js
-│   ├── globals.js
-│   ├── main.js
+│   │   ├── scene.js     # Rendu, caméra, cubies et images des stickers
+│   │   ├── geometry.js  # Faces, couleurs, cases, orientations
+│   │   ├── orientation.js
+│   │   ├── input.js     # Souris, doigt, clavier
+│   │   ├── hover.js
+│   │   ├── modes.js     # Accueil, exploration, jeu
+│   │   ├── play.js      # Rangées, mélange, résolution
+│   │   ├── solver-worker.js
+│   │   ├── textures.js
+│   │   └── math.js      # Ressorts et rotations
+│   ├── ui/
+│   │   └── controls.js  # Patron, face devant, commandes du jeu
 │   └── utils/
-│       └── constants.js
+│       └── constants.js # Tout le contenu du portfolio (FR/EN)
+├── scripts/             # Serveur de développement, images du CV
+├── tests/               # Tests Playwright
 └── package.json         # Configuration npm
 ```
 
@@ -116,32 +129,25 @@ npm start
 
 ### Composants Principaux
 
-#### Initialisation Three.js
+#### Le cube
 
-- Configuration de la scène 3D
-- Mise en place de la caméra et des contrôles
-- Gestion de l'éclairage et des ombres
-
-#### Gestion du Cube
-
-- Création dynamique des faces et textures
-- Animation et interaction avec le cube
-- Système de zoom et navigation
+- Scène Three.js : le cube tourne sur lui-même (ressorts façon Apple, élan au lâcher), la caméra cadre selon le défilement
+- Images des contenus posées sur les stickers de la face tournée vers soi
+- Jeu : chaque rangée tourne autour d'un pivot ; la résolution passe par l'algorithme de Kociemba (cubejs, dans un worker), ou rejoue les mouvements à l'envers si cubejs n'est pas disponible
 
 #### Interface Utilisateur
 
-- Menu de navigation responsive
-- Cartes d'information dynamiques
-- Prévisualisation du contenu
+- Cartes dont le contenu vient de `js/utils/constants.js`
+- Patron du cube et commandes du jeu qui suivent le cube
 
 ## Performances
 
 ### Optimisations
 
 - Mise en cache des textures
-- Gestion optimisée des ressources 3D
-- Chargement asynchrone des assets
-- Adaptation automatique selon le device
+- Le cube ne sert d'écran de chargement que si les images tardent
+- Images en WebP, chargées une seule fois
+- Adaptation automatique à la taille de l'écran
 
 ## Licence
 

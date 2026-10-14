@@ -1,145 +1,174 @@
+// Souris, doigt et clavier sur le cube : le tourner, tourner une rangée en jeu, ouvrir un sticker,
+// et en jeu, le rapprocher ou l'éloigner (molette, pincement)
 import * as THREE from 'three';
-import { app } from '../globals.js';
-import { calculateCubiePosition, faceFromNormal } from './cube.js';
-import { zoomToFace, getCentralCubie, onMouseMove } from './navigation.js';
-import { queueMove } from './animator.js';
-import { showInfoCard } from '../cards/overlay.js';
-import { CUBE_CONTENT } from '../utils/constants.js';
-import { openMenu, highlightMenuItem } from '../ui/menu-state.js';
-import { isCubeSectionInView } from '../utils/view.js';
+import { S } from '../state.js';
+import { openSticker } from '../cards/card.js';
+import { KEYS, item } from '../content.js';
+import { clearHover, hoverAt } from './hover.js';
+import { X, Y, clamp, qAxis } from './math.js';
+import { scrollToCube } from './modes.js';
+import { snapFromThrow, turnByKeys, turnTo } from './orientation.js';
+import { busy, dragLayer, releaseLayer, startLayerDrag } from './play.js';
+import { canvas, faces, pick, tileByKey } from './scene.js';
 
-// Position de départ de la souris, pour distinguer un clic d'un glissement
-let mouseStartX = 0;
-let mouseStartY = 0;
-// Glissement d'une couche en mode jeu
-let dragStartIntersect = null;
-let dragStartPoint = null;
-let isGameDragging = false;
+const SPEED = 0.009; // radians par pixel glissé
+const ZOOM = { min: 0.7, max: 1.6 }; // distance de la caméra, par rapport à celle du jeu
+const touches = new Map(); // doigts posés sur le cube
 
-// Premier cubie sous le pointeur
-function pickCubie(clientX, clientY) {
-  app.mouse.x = (clientX / window.innerWidth) * 2 - 1;
-  app.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
-  app.raycaster.setFromCamera(app.mouse, app.camera);
-  return app.raycaster.intersectObjects(app.cubies)[0] || null;
-}
+const zoomTo = (value) => (S.zoom = clamp(value, ZOOM.min, ZOOM.max));
+const spread = () => {
+  const [a, b] = [...touches.values()];
+  return Math.max(1, Math.hypot(a.x - b.x, a.y - b.y));
+};
 
-// Normale de la face touchée, dans le repère du monde
-function worldNormal(intersection) {
-  return intersection.face.normal.clone().transformDirection(intersection.object.matrixWorld);
-}
-
-function onMouseDown(e) {
-  if (!isCubeSectionInView()) return;
-
-  app.isDragging = false;
-  mouseStartX = e.clientX;
-  mouseStartY = e.clientY;
-  dragStartPoint = { x: e.clientX, y: e.clientY };
-  isGameDragging = false;
-
-  // en mode jeu, un glissement commencé sur un cubie tourne une couche au lieu du cube entier
-  dragStartIntersect = app.isPlayable ? pickCubie(e.clientX, e.clientY) : null;
-  app.controls.enableRotate = !dragStartIntersect;
-}
-
-function onDragMove(e) {
-  if (!isCubeSectionInView()) return;
-
-  // au-delà d'un seuil, le mouvement est un glissement et non un clic
-  if (Math.abs(e.clientX - mouseStartX) > 5 || Math.abs(e.clientY - mouseStartY) > 5) {
-    app.isDragging = true;
+function onPointerDown(e) {
+  if (e.pointerType === 'touch') touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (S.phase !== 'ready' || e.button > 0) return;
+  // en jeu, deux doigts rapprochent ou éloignent le cube ; une rangée en cours va au quart de tour le plus proche
+  if (S.mode === 'play' && touches.size === 2) {
+    if (S.drag?.type === 'layer') releaseLayer(true);
+    S.drag = { type: 'pinch', spread: spread(), zoom: S.zoom };
+    canvas.setPointerCapture(e.pointerId);
+    return;
   }
-  if (app.isPlayable && dragStartIntersect) {
-    const dx = e.clientX - dragStartPoint.x;
-    const dy = e.clientY - dragStartPoint.y;
-    if (Math.sqrt(dx * dx + dy * dy) > 8) isGameDragging = true;
+  if (S.drag || touches.size > 1) return; // un seul doigt à la fois
+  const hit = pick(e.clientX, e.clientY);
+  const now = performance.now();
+  const start = {
+    pointerId: e.pointerId,
+    hit,
+    sx: e.clientX,
+    sy: e.clientY,
+    last: { x: e.clientX, y: e.clientY, t: now },
+    moved: 0,
+  };
+  // en jeu, un glissé sur le cube tourne une rangée ; ailleurs, il tourne le cube entier
+  if (S.mode === 'play' && hit && !busy()) S.drag = { type: 'layer-pending', ...start };
+  else if (hit || S.mode !== 'intro') S.drag = { type: 'rotate', ...start };
+  else return;
+  canvas.setPointerCapture(e.pointerId);
+}
+
+function onPointerMove(e) {
+  if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  const d = S.drag;
+  if (!d) {
+    if (e.pointerType === 'mouse') hoverAt(e.clientX, e.clientY);
+    return;
+  }
+  if (d.type === 'pinch') {
+    if (touches.size === 2) zoomTo((d.zoom * d.spread) / spread());
+    return;
+  }
+  if (e.pointerId !== d.pointerId) return;
+  const now = performance.now();
+  const dt = Math.max(1, now - d.last.t) / 1000;
+  const dx = e.clientX - d.last.x;
+  const dy = e.clientY - d.last.y;
+  d.moved += Math.abs(dx) + Math.abs(dy);
+  if (d.type === 'rotate') {
+    if (d.moved < 4) return;
+    // le cube suit le pointeur dans toutes les directions et garde sa vitesse pour le lâcher
+    S.base.premultiply(qAxis(Y, dx * SPEED)).premultiply(qAxis(X, dy * SPEED));
+    S.w.lerp(new THREE.Vector3(dy * SPEED, dx * SPEED, 0).divideScalar(dt), 0.5);
+    S.target = null;
+    canvas.classList.add('dragging');
+    clearHover();
+  } else if (d.type === 'layer-pending') {
+    const tx = e.clientX - d.sx;
+    const ty = e.clientY - d.sy;
+    if (Math.hypot(tx, ty) > 8) startLayerDrag(d, tx, ty);
+  } else if (d.type === 'layer') {
+    dragLayer(d, e.clientX, e.clientY, dt);
+  }
+  d.last = { x: e.clientX, y: e.clientY, t: now };
+}
+
+function onRelease(e) {
+  touches.delete(e.pointerId);
+  const d = S.drag;
+  if (!d) return;
+  if (d.type === 'pinch') {
+    if (!touches.size) S.drag = null; // le pincement finit quand les deux doigts sont levés
+    return;
+  }
+  if (e.pointerId !== d.pointerId) return;
+  S.drag = null;
+  canvas.classList.remove('dragging');
+  const still = performance.now() - d.last.t > 80; // le pointeur s'était arrêté avant le lâcher
+  if (d.type === 'rotate') {
+    if (d.moved < 6) {
+      if (e.type === 'pointerup') handleClick(d.hit);
+      return;
+    }
+    if (still) S.w.multiplyScalar(0.2);
+    if (S.mode === 'intro') scrollToCube();
+    else if (S.mode === 'explore') snapFromThrow();
+  } else if (d.type === 'layer') {
+    releaseLayer(still);
   }
 }
 
-// Tourne la couche glissée, selon la face touchée et la direction du glissement
-function rotateDraggedLayer(dx, dy) {
-  const normal = worldNormal(dragStartIntersect);
-  const pos = dragStartIntersect.object.userData.gridPos;
-
-  // direction du glissement dans le repère du monde (l'axe y de l'écran est vers le bas)
-  const camDir = new THREE.Vector3();
-  app.camera.getWorldDirection(camDir);
-  const cameraUp = app.camera.up.clone().applyQuaternion(app.camera.quaternion).normalize();
-  const cameraRight = new THREE.Vector3().crossVectors(camDir, cameraUp).normalize();
-  const dragWorld = cameraRight.clone().multiplyScalar(dx).add(cameraUp.clone().multiplyScalar(-dy)).normalize();
-
-  // axe de rotation ≈ normale × glissement, ramené à l'axe principal le plus proche
-  const rotAxis = new THREE.Vector3().crossVectors(normal, dragWorld).normalize();
-  const ax = Math.abs(rotAxis.x);
-  const ay = Math.abs(rotAxis.y);
-  const az = Math.abs(rotAxis.z);
-  let layer, number, orientation;
-  if (ax >= ay && ax >= az) {
-    layer = 'col';
-    number = Math.round(pos.x);
-    orientation = rotAxis.x > 0 ? 1 : 0;
-  } else if (ay >= ax && ay >= az) {
-    layer = 'row';
-    number = Math.round(pos.y);
-    orientation = rotAxis.y > 0 ? 1 : 0;
-  } else {
-    layer = 'depth';
-    number = Math.round(pos.z);
-    orientation = rotAxis.z > 0 ? 1 : 0;
-  }
-
-  // face tournée dans le même sens que la caméra : inverser pour garder un glissement intuitif
-  if (normal.dot(camDir) > 0) orientation = orientation ? 0 : 1;
-
-  queueMove(layer, number, orientation, 400, { highlight: true });
+// En jeu, la page ne défile pas : la molette (ou le pincement du pavé tactile) rapproche ou éloigne le cube
+function onWheel(e) {
+  if (S.mode !== 'play') return;
+  e.preventDefault();
+  const pixels = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * S.height : e.deltaY;
+  zoomTo(S.zoom * Math.exp(pixels * (e.ctrlKey ? 0.01 : 0.0015)));
 }
 
-function onMouseUp(e) {
-  if (!isCubeSectionInView()) return;
-
-  if (app.isPlayable && isGameDragging && dragStartIntersect) {
-    rotateDraggedLayer(e.clientX - dragStartPoint.x, e.clientY - dragStartPoint.y);
-  } else if (!app.isDragging) {
-    handleClick(e); // sans glissement, c'est un simple clic
+function handleClick(hit) {
+  if (!hit) return;
+  if (S.mode === 'intro') {
+    scrollToCube(); // le cube vient au centre, se pose, et ses images apparaissent
+    return;
   }
-
-  dragStartIntersect = null;
-  dragStartPoint = null;
-  isGameDragging = false;
-  app.isDragging = false;
-  // la rotation du cube entier est toujours rétablie à la fin du geste
-  app.controls.enableRotate = true;
+  if (S.mode !== 'explore') return;
+  const tile = hit.key && tileByKey[hit.key];
+  const data = tile && item(tile.key);
+  if (tile && faces[tile.face].visible && data && (data.hasContent || data.link)) {
+    if (!data.hasContent) window.open(data.link, '_blank', 'noopener');
+    else openSticker(tile.key);
+  } else if (!faces[hit.face].visible) {
+    turnTo(hit.face);
+  }
 }
 
-// Clic sur le cube : zoom sur la face touchée, ou ouverture du contenu d'un sticker une fois zoomé
-function handleClick(event) {
-  if (!isCubeSectionInView() || app.isModalOpen || app.isPlayable) return;
-
-  const intersection = pickCubie(event.clientX, event.clientY);
-  if (!intersection) return;
-  const faceType = faceFromNormal(worldNormal(intersection));
-  const centralCubie = faceType && getCentralCubie(faceType);
-  if (!centralCubie) return;
-
-  if (app.isZoomed) {
-    const position = calculateCubiePosition(intersection.object.userData.gridPos, faceType);
-    const content = CUBE_CONTENT[faceType]?.[position];
-    if (content?.hasContent) showInfoCard(event, faceType, position);
-    else if (content?.link) window.open(content.link, '_blank', 'noopener');
-  } else {
-    document.querySelector('.container').style.overflow = 'hidden';
-    zoomToFace(centralCubie, faceType);
-    app.isZoomed = true;
-    openMenu();
-    highlightMenuItem(faceType, { scroll: true });
+// Clavier : les flèches tournent le cube d'un quart de tour, Entrée l'amène au centre puis ouvre la face devant
+function onKeyDown(e) {
+  if (S.phase !== 'ready' || S.mode === 'play') return;
+  const arrows = { ArrowLeft: [Y, -1], ArrowRight: [Y, 1], ArrowUp: [X, -1], ArrowDown: [X, 1] };
+  if (arrows[e.key]) {
+    e.preventDefault();
+    turnByKeys(...arrows[e.key]);
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    if (S.mode === 'intro') {
+      scrollToCube();
+    } else {
+      const key = KEYS[S.front].find((k) => item(k).hasContent);
+      if (key) openSticker(key, canvas);
+    }
   }
 }
 
 export function setupInput() {
-  window.addEventListener('mousedown', onMouseDown);
-  window.addEventListener('mousemove', onDragMove);
-  window.addEventListener('mouseup', onMouseUp);
-  // survol des stickers en vue zoomée
-  window.addEventListener('mousemove', onMouseMove);
+  // un doigt posé sur le cube le fait tourner ; ailleurs, la page défile
+  canvas.addEventListener(
+    'touchstart',
+    (e) => {
+      const touch = e.touches[0];
+      if (S.phase === 'ready' && touch && pick(touch.clientX, touch.clientY)) e.preventDefault();
+    },
+    { passive: false },
+  );
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointermove', onPointerMove);
+  canvas.addEventListener('pointerup', onRelease);
+  canvas.addEventListener('pointercancel', onRelease);
+  canvas.addEventListener('pointerleave', () => {
+    if (!S.drag) clearHover();
+  });
+  canvas.addEventListener('keydown', onKeyDown);
+  window.addEventListener('wheel', onWheel, { passive: false });
 }

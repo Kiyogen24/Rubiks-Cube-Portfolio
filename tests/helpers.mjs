@@ -1,8 +1,8 @@
-// Outils communs aux tests : préparation de la page et interactions avec le cube 3D
+// Outils communs aux tests : préparation de la page et accès à l'état du cube 3D
 
-// Langue, thème et aides déjà vues, posés une seule fois avant le premier chargement.
-// Sans `motion`, l'utilisateur préfère réduire les animations : pas de mouvement au repos,
-// pour que les tests ne dépendent pas du temps passé sans interaction.
+// Langue et thème posés une seule fois avant le premier chargement.
+// Sans `motion`, l'utilisateur préfère réduire les animations : le cube vide ne tourne pas à l'accueil
+// et les mouvements sont presque instantanés, pour que les tests ne dépendent pas du temps.
 export async function prepare(page, { lang = 'fr', theme = 'light', motion = false } = {}) {
   if (!motion) await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.addInitScript(
@@ -11,8 +11,6 @@ export async function prepare(page, { lang = 'fr', theme = 'light', motion = fal
       sessionStorage.setItem('test-init', '1');
       localStorage.setItem('lang', lang);
       localStorage.setItem('theme', theme);
-      localStorage.setItem('hasSeenCubeHints', 'true');
-      localStorage.setItem('hasSeenRotateHint', 'true');
     },
     { lang, theme },
   );
@@ -31,119 +29,116 @@ export function watchErrors(page) {
   return errors;
 }
 
+// Ouvre la page et attend que le cube soit prêt. Les modules importés ici sont ceux de la page
+// (même adresse, même instance) : leur état est exposé sur window pour les tests synchrones.
 export async function open(page) {
-  await page.goto('/index.html');
-  await page.waitForFunction(() => document.body.classList.contains('loaded'));
-}
-
-// Fait défiler jusqu'à la section du cube et attend qu'elle occupe l'écran
-// (et que l'interface de la section soit à jour : le bouton du menu n'apparaît qu'après le défilement)
-export async function toCube(page) {
-  await page.evaluate(() => document.getElementById('cube-section').scrollIntoView());
-  await page.waitForFunction(() => Math.abs(document.getElementById('cube-section').getBoundingClientRect().top) < 2);
-  await page.locator('.menu-btn').waitFor({ state: 'visible' });
-  await page.waitForTimeout(300);
-}
-
-// Attend la fin d'une animation de zoom ou de dézoom
-// (waitForFunction n'attend pas les promesses : l'état est exposé sur window pour un test synchrone)
-export async function cameraStill(page) {
+  await page.goto('/');
   await page.evaluate(async () => {
-    window.__app = (await import('/js/globals.js')).app;
+    window.__THREE = await import('three');
+    window.__S = (await import('/js/state.js')).S;
+    window.__scene = await import('/js/cube/scene.js');
+    window.__play = await import('/js/cube/play.js');
   });
-  await page.waitForFunction(() => !window.__app.cameraAnimating);
+  await page.waitForFunction(() => window.__S.phase === 'ready');
+}
+
+// Attend que le cube soit posé et que le cadrage ne bouge plus
+export async function still(page) {
+  await page.waitForFunction(() => {
+    const S = window.__S;
+    const f = window.__scene.framingTarget();
+    const framed = Math.abs(S.view.dist.x - f.dist) < 0.02 && Math.abs(S.view.shift.x - f.shift) < 0.002;
+    const posed = !S.target || 2 * Math.acos(Math.min(1, Math.abs(S.base.dot(S.target)))) < 0.01;
+    return framed && posed && S.w.length() < 0.02 && !window.__play.busy();
+  });
   await page.waitForTimeout(100);
 }
 
-export async function zoomTo(page, face) {
-  const menuOpen = await page.locator('.menu').evaluate((m) => m.classList.contains('active'));
-  if (!menuOpen) await page.click('.menu-btn');
-  await page.click(`.menu-item[data-face="${face}"]`);
-  await page.waitForFunction(() => document.getElementById('cube-section').classList.contains('zoomed'));
-  await page.waitForTimeout(150);
-  await cameraStill(page);
+// Défile jusqu'au cube et attend qu'il soit au centre
+export async function toCube(page) {
+  await page.evaluate(() => window.scrollTo(0, innerHeight));
+  await page.waitForFunction(() => window.__S.mode === 'explore');
+  await still(page);
 }
 
-export async function zoomOut(page) {
-  await page.click('#reset');
-  await page.waitForFunction(() => !document.getElementById('cube-section').classList.contains('zoomed'));
-  await cameraStill(page);
+// Centre à l'écran de l'image d'un sticker (« face_case »)
+export function stickerPoint(page, key) {
+  return page.evaluate((key) => {
+    const r = window.__scene.stickerRect(window.__scene.tileByKey[key]);
+    return { x: r.x + r.w / 2, y: r.y + r.h / 2 };
+  }, key);
 }
 
-// Position à l'écran du sticker `index` (0 à 8) d'une face
-export function cellPos(page, face, index) {
-  return page.evaluate(
-    async ({ face, index }) => {
-      const THREE = await import('three');
-      const { app } = await import('/js/globals.js');
-      const { calculateCubiePosition } = await import('/js/cube/cube.js');
-      const normals = {
-        front: [0, 0, 1],
-        back: [0, 0, -1],
-        right: [1, 0, 0],
-        left: [-1, 0, 0],
-        top: [0, 1, 0],
-        bottom: [0, -1, 0],
-      };
-      const n = new THREE.Vector3(...normals[face]);
-      const cubie = app.cubies.find((c) => {
-        const p = c.userData.gridPos;
-        return new THREE.Vector3(p.x, p.y, p.z).dot(n) > 0.5 && calculateCubiePosition(p, face) === index;
-      });
-      const v = new THREE.Vector3();
-      cubie.getWorldPosition(v);
-      v.add(n.multiplyScalar(0.5)).project(app.camera);
-      return { x: (v.x * 0.5 + 0.5) * innerWidth, y: (-v.y * 0.5 + 0.5) * innerHeight };
-    },
-    { face, index },
-  );
+// Point de la face tournée vers soi, au milieu d'un de ses bords
+export function frontEdgePoint(page) {
+  return page.evaluate(() => {
+    const { cube, project } = window.__scene;
+    const normals = {
+      right: [1, 0, 0],
+      left: [-1, 0, 0],
+      top: [0, 1, 0],
+      bottom: [0, -1, 0],
+      front: [0, 0, 1],
+      back: [0, 0, -1],
+    };
+    const n = normals[window.__S.front];
+    const p = n.map((v) => v * 1.5);
+    p[n.findIndex((v) => v === 0)] = 1;
+    cube.updateMatrixWorld(true);
+    return project(cube.localToWorld(new window.__THREE.Vector3(...p)));
+  });
 }
 
-// Survole puis clique un sticker et renvoie la carte ouverte
-export async function openCard(page, face, index) {
-  const p = await cellPos(page, face, index);
+// Tourne la face vers soi avec le patron, puis clique le sticker et attend que sa carte soit ouverte
+export async function openSticker(page, key) {
+  const face = key.split('_')[0];
+  if ((await page.evaluate(() => window.__S.front)) !== face) {
+    await page.click(`#net button[data-face="${face}"]`);
+    await still(page);
+  }
+  const p = await stickerPoint(page, key);
   await page.mouse.move(p.x, p.y);
-  await page.waitForTimeout(150);
   await page.mouse.click(p.x, p.y);
-  const card = page.locator('.info-card.active');
-  await card.waitFor();
-  return card;
+  await cardOpen(page);
+  return page.locator('#card');
+}
+
+export async function cardOpen(page) {
+  await page.waitForFunction(() => window.__S.card?.target === 1 && window.__S.card.p.x > 0.99);
 }
 
 export async function closeCard(page) {
-  await page.click('.info-card.active .close-button');
-  await page.locator('.info-card').waitFor({ state: 'detached' });
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !window.__S.card);
 }
 
-// Le cube est-il exactement dans sa position d'origine (positions et orientations) ?
+// Le cube est-il exactement dans sa position d'origine (positions et orientations, centres compris) ?
 export function cubeAtHome(page) {
-  return page.evaluate(async () => {
-    const { app } = await import('/js/globals.js');
-    return app.cubies.every(
-      (c) => c.userData.gridPos.equals(c.userData.homePos) && Math.abs(Math.abs(c.quaternion.w) - 1) < 1e-6,
-    );
-  });
+  return page.evaluate(() =>
+    window.__scene.cubies.every(
+      (c) => c.position.distanceTo(c.userData.home) < 1e-3 && Math.abs(Math.abs(c.quaternion.w) - 1) < 1e-6,
+    ),
+  );
 }
 
-// Faces dont les images sont affichées sur les stickers
-export function visibleLabelFaces(page) {
-  return page.evaluate(async () => (await import('/js/cube/sticker-images.js')).visibleFaces());
+export function cubeOrientation(page) {
+  return page.evaluate(() => window.__S.base.toArray());
 }
 
-export function cameraPosition(page) {
-  return page.evaluate(async () => {
-    const { app } = await import('/js/globals.js');
-    return app.camera.position.toArray();
-  });
+// Angle (en radians) dont le cube entier a tourné depuis `orientation` (donnée par cubeOrientation)
+export function turnedSince(page, orientation) {
+  return page.evaluate(
+    (q) => 2 * Math.acos(Math.min(1, Math.abs(window.__S.base.dot(new window.__THREE.Quaternion(...q))))),
+    orientation,
+  );
 }
 
-// Glisser sur le canvas (rotation de la caméra hors du mode zoom)
-export async function drag(page, from = { x: 600, y: 450 }, by = { x: 250, y: 80 }) {
+// Glisser sur le canvas
+export async function drag(page, from, by = { x: 180, y: 0 }) {
   await page.mouse.move(from.x, from.y);
   await page.mouse.down();
-  for (let i = 1; i <= 10; i++) await page.mouse.move(from.x + (by.x * i) / 10, from.y + (by.y * i) / 10);
+  for (let i = 1; i <= 8; i++) await page.mouse.move(from.x + (by.x * i) / 8, from.y + (by.y * i) / 8);
   await page.mouse.up();
-  await page.waitForTimeout(600);
 }
 
 // Âge attendu sur la carte « À propos » (né le 20/10/2004)

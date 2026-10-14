@@ -1,23 +1,3 @@
-// Constantes
-export const CATEGORIES = {
-  front: 'Compétences',
-  back: 'Expériences',
-  top: 'À propos',
-  bottom: 'Mon CV',
-  right: 'Projets',
-  left: 'Formation',
-};
-
-// Constantes pour les couleurs des faces
-export const stickerColors = {
-  front: '#B90000',
-  back: '#ff8000',
-  top: '#FFFFFF',
-  bottom: '#ffff00',
-  right: '#000FFF',
-  left: '#00994C',
-};
-
 // Date de naissance : l'âge affiché dans « À propos » est recalculé à chaque visite
 const BIRTH_DATE = new Date(2004, 9, 20); // 20/10/2004 (les mois commencent à 0)
 
@@ -30,7 +10,7 @@ function computeAge(birthDate) {
   return birthdayPassed ? age : age - 1;
 }
 
-const AGE = computeAge(BIRTH_DATE);
+export const AGE = computeAge(BIRTH_DATE);
 
 // Export des constantes nécessaires
 export const CUBE_CONTENT = {

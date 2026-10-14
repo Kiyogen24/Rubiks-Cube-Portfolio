@@ -1,64 +1,120 @@
 import { test, expect } from '@playwright/test';
-import { prepare, open, toCube, cellPos, cameraPosition, drag, cubeAtHome } from './helpers.mjs';
+import {
+  prepare,
+  open,
+  toCube,
+  still,
+  cubeAtHome,
+  cubeOrientation,
+  turnedSince,
+  frontEdgePoint,
+  drag,
+} from './helpers.mjs';
+
+async function play(page) {
+  await prepare(page);
+  await open(page);
+  await toCube(page);
+  await page.click('#play');
+  await expect(page.locator('html')).toHaveClass(/locked/);
+  await still(page);
+}
+
+async function shuffle(page) {
+  await page.click('#shuffle');
+  await expect(page.locator('#status')).toHaveText('À vous de jouer', { timeout: 30_000 });
+  await still(page);
+}
 
 test('mélanger puis résoudre avec le solveur de Kociemba', async ({ page }) => {
   const logs = [];
   page.on('console', (m) => logs.push(m.text()));
-  await prepare(page);
-  await open(page);
-  await toCube(page);
-
-  const button = page.locator('#shuffle-solve');
-  await expect(button).toHaveText('Mélanger');
-  await button.click();
-  await expect(button).toHaveText('Résoudre', { timeout: 30_000 });
-  await expect(button).toBeEnabled();
+  await play(page);
+  await shuffle(page);
   expect(await cubeAtHome(page)).toBe(false);
 
-  await button.click();
-  await expect(button).toHaveText('Mélanger', { timeout: 40_000 });
-  await page.waitForTimeout(2500); // laisse passer la vérification périodique de l'état résolu
-
+  await page.click('#solve');
+  await expect(page.locator('#status')).toHaveText('Résolution…');
+  await page.waitForFunction(() => !window.__play.busy() && !window.__S.moves.length, null, { timeout: 40_000 });
   expect(logs.some((l) => l.includes('solution cubejs'))).toBe(true);
-  await expect(page.locator('.confetti-container')).toHaveCount(0);
+  // résolu exactement, centres compris (la photo du sticker du haut est droite)
   expect(await cubeAtHome(page)).toBe(true);
+  await expect(page.locator('#status')).toHaveText('');
 });
 
-test('en mode jeu, glisser sur un sticker tourne une couche et non le cube', async ({ page }) => {
-  await prepare(page);
-  await open(page);
-  await toCube(page);
-  const button = page.locator('#shuffle-solve');
-  await button.click();
-  await expect(button).toHaveText('Résoudre', { timeout: 30_000 });
+test('en jeu, glisser sur un sticker tourne une rangée, et à côté tout le cube', async ({ page }) => {
+  await play(page);
+  const moves = () => page.evaluate(() => window.__S.moves.length);
+  const orientation = await cubeOrientation(page);
+  const turned = () => turnedSince(page, orientation);
 
-  const moves = () => page.evaluate(async () => (await import('/js/cube/animator.js')).getCompletedMoves().length);
-  const before = await moves();
-  const camera = await cameraPosition(page);
-  await drag(page, await cellPos(page, 'front', 4), { x: 120, y: 0 });
-  await expect.poll(moves).toBe(before + 1);
-  expect(await cameraPosition(page)).toEqual(camera);
+  await drag(page, await frontEdgePoint(page), { x: 180, y: 0 });
+  await expect.poll(moves).toBe(1);
+  await still(page);
+  expect(await turned()).toBeLessThan(0.01);
+  await expect(page.locator('#status')).toHaveText('À vous de jouer');
 
-  // en dehors du cube, le glissement fait tourner tout le cube
-  await drag(page, { x: 150, y: 150 });
-  expect(await cameraPosition(page)).not.toEqual(camera);
+  // en dehors du cube, le glissé fait tourner le cube entier
+  await drag(page, { x: 150, y: 450 }, { x: 200, y: 60 });
+  expect(await turned()).toBeGreaterThan(0.3);
+  expect(await moves()).toBe(1);
 });
 
-test("un coin tourné sur place n'est pas considéré comme résolu", async ({ page }) => {
+test('en jeu, la molette rapproche ou éloigne le cube sans faire défiler la page', async ({ page }) => {
+  await play(page);
+  const distance = () => page.evaluate(() => window.__scene.framingTarget().dist);
+  const start = await distance();
+  const scroll = await page.evaluate(() => scrollY);
+  await page.mouse.move(720, 450);
+  await page.mouse.wheel(0, -400);
+  await expect.poll(distance).toBeLessThan(start);
+  await page.mouse.wheel(0, 800);
+  await expect.poll(distance).toBeGreaterThan(start);
+  expect(await page.evaluate(() => scrollY)).toBe(scroll);
+});
+
+test('« Terminé » remet le cube en ordre, à sa place et à sa taille d’avant le jeu', async ({ page }) => {
+  await play(page);
+  const orientation = await cubeOrientation(page);
+  const distance = () => page.evaluate(() => window.__scene.framingTarget().dist);
+  await shuffle(page);
+  await page.mouse.move(720, 450);
+  await page.mouse.wheel(0, -400);
+  await drag(page, { x: 150, y: 450 }, { x: 200, y: 60 });
+  expect(await turnedSince(page, orientation)).toBeGreaterThan(0.3);
+
+  await page.click('#done');
+  await page.waitForFunction(() => window.__S.mode === 'explore', null, { timeout: 40_000 });
+  await expect(page.locator('html')).not.toHaveClass(/locked/);
+  await still(page);
+  expect(await cubeAtHome(page)).toBe(true);
+  expect(await turnedSince(page, orientation)).toBeLessThan(0.01);
+  expect(await page.evaluate(() => window.__S.zoom)).toBe(1);
+  expect(await distance()).toBeGreaterThan(9);
+  await expect(page.locator('#play')).toBeFocused();
+});
+
+test('un coin tourné sur place n’est pas résolu, un centre tourné sur lui-même l’est', async ({ page }) => {
   await prepare(page);
   await open(page);
-  await toCube(page);
+  const solved = () => page.evaluate(() => window.__play.isSolved());
+  expect(await solved()).toBe(true);
 
-  await page.evaluate(async () => {
-    const THREE = await import('three');
-    const { app } = await import('/js/globals.js');
-    window.__corner = app.cubies.find((c) => c.userData.homePos.equals(new THREE.Vector3(1, 1, 1)));
-    window.__corner.quaternion.setFromAxisAngle(new THREE.Vector3(1, 1, 1).normalize(), (2 * Math.PI) / 3);
+  // un coin tourné d'un tiers de tour : les couleurs ne sont plus à leur place
+  await page.evaluate(() => {
+    const { Vector3 } = window.__THREE;
+    window.__corner = window.__scene.cubies.find((c) => c.userData.home.distanceTo(new Vector3(1, 1, 1)) < 0.01);
+    window.__corner.quaternion.setFromAxisAngle(new Vector3(1, 1, 1).normalize(), (2 * Math.PI) / 3);
   });
-  await page.waitForTimeout(2000);
-  await expect(page.locator('.confetti-container')).toHaveCount(0);
-
-  // remis en place, le cube est de nouveau résolu : la résolution « manuelle » est détectée
+  expect(await solved()).toBe(false);
   await page.evaluate(() => window.__corner.quaternion.identity());
-  await expect(page.locator('.confetti-container')).toHaveCount(1, { timeout: 4000 });
+  expect(await solved()).toBe(true);
+
+  // le centre du haut tourné d'un quart de tour : mêmes couleurs, toujours résolu
+  await page.evaluate(() => {
+    const { Vector3 } = window.__THREE;
+    const top = window.__scene.cubies.find((c) => c.userData.home.distanceTo(new Vector3(0, 1, 0)) < 0.01);
+    top.quaternion.setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2);
+  });
+  expect(await solved()).toBe(true);
 });
