@@ -1,7 +1,8 @@
 // Importation des modules nécessaires depuis Three.js et nos fichiers internes
 import * as THREE from 'three';
-import { updateFaceTextures, createFaceTexture, setFaceMap } from './cube.js';
-import { updateCubieHoverState, hidePreview } from '../cards/preview.js';
+import { updateFaceTextures, createFaceTexture, setFaceMap, faceFromNormal } from './cube.js';
+import { setHover, clearHover } from '../cards/preview.js';
+import { visibleFaces } from './sticker-images.js';
 import { dropAll, updateLifts } from './lift.js';
 import { onFrame } from './scene.js';
 import { showStickerButtons, hideStickerButtons } from './sticker-buttons.js';
@@ -9,38 +10,36 @@ import { closeMenu } from '../ui/menu-state.js';
 import { preloadPreviews } from '../ui/loader.js';
 import { app } from '../globals.js';
 
-// Stockage du cubie survolé (initialisé à null)
-let hoveredCubie = null;
-app.hoveredCubie = hoveredCubie;
-
 // Sélection des éléments DOM pour la navigation
 const themeBtn = document.querySelector('.theme-btn');
 const cubeSection = document.getElementById('cube-section');
 
-// Gère le mouvement de la souris pour actualiser le survol du cube
+// Survol des stickers à la souris : sur le cube seulement (pas à travers le menu ou les boutons),
+// ni en mode jeu, ni carte ouverte, ni pendant un vol de caméra ou un glissement
 export function onMouseMove(event) {
-  if (!app.isZoomed || app.isModalOpen) return;
+  if (
+    event.target !== app.renderer.domElement ||
+    event.buttons ||
+    app.isPlayable ||
+    app.isModalOpen ||
+    app.cameraAnimating
+  ) {
+    clearHover();
+    return;
+  }
 
-  // Actualisation des coordonnées de la souris pour le raycasting
   app.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   app.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
   app.raycaster.setFromCamera(app.mouse, app.camera);
-  const intersects = app.raycaster.intersectObjects(app.cubies);
+  const hit = app.raycaster.intersectObjects(app.cubies)[0];
+  const face = hit && faceFromNormal(hit.face.normal.clone().transformDirection(hit.object.matrixWorld));
 
-  // Détection du cubie sous le curseur
-  const newHoveredCubie = intersects.length > 0 ? intersects[0].object : null;
-
-  // Mise à jour de l'état de survol
-  if (app.hoveredCubie !== newHoveredCubie) {
-    if (app.hoveredCubie) {
-      updateCubieHoverState(app.hoveredCubie, false);
-    }
-    app.hoveredCubie = newHoveredCubie;
-    if (app.hoveredCubie) {
-      updateCubieHoverState(app.hoveredCubie, true);
-    }
+  // vue d'ensemble : seulement les stickers des faces dont les images sont affichées
+  if (!face || !(app.isZoomed || visibleFaces().includes(face))) {
+    clearHover();
+    return;
   }
+  setHover(hit.object, face, { x: event.clientX, y: event.clientY });
 }
 
 // Affiche ou masque le bouton Mélanger / Résoudre
@@ -241,12 +240,8 @@ export function dezoom() {
     });
   });
 
-  // Réinitialisation de l'effet sur le cubie survolé
-  if (app.hoveredCubie) {
-    updateCubieHoverState(app.hoveredCubie, false);
-    app.hoveredCubie = null;
-  }
-  hidePreview();
+  // Fin du survol en cours
+  clearHover();
 }
 
 // Retourne les cubies appartenant à une face donnée du cube

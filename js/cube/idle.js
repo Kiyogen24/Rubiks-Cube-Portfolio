@@ -3,6 +3,7 @@ import { app } from '../globals.js';
 import { onFrame } from './scene.js';
 import { isBusy } from './animator.js';
 import { isCubeSectionInView } from '../utils/view.js';
+import { clearHover } from '../cards/preview.js';
 
 // Mouvement au repos : sans interaction, le cube tourne lentement, flotte et tourne parfois une face.
 // Coupé en vue zoomée, en mode jeu et si l'utilisateur préfère réduire les animations.
@@ -108,6 +109,7 @@ function update(dt) {
   } else {
     // démarrage progressif, arrêt rapide
     const target = idleFor > IDLE_DELAY ? 1 : 0;
+    if (target && intensity < 0.01) clearHover(); // le cube va tourner sous la souris
     const tau = target > intensity ? 0.8 : 0.15;
     intensity += (target - intensity) * (1 - Math.exp(-dt / tau));
   }

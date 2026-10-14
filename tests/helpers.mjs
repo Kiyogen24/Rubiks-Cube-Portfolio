@@ -125,9 +125,9 @@ export function cubeAtHome(page) {
   });
 }
 
-// Faces dont les contenus sont affichés sur les stickers
+// Faces dont les images sont affichées sur les stickers
 export function visibleLabelFaces(page) {
-  return page.evaluate(async () => (await import('/js/cube/sticker-labels.js')).visibleFaces());
+  return page.evaluate(async () => (await import('/js/cube/sticker-images.js')).visibleFaces());
 }
 
 export function cameraPosition(page) {

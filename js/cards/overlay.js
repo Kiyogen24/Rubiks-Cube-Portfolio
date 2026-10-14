@@ -1,8 +1,6 @@
 // Importation des modules nécessaires
-import { hidePreview } from './preview.js';
+import { clearHover } from './preview.js';
 import { CATEGORIES, CUBE_CONTENT } from '../utils/constants.js';
-import { updateFaceTextures } from '../cube/cube.js';
-import { dropCubie } from '../cube/lift.js';
 import { app } from '../globals.js';
 
 // Variables globales pour l'overlay et la carte d'information active
@@ -176,14 +174,8 @@ export function showInfoCard(event, faceType, cubePosition) {
     event.stopPropagation();
   }
 
-  // Réinitialiser l'effet de survol (hover) s'il est actif
-  if (app.hoveredCubie) {
-    dropCubie(app.hoveredCubie);
-    updateFaceTextures(app.hoveredCubie, app.hoveredCubie.userData.hoveredFace);
-    app.hoveredCubie.userData.hoveredFace = null;
-    app.hoveredCubie = null;
-  }
-  hidePreview();
+  // Fin du survol en cours (cubie soulevé, étiquette)
+  clearHover();
 
   // Désactiver les contrôles du cube et activer le mode modal
   app.isModalOpen = true;

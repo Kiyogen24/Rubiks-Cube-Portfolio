@@ -115,7 +115,7 @@ test("un clic rapide sur un sticker ne laisse pas d'aperçu derrière la carte",
     await page.mouse.click(p.x, p.y);
     await page.locator('.info-card.active').waitFor();
     await page.waitForTimeout(400);
-    await expect(page.locator('.preview-popup.visible')).toHaveCount(0);
+    await expect(page.locator('.sticker-tip.visible')).toHaveCount(0);
     await closeCard(page);
     await page.mouse.move(20, 450);
   }

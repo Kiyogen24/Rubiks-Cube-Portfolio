@@ -1,178 +1,84 @@
 import * as THREE from 'three';
-import { CUBE_CONTENT, stickerColors } from '../utils/constants.js';
-import { calculateCubiePosition, faceFromNormal, updateFaceTextures, setFaceMap } from '../cube/cube.js';
+import { CUBE_CONTENT } from '../utils/constants.js';
+import { calculateCubiePosition } from '../cube/cube.js';
 import { liftCubie, dropCubie } from '../cube/lift.js';
 import { app } from '../globals.js';
 
-let previewElement = null;
-let previewFrame = null; // affichage en attente (annulé si la popup est masquée entre-temps)
+// Survol d'un sticker qui a un contenu : le cubie se soulève un peu et une étiquette nomme le contenu
+let tip = null;
+let hovered = null; // { cubie, face }
+const stickerCenter = new THREE.Vector3();
+const NORMALS = {
+  right: [1, 0, 0],
+  left: [-1, 0, 0],
+  top: [0, 1, 0],
+  bottom: [0, -1, 0],
+  front: [0, 0, 1],
+  back: [0, 0, -1],
+};
 
-// Affiche une popup de prévisualisation à la position donnée, avec une image en fond et le titre du contenu
-export function displayPreview(imageSrc, event, title = '') {
-  // Crée l'élément de prévisualisation s'il n'existe pas déjà
-  if (!previewElement) {
-    previewElement = document.createElement('div');
-    previewElement.className = 'preview-popup';
-    previewElement.innerHTML = '<span class="preview-popup__title"></span>';
-    document.body.appendChild(previewElement);
+function titleOf(content) {
+  const lang = app.langManager?.currentLang || 'fr';
+  return (content.i18n?.[lang]?.title || content.title).trim();
+}
+
+// Étiquette au-dessus et à droite du point visé (souris, ou centre du sticker au clavier)
+function showTip(content, x, y) {
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.className = 'sticker-tip';
+    tip.setAttribute('aria-hidden', 'true'); // au clavier, le nom est déjà celui du bouton du sticker
+    document.body.appendChild(tip);
   }
+  tip.textContent = titleOf(content);
+  tip.style.left = `${x}px`;
+  tip.style.top = `${y}px`;
+  tip.classList.add('visible');
+}
 
-  previewElement.style.display = 'block';
-  previewElement.style.backgroundImage = `url(${imageSrc})`;
-  previewElement.firstElementChild.textContent = title;
-  previewElement.classList.toggle('has-title', Boolean(title));
+// Masque l'étiquette (le survol reste actif)
+export function hidePreview() {
+  tip?.classList.remove('visible');
+}
 
-  // Calculer la position centrée en fonction de l'événement de survol
-  const cubieCenterX = event.clientX;
-  const cubieCenterY = event.clientY;
+// Fin du survol : le cubie redescend, l'étiquette disparaît
+export function clearHover() {
+  if (hovered) dropCubie(hovered.cubie);
+  hovered = null;
+  app.hoveredCubie = null;
+  hidePreview();
+  if (app.renderer) app.renderer.domElement.style.cursor = '';
+}
 
-  // Utilise requestAnimationFrame pour une transition fluide en ajoutant la classe "visible"
-  cancelAnimationFrame(previewFrame);
-  previewFrame = requestAnimationFrame(() => {
-    previewFrame = null;
-    previewElement.classList.add('visible');
-    previewElement.style.left = `${cubieCenterX}px`;
-    previewElement.style.top = `${cubieCenterY}px`;
+// Survol de la case `face` du cubie, au point `point` de l'écran ; sans contenu, le survol s'arrête
+export function setHover(cubie, face, point) {
+  const content = CUBE_CONTENT[face]?.[calculateCubiePosition(cubie.userData.gridPos, face)];
+  if (!content?.preview) {
+    clearHover();
+    return;
+  }
+  if (hovered?.cubie !== cubie || hovered?.face !== face) {
+    clearHover();
+    hovered = { cubie, face };
+    app.hoveredCubie = cubie;
+    if (!app.idleTwisting) liftCubie(cubie, face);
+  }
+  showTip(content, point.x, point.y);
+  // vue d'ensemble : un clic zoome sur la face ; en vue zoomée, seuls les contenus ouvrent quelque chose
+  const clickable = !app.isZoomed || content.hasContent || content.link;
+  app.renderer.domElement.style.cursor = clickable ? 'pointer' : '';
+}
+
+// Clavier : le sticker qui a le focus est mis en avant comme au survol, l'étiquette posée sur lui
+export function focusSticker(cubie, face) {
+  stickerCenter.fromArray(NORMALS[face]).multiplyScalar(0.5); // centre de la case, sur la surface du cubie
+  cubie.localToWorld(stickerCenter).project(app.camera);
+  setHover(cubie, face, {
+    x: (stickerCenter.x * 0.5 + 0.5) * window.innerWidth,
+    y: (-stickerCenter.y * 0.5 + 0.5) * window.innerHeight,
   });
 }
 
-// Masque la popup de prévisualisation
-export function hidePreview() {
-  // annule un affichage encore en attente (clic dans la même frame que l'entrée sur le sticker)
-  cancelAnimationFrame(previewFrame);
-  previewFrame = null;
-  if (previewElement) {
-    previewElement.classList.remove('visible');
-  }
-}
-
-// Met à jour l'état de survol d'un cubie et applique les effets si nécessaire
-export function updateCubieHoverState(cubie, isHovered) {
-  // N'applique pas d'effets si l'application n'est pas en mode zoom
-  if (!app.isZoomed) return;
-
-  // Vérifie si le rayon de la souris intersecte le cubie
-  const intersects = app.raycaster.intersectObject(cubie);
-
-  if (intersects.length > 0 && isHovered) {
-    // Normal de la face intersectée, transformé vers le repère du monde
-    const normal = intersects[0].face.normal.clone();
-    normal.transformDirection(cubie.matrixWorld);
-
-    // Détermine la face concernée en fonction de la direction du vecteur normal
-    const content = highlightSticker(cubie, faceFromNormal(normal));
-    // Change le curseur si le contenu est interactif
-    if (content?.hasContent || content?.link) {
-      app.renderer.domElement.style.cursor = 'pointer';
-    }
-  } else {
-    // Réinitialise l'état de la face survolée et remet le curseur par défaut
-    dropCubie(cubie);
-    if (cubie.userData.hoveredFace) {
-      updateFaceTextures(cubie, cubie.userData.hoveredFace);
-      cubie.userData.hoveredFace = null;
-      app.renderer.domElement.style.cursor = 'default';
-    }
-    hidePreview();
-  }
-}
-
-// Met en avant le sticker d'un cubie (texture, soulèvement, aperçu) s'il a un aperçu ; renvoie son contenu
-function highlightSticker(cubie, faceType) {
-  const position = calculateCubiePosition(cubie.userData.gridPos, faceType);
-  const content = CUBE_CONTENT[faceType]?.[position];
-  if (!content?.preview) return null;
-  cubie.userData.hoveredFace = faceType;
-  applyHoverEffects(cubie, faceType, content);
-  liftCubie(cubie, faceType);
-  return content;
-}
-
-// Clavier : le sticker qui a le focus est mis en avant comme au survol
-export function focusSticker(cubie, faceType) {
-  if (app.hoveredCubie && app.hoveredCubie !== cubie) updateCubieHoverState(app.hoveredCubie, false);
-  app.hoveredCubie = cubie;
-  highlightSticker(cubie, faceType);
-}
-
 export function blurSticker(cubie) {
-  if (app.hoveredCubie !== cubie) return;
-  updateCubieHoverState(cubie, false);
-  app.hoveredCubie = null;
-}
-
-// Applique les effets de survol sur un cubie pour la face donnée en créant une texture dynamique
-function applyHoverEffects(cubie, faceType, content) {
-  // Détermine l'index de la face en fonction d'un tableau de noms
-  const faceIndex = ['right', 'left', 'top', 'bottom', 'front', 'back'].indexOf(faceType);
-
-  // Crée un canvas pour dessiner la texture
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-
-  const margin = 32;
-  const stickerSize = 448;
-  const radius = 35;
-  const baseColor = stickerColors[faceType];
-
-  // Dessine le fond arrondi du sticker
-  ctx.fillStyle = baseColor;
-  ctx.beginPath();
-  ctx.roundRect(margin, margin, stickerSize, stickerSize, radius);
-  ctx.fill();
-
-  // Ajoute un effet lumineux avec un dégradé
-  const gradient = ctx.createLinearGradient(margin, margin, stickerSize + margin, stickerSize + margin);
-  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-  gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
-  gradient.addColorStop(1, 'rgba(255, 255, 255, 0.15)');
-
-  ctx.save();
-  ctx.clip();
-  ctx.fillStyle = gradient;
-  ctx.fillRect(margin, margin, stickerSize, stickerSize);
-  ctx.restore();
-
-  // Si une prévisualisation existe, applique la texture et affiche la popup
-  if (content.preview) {
-    // Crée une texture depuis le canvas
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.anisotropy = app.renderer.capabilities.getMaxAnisotropy();
-    setFaceMap(cubie.material[faceIndex], texture);
-
-    // Calcule la position du cubie à l'écran pour positionner la prévisualisation
-    const vector = new THREE.Vector3();
-    cubie.getWorldPosition(vector);
-    vector.project(app.camera);
-
-    const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
-
-    // Affiche la prévisualisation avec un ajustement de position, et le titre dans la langue choisie
-    const lang = app.langManager?.currentLang || 'fr';
-    const title = content.i18n?.[lang]?.title || content.title;
-    displayPreview(content.preview, { clientX: x - 80, clientY: y - 80 }, title);
-  }
-
-  // Ajoute un symbole "+" si le contenu est interactif
-  if (content.hasContent) {
-    const plusSize = 100;
-    const padding = 60;
-    const centerX = stickerSize - padding;
-    const centerY = stickerSize - padding;
-
-    // Dessine le cercle de fond pour le symbole
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, plusSize / 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Dessine le symbole "+" au centre du cercle
-    ctx.fillStyle = baseColor;
-    ctx.font = 'bold 72px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('+', centerX, centerY + 5);
-  }
+  if (hovered?.cubie === cubie) clearHover();
 }

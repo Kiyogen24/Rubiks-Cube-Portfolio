@@ -22,7 +22,7 @@ test('au clavier : menu, face, sticker, carte, puis retour', async ({ page }) =>
   // le sticker qui a le focus est mis en avant, Entrée ouvre sa carte
   const sticker = page.locator('.sticker-buttons button').first();
   await sticker.focus();
-  await expect(page.locator('.preview-popup.visible')).toHaveCount(1);
+  await expect(page.locator('.sticker-tip.visible')).toHaveCount(1);
   await page.keyboard.press('Enter');
   const card = page.locator('.info-card.active[role="dialog"]');
   await expect(card).toBeFocused();
