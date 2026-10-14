@@ -298,7 +298,7 @@ export const CUBE_CONTENT = {
       details: [
         "<strong>Echecs :</strong> J'ai appris de manière autodidacte et ai participé à quelques compétitions. Au meilleur de ma forme, j'ai pu atteindre les 1600 Elo sur chess.com !",
         "<strong>Danse :</strong> J'ai pratiqué pendant 12 ans le Hip-Hop et c'est une activité que j'adore !",
-        "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. Actuellement, j'en connais 400 :)",
+        "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. J'en ai su jusqu'à 400… il m'en reste environ 200 aujourd'hui :)",
         "<strong>Sport :</strong> J'essaye d'aller à la salle 3 fois par semaine et de courir et nager au moins une fois par semaine. La santé, c'est important !",
       ],
       icon: 'fa-regular fa-heart',
@@ -311,7 +311,7 @@ export const CUBE_CONTENT = {
           details: [
             '<strong>Chess:</strong> Self-taught, I participated in a few competitions. At my best, I reached 1600 Elo on chess.com!',
             "<strong>Dancing:</strong> I practiced Hip-Hop for 12 years and it's an activity that I truly love!",
-            "<strong>Memory competitions:</strong> I enjoy memorizing digits of Pi (don't ask me why) and testing my memory. I currently know 400 digits :)",
+            "<strong>Memory competitions:</strong> I enjoy memorizing digits of Pi (don't ask me why) and testing my memory. I once knew 400 of them… about 200 are left today :)",
             '<strong>Sport:</strong> I try to go to the gym 3 times a week and to run and swim at least once a week. Health is important!',
           ],
         },
@@ -432,7 +432,7 @@ export const CUBE_CONTENT = {
               <div class="card-content">
                 <article class="project-content">
                   <h3>Context and Objectives</h3>
-                  <p>The Rubik’s Cube is a combinatorial problem with more than <strong>43 trillion possible states</strong>. The goal was to design an autonomous agent, compare different AI strategies, study neural network convergence, and finally build a robotic prototype able to manipulate the cube.</p>
+                  <p>The Rubik’s Cube is a combinatorial problem with more than <strong>43 quintillion possible states</strong>. The goal was to design an autonomous agent, compare different AI strategies, study neural network convergence, and finally build a robotic prototype able to manipulate the cube.</p>
 
                   <h3>Methodology</h3>
                   <p>Our approach combined the method of <em>DeepCube</em> and <em>AlphaZero</em> with the <strong>Autodidactic Iteration</strong> to generate training data through self-play, and the <strong>Monte Carlo Tree Search (MCTS)</strong> to guide state exploration.</p>
