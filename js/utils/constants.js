@@ -298,7 +298,7 @@ export const CUBE_CONTENT = {
       details: [
         "<strong>Echecs :</strong> J'ai appris de manière autodidacte et ai participé à quelques compétitions. Au meilleur de ma forme, j'ai pu atteindre les 1600 Elo sur chess.com !",
         "<strong>Danse :</strong> J'ai pratiqué pendant 12 ans le Hip-Hop et c'est une activité que j'adore !",
-        "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. J'en ai su jusqu'à 400… il m'en reste environ 200 aujourd'hui :)",
+        "<strong>Concours de mémoire :</strong> J'aime bien retenir les décimales de Pi (ne me demandez pas pourquoi) et mettre ma mémoire à l'épreuve. J'en connaissais jusqu'à 400… il m'en reste environ 200 aujourd'hui :)",
         "<strong>Sport :</strong> J'essaye d'aller à la salle 3 fois par semaine et de courir et nager au moins une fois par semaine. La santé, c'est important !",
       ],
       icon: 'fa-regular fa-heart',
