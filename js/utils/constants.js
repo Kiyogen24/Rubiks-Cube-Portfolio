@@ -583,7 +583,7 @@ export const CUBE_CONTENT = {
     2: {
       title: 'Portfolio',
       icon: 'fa-solid fa-cube',
-      period: '02/2025 - 09/2025',
+      period: "02/2025 - Aujourd'hui",
       preview: 'assets/previews/projects/portfolio_0.webp',
       hasContent: true,
       htmlContent: `
@@ -592,79 +592,91 @@ export const CUBE_CONTENT = {
           <h2>Portfolio</h2>
           <div class="period-badge">
             <i class="fas fa-calendar-alt"></i>
-            <span>02/2025 - 09/2025</span>
+            <span>02/2025 - Aujourd'hui</span>
           </div>
         </div>
         <section class="project-summary">
-          <p>Ce <em>Rubik's Cube</em> est une application web interactive qui présente mon portfolio sous la forme d'un Rubik's Cube en 3D.</p>
+          <p>Ce site est mon portfolio : un <em>Rubik's Cube</em> en 3D dont chaque face présente une partie de mon parcours, et qu'on peut aussi mélanger et résoudre.</p>
         </section>
         <hr>
         <div class="card-content">
           <article class="project-content">
-            <p>Chaque face du cube du Rubik's Cube est dédiée à une catégorie spécifique : expériences, projets, passions et compétences. Les carrés individuels sur chaque face représentent des éléments détaillés de ces catégories.</p>
+            <p>Le site tient en une page. À l'accueil, le cube tourne à côté de mon nom ; en descendant, il vient au centre et ses faces se couvrent de contenus : compétences, expériences, projets, formation, à propos et CV. Chaque sticker ouvre une carte qui sort de son image, aux couleurs de sa face.</p>
             <h3>Fonctionnalités principales :</h3>
             <ul>
-              <li><strong>Interface 3D interactive :</strong> Utilisation de Three.js pour créer et manipuler le Rubik's Cube en trois dimensions, offrant une expérience utilisateur immersive.</li>
-              <li><strong>Navigation intuitive :</strong> Les utilisateurs peuvent interagir avec le cube pour explorer différentes sections du portfolio, chaque face fournissant des informations spécifiques.</li>
-              <li><strong>Mélange et mode jeu :</strong> Possibilité de mélanger le cube et de jouer avec, ajoutant une dimension ludique à la navigation.</li>
-              <li><strong>Bouton EN/FR :</strong> Changement de langue dynamique pour une expérience bilingue.</li>
-              <li><strong>Design responsive <em>(en développement)</em> :</strong> Adaptation de l'affichage pour une expérience optimale sur divers appareils et tailles d'écran.</li>
+              <li><strong>Cube en 3D :</strong> construit avec Three.js. On le fait tourner librement, il se pose sur la face la plus proche, et les images n'apparaissent que sur la face tournée vers soi.</li>
+              <li><strong>Cartes :</strong> la face se tourne d'abord vers soi, puis la carte sort de son sticker. Tout le contenu, en français et en anglais, vient d'un même fichier.</li>
+              <li><strong>Mode jeu :</strong> tourner les rangées au doigt ou au clavier, mélanger, et résoudre automatiquement avec l'algorithme de Kociemba (cubejs, dans un Web Worker). Une petite fête attend ceux qui le résolvent à la main.</li>
+              <li><strong>Identité visuelle :</strong> les couleurs du cube habillent les cartes, le fond de la page et les boutons, en thème clair comme en thème sombre.</li>
+              <li><strong>Partout :</strong> version téléphone (gestes à un et deux doigts), navigation au clavier, français et anglais.</li>
             </ul>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="Aperçu du Rubik's Cube en 3D" class="project-image"><figcaption>Aperçu de la page du Rubik's Cube en 3D</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Accueil du portfolio : le nom, une phrase et le cube" class="project-image"><figcaption>L'accueil : le cube tourne à côté du nom</figcaption></figure>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Cube mélangé et mode jeu" class="project-image"><figcaption>Aperçu du cube mélangé en mode jeu</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="Une carte de projet ouverte à côté du cube" class="project-image"><figcaption>Une carte sortie de son sticker, aux couleurs de sa face</figcaption></figure>
 
-            <h3>Technologie utilisée :</h3>
+            <h3>Technologies utilisées :</h3>
             <ul>
-              <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
-              <li><strong>Bibliothèque 3D :</strong> Three.js</li>
+              <li><strong>Frontend :</strong> HTML, CSS, JavaScript (modules ES, sans framework)</li>
+              <li><strong>3D :</strong> Three.js</li>
+              <li><strong>Résolution :</strong> cubejs (algorithme de Kociemba), dans un Web Worker</li>
+              <li><strong>Qualité :</strong> tests Playwright, ESLint et Prettier, intégration continue avec GitHub Actions</li>
+              <li><strong>Déploiement :</strong> Vercel</li>
             </ul>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Aperçu d'une des faces" class="project-image"><figcaption>Aperçu d'une des faces avec effet de survolement</figcaption></figure>
-            <p>Le site est conçu avec une approche 3D, offrant une expérience utilisateur immersive et une navigation intuitive à travers mes différents projets et compétences.</p>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Cube résolu à la main, avec des confettis et le score" class="project-image"><figcaption>Le cube résolu à la main : confettis et score</figcaption></figure>
+
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_4.webp" alt="Le portfolio sur téléphone : le cube, puis une carte" class="project-image"><figcaption>Sur téléphone : le cube au centre, puis une carte</figcaption></figure>
+            <p>Le site a été entièrement repensé en octobre 2026 : une seule page, des cartes plus complètes et un vrai mode jeu.</p>
             <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le projet sur GitHub</a>
           </article>
         </div>
       `,
       i18n: {
         en: {
+          period: '02/2025 - Present',
           htmlContent: `
             <div class="card-header">
               <i class="fa-solid fa-cube"></i>
               <h2>Portfolio</h2>
               <div class="period-badge">
                 <i class="fas fa-calendar-alt"></i>
-                <span>02/2025 - 09/2025</span>
+                <span>02/2025 - Present</span>
               </div>
             </div>
             <section class="project-summary">
-              <p>This <em>Rubik's Cube</em> is an interactive web application that presents my portfolio as a 3D Rubik's Cube.</p>
+              <p>This website is my portfolio: a 3D <em>Rubik's Cube</em> whose faces each present a part of my background, and which you can also scramble and solve.</p>
             </section>
             <hr>
             <div class="card-content">
               <article class="project-content">
-                <p>Each face of the Rubik's Cube is dedicated to a specific category: experiences, projects, passions and skills. Individual squares on each face represent detailed items of these categories.</p>
+                <p>The site fits on one page. On the home screen, the cube spins next to my name; scrolling down brings it to the centre, and its faces fill with content: skills, experience, projects, education, about me and CV. Each sticker opens a card that comes out of its image, in the colours of its face.</p>
                 <h3>Main features:</h3>
                 <ul>
-                  <li><strong>Interactive 3D interface:</strong> Uses Three.js to create and manipulate the Rubik's Cube in three dimensions for an immersive user experience.</li>
-                  <li><strong>Intuitive navigation:</strong> Users can interact with the cube to explore different sections of the portfolio, each face providing specific information.</li>
-                  <li><strong>Shuffle and play mode:</strong> Ability to shuffle the cube and play with it, adding a playful dimension to navigation.</li>
-                  <li><strong>EN/FR toggle button:</strong> Dynamic language switch for a bilingual experience.</li>
-                  <li><strong>Responsive design <em>(in progress)</em>:</strong> Adapts the display for an optimal experience across devices and screen sizes.</li>
+                  <li><strong>3D cube:</strong> built with Three.js. It turns freely, settles on the nearest face, and images only appear on the face turned towards you.</li>
+                  <li><strong>Cards:</strong> the face first turns towards you, then the card comes out of its sticker. All the content, in French and English, comes from a single file.</li>
+                  <li><strong>Play mode:</strong> turn rows with your finger or the keyboard, scramble, and solve automatically with Kociemba's algorithm (cubejs, in a Web Worker). A small celebration awaits those who solve it by hand.</li>
+                  <li><strong>Visual identity:</strong> the cube's colours dress the cards, the page background and the buttons, in light and dark themes.</li>
+                  <li><strong>Everywhere:</strong> phone version (one- and two-finger gestures), keyboard navigation, French and English.</li>
                 </ul>
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Shuffled cube in play mode" class="project-image"><figcaption>Preview of the shuffled cube in play mode</figcaption></figure>
 
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="Rubik's Cube 3D preview" class="project-image"><figcaption>Preview of the 3D Rubik's Cube page</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Portfolio home: the name, a sentence and the cube" class="project-image"><figcaption>The home screen: the cube spins next to the name</figcaption></figure>
 
-                <h3>Technology used:</h3>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="A project card open next to the cube" class="project-image"><figcaption>A card out of its sticker, in the colours of its face</figcaption></figure>
+
+                <h3>Technologies used:</h3>
                 <ul>
-                  <li><strong>Frontend:</strong> HTML, CSS, JavaScript</li>
-                  <li><strong>3D library:</strong> Three.js</li>
+                  <li><strong>Frontend:</strong> HTML, CSS, JavaScript (ES modules, no framework)</li>
+                  <li><strong>3D:</strong> Three.js</li>
+                  <li><strong>Solving:</strong> cubejs (Kociemba's algorithm), in a Web Worker</li>
+                  <li><strong>Quality:</strong> Playwright tests, ESLint and Prettier, continuous integration with GitHub Actions</li>
+                  <li><strong>Deployment:</strong> Vercel</li>
                 </ul>
 
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Preview of a face" class="project-image"><figcaption>Preview of one face with hover effect</figcaption></figure>
-                <p>The site is built with a 3D-first approach, offering an immersive user experience and intuitive navigation through my various projects and skills.</p>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Cube solved by hand, with confetti and the score" class="project-image"><figcaption>The cube solved by hand: confetti and score</figcaption></figure>
+
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_4.webp" alt="The portfolio on a phone: the cube, then a card" class="project-image"><figcaption>On a phone: the cube in the centre, then a card</figcaption></figure>
+                <p>The site was fully redesigned in October 2026: a single page, richer cards and a real play mode.</p>
                 <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View the project on GitHub</a>
               </article>
             </div>
