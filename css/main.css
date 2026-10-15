@@ -12,8 +12,8 @@
   --primary-hover: #433bff;
   --primary-ink: #ffffff;
   --secondary: #ffffff;
-  --secondary-hover: #ededf0; /* gris neutre au survol */
-  --secondary-ink: #16124a;
+  --secondary-hover: #f6f5ff;
+  --secondary-ink: #2f27ce;
   --link: #2f27ce;
   --card-shadow:
     0 1px 2px rgba(20, 16, 90, 0.06), 0 30px 70px -30px rgba(47, 39, 206, 0.32); /* taste-skill-ignore : seule la carte, qui flotte comme un dialogue */
@@ -24,7 +24,7 @@
   --face-back: #ff8000;
   --face-left: #00994c;
   --face-bottom: #ffe100;
-  --socket-top: #e5e3f6;
+  --socket-top: #e4e4e9; /* gris : la face du haut est blanche */
   --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
   --font-text: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
   --margin: clamp(1.25rem, 6vw, 7rem);
@@ -47,16 +47,20 @@
   --secondary-ink: #f1f0ff;
   --link: #b3aeff;
   --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 30px 70px -30px rgba(0, 0, 0, 0.9); /* taste-skill-ignore */
-  --socket-top: #2b2760;
+  --socket-top: #3a3a46;
   color-scheme: dark;
 }
 /* Chaque face prête à l'interface la couleur de ses stickers (le ton, pour les fonds), une couleur d'accent et le
-   texte qui va dessus. La face du haut est blanche : son accent est l'indigo du site. Le vert d'accent est un peu
+   texte qui va dessus. La face du haut est blanche : son accent est un gris neutre. Le vert d'accent est un peu
    plus sombre que celui du cube pour rester lisible. */
-:root,
-[data-accent='top'] {
+:root {
   --tone: var(--face-top);
   --accent: var(--primary);
+  --accent-ink: #ffffff;
+}
+[data-accent='top'] {
+  --tone: var(--face-top);
+  --accent: #6e6e78;
   --accent-ink: #ffffff;
 }
 [data-accent='front'] {
@@ -115,6 +119,10 @@ body {
 }
 :root[data-theme='dark'][data-accent] body {
   background-color: color-mix(in srgb, var(--accent) 17%, var(--bg));
+}
+/* la face blanche, en sombre : de vrais gris, sans le violet du fond */
+:root[data-theme='dark'][data-accent='top'] body {
+  background-color: #1b1b22;
 }
 p,
 h1,
@@ -789,6 +797,10 @@ h1 {
 :root[data-theme='dark'] .card {
   --paper: color-mix(in srgb, var(--tone) 20%, var(--surface));
   --tint: color-mix(in srgb, var(--accent) 24%, var(--surface));
+}
+:root[data-theme='dark'] .card[data-accent='top'] {
+  --paper: #2a2a33;
+  --tint: #363641;
 }
 .card .card-close {
   background: var(--tint);
