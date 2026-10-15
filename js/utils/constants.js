@@ -1,5 +1,5 @@
 // Date de naissance : l'âge affiché dans « À propos » est recalculé à chaque visite
-const BIRTH_DATE = new Date(2004, 9, 20); // 20/10/2004 (les mois commencent à 0)
+const BIRTH_DATE = new Date(2004, 9, 21); // 21/10/2004 (les mois commencent à 0)
 
 function computeAge(birthDate) {
   const today = new Date();

@@ -141,9 +141,9 @@ export async function drag(page, from, by = { x: 180, y: 0 }) {
   await page.mouse.up();
 }
 
-// Âge attendu sur la carte « À propos » (né le 20/10/2004)
+// Âge attendu sur la carte « À propos » (né le 21/10/2004)
 export function expectedAge(now = new Date()) {
-  const birth = new Date(2004, 9, 20);
-  const passed = now.getMonth() > 9 || (now.getMonth() === 9 && now.getDate() >= 20);
+  const birth = new Date(2004, 9, 21);
+  const passed = now.getMonth() > 9 || (now.getMonth() === 9 && now.getDate() >= 21);
   return now.getFullYear() - birth.getFullYear() - (passed ? 0 : 1);
 }
