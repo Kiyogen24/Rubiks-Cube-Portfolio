@@ -14,7 +14,7 @@ import { onSolved, setStatus, shuffle, solve, updateLayer } from './cube/play.js
 import { canvas, cube, render, resize, snapFraming, updateCamera, updateTiles } from './cube/scene.js';
 import { loadImage } from './cube/textures.js';
 import { celebrate } from './ui/celebrate.js';
-import { renderContact, setupContact } from './ui/contact.js';
+import { measureContact, renderContact, setupContact } from './ui/contact.js';
 
 const intro = $('#intro');
 const cubeView = $('#cube-view');
@@ -101,9 +101,10 @@ window.addEventListener('scroll', readScroll, { passive: true });
 window.addEventListener('resize', () => {
   resize();
   readScroll();
+  measureContact();
 });
 
-// Molette et pavé tactile : un geste, une page. Sinon un grand lancer passe de l'accueil à « Écrivez-moi »
+// Molette et pavé tactile : un geste, une page. Sinon un grand lancer passe de l'accueil à « Contactez-moi »
 // sans s'arrêter au cube ; l'élan qui suit un geste est ignoré tant qu'il dure. (Au doigt, le défilement
 // natif s'arrête à chaque page : scroll-snap-stop.) En jeu, la molette zoome (cube/input.js).
 const pages = [...document.querySelectorAll('.page')];
@@ -113,7 +114,7 @@ window.addEventListener(
   'wheel',
   (e) => {
     if (S.mode === 'play' || e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-    if (e.target instanceof Element && e.target.closest('.card')) return; // le contenu d'une carte défile
+    if (e.target instanceof Element && e.target.closest('.card, textarea')) return; // une carte, un message défilent
     e.preventDefault();
     const now = performance.now();
     const size = Math.abs(e.deltaY);
@@ -200,7 +201,7 @@ function update(dt) {
   updateOrientation(dt, fast);
   // le défilement fait passer de l'accueil au cube, et retour
   if (S.phase === 'ready' && S.mode !== 'play' && !S.drag) {
-    // le cube s'explore sur sa page ; à l'accueil et sur « Écrivez-moi », il tourne, vide, à côté du texte
+    // le cube s'explore sur sa page ; à l'accueil et sur « Contactez-moi », il tourne, vide, à côté du texte
     if (S.mode === 'intro' && S.scrollP > 0.55 && S.contactP < 0.45) enterExplore();
     else if (S.mode === 'explore' && (S.scrollP < 0.45 || S.contactP > 0.55)) leaveExplore();
   }

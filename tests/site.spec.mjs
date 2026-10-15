@@ -129,7 +129,7 @@ test('un grand lancer à la molette depuis l’accueil s’arrête au cube', asy
   await page.waitForFunction(() => window.__S.mode === 'explore');
 });
 
-test('« Écrivez-moi », la dernière section : un mail au sujet rempli, l’adresse à copier', async ({
+test('« Contactez-moi », la dernière section : le mail s’écrit sur la page, l’adresse se copie', async ({
   page,
   context,
 }) => {
@@ -138,17 +138,28 @@ test('« Écrivez-moi », la dernière section : un mail au sujet rempli, l’ad
   await open(page);
   await page.evaluate(() => window.scrollTo(0, document.getElementById('contact').offsetTop));
   await page.waitForFunction(() => window.__S.contactP > 0.99 && window.__S.mode === 'intro');
-  await expect(page.locator('#contact-title')).toHaveText('Écrivez-moi');
+  await expect(page.locator('#contact-title')).toHaveText('Contactez-moi');
+  await expect(page.locator('#mail')).toHaveText('Écrire un mail');
   await expect(page.locator('#mail')).toHaveAttribute(
     'href',
     'mailto:r.goldenchtein@proton.me?subject=Contact%20depuis%20votre%20portfolio',
   );
+
+  // le message écrit sur la page part avec le mail, et le bouton devient « Envoyer le mail »
+  await page.fill('#message', 'Bonjour Romain,\nUn stage en RL ?');
+  await expect(page.locator('#mail')).toHaveText('Envoyer le mail');
+  await expect(page.locator('#mail')).toHaveAttribute(
+    'href',
+    'mailto:r.goldenchtein@proton.me?subject=Contact%20depuis%20votre%20portfolio&body=Bonjour%20Romain%2C%0AUn%20stage%20en%20RL%20%3F',
+  );
+
   await page.click('#copy-mail');
   await expect(page.locator('#copy-label')).toHaveText('Adresse copiée');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('r.goldenchtein@proton.me');
 
   await page.click('.lang button[data-lang="en"]');
-  await expect(page.locator('#contact-title')).toHaveText('Write to me');
+  await expect(page.locator('#contact-title')).toHaveText('Get in touch');
+  await expect(page.locator('#mail')).toHaveText('Send the email');
   await expect(page.locator('#mail')).toHaveAttribute('href', /subject=Contact%20from%20your%20portfolio/);
 });
 

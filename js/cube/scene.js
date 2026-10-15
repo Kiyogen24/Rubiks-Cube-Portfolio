@@ -128,13 +128,32 @@ export function framingTarget() {
   const room = n ? { shift: 0, lift: 0.1, dist: 16 } : { shift: 0, lift: 0.07, dist: Math.max(9.4, 13 / a) };
   if (S.mode === 'play') return { ...room, dist: room.dist * S.zoom };
   const home = n ? { shift: 0, lift: 0.19, dist: 16.5 } : { shift: 0.21, lift: 0.05, dist: Math.max(11, 15 / a) };
-  // en descendant encore, vers « Écrivez-moi », le cube retourne à côté du texte, comme à l'accueil
-  const e = easeInOut(S.scrollP) * (1 - easeInOut(S.contactP));
+  // en descendant encore, vers « Contactez-moi », le cube retourne à côté du texte, plus petit qu'à l'accueil
+  if (S.contactP > 0) {
+    const end = n ? phoneContactFraming() : { shift: 0.25, lift: 0.04, dist: home.dist * 1.35 };
+    const c = easeInOut(S.contactP);
+    return {
+      shift: lerp(room.shift, end.shift, c),
+      lift: lerp(room.lift, end.lift, c),
+      dist: lerp(room.dist, end.dist, c),
+    };
+  }
+  const e = easeInOut(S.scrollP);
   return {
     shift: lerp(home.shift, room.shift, e),
     lift: lerp(home.lift, room.lift, e),
     dist: lerp(home.dist, room.dist, e),
   };
+}
+// Sur téléphone, le texte de « Contactez-moi » est en bas : le cube se met dans la place libre au-dessus,
+// et s'en va vers le haut s'il n'y en a pas assez
+function phoneContactFraming() {
+  const top = 76; // sous la barre
+  const free = S.contactTextTop - top - 16;
+  const radius = Math.min(130, free * 0.38); // le cube penché déborde un peu de ce rayon
+  if (radius < 60) return { shift: 0, lift: 0.9, dist: 26 };
+  const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  return { shift: 0, lift: 0.5 - (top + free * 0.46) / S.height, dist: (2.45 * S.height) / (2 * tan * radius) };
 }
 export function snapFraming() {
   const f = framingTarget();

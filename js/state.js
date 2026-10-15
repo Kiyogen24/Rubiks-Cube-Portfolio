@@ -22,7 +22,8 @@ export const S = {
   scale: { x: 1, v: 0 },
   view: { shift: { x: 0.21, v: 0 }, lift: { x: 0.04, v: 0 }, dist: { x: 11, v: 0 } },
   scrollP: 0, // 0 à l'accueil, 1 sur le cube
-  contactP: 0, // 0 sur le cube, 1 sur « Écrivez-moi »
+  contactP: 0, // 0 sur le cube, 1 sur « Contactez-moi »
+  contactTextTop: 0, // haut du texte de « Contactez-moi » dans sa page (le cube du téléphone tient au-dessus)
   hovered: null,
   markDirty: true,
   // jeu

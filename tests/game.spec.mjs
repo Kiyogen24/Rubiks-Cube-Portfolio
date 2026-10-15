@@ -107,7 +107,7 @@ test('« Terminé » remet le cube en ordre, à sa place et à sa taille d’ava
   await expect(page.locator('#play')).toBeFocused();
 });
 
-test('résolu à la main après un mélange : la fête, puis « Écrivez-moi » au message adapté', async ({ page }) => {
+test('résolu à la main après un mélange : la fête, puis « Contactez-moi » au message adapté', async ({ page }) => {
   await play(page);
   // un quart de tour à la main, puis trois autres dans le même sens : le cube revient résolu
   const p = await frontEdgePoint(page);
@@ -128,10 +128,10 @@ test('résolu à la main après un mélange : la fête, puis « Écrivez-moi » 
   await expect(page.locator('#status')).toHaveText('Résolu, bravo !');
   await expect(page.locator('#score')).toHaveText(/^3 mouvements · 1 min \d\d s$/);
 
-  // la récompense d'abord, puis la page descend vers « Écrivez-moi », dont le message a changé
+  // la récompense d'abord, puis la page descend vers « Contactez-moi », dont le message a changé
   await page.waitForFunction(() => window.__S.contactP > 0.99, null, { timeout: 10_000 });
   await expect(page.locator('html')).not.toHaveClass(/locked/);
-  await expect(page.locator('#contact-title')).toHaveText('Cube résolu.\nEt maintenant ?');
+  await expect(page.locator('#contact-title')).toHaveText('Vous avez résolu le Cube ?!');
   await expect(page.locator('#contact-lead')).toContainText('En 3 mouvements');
   await expect(page.locator('#mail')).toHaveAttribute('href', /subject=J%E2%80%99ai%20r%C3%A9solu/);
   await expect(page.locator('#mail')).toBeFocused();

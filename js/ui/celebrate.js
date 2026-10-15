@@ -1,5 +1,5 @@
 // Célébrations : un petit bond quand le bouton résout le cube ; une vraie fête quand on l'a résolu à la main
-// après un mélange (tour de joie, confettis-stickers, score), puis la page descend vers « Écrivez-moi »
+// après un mélange (tour de joie, confettis-stickers, score), puis la page descend vers « Contactez-moi »
 import * as THREE from 'three';
 import { S, $, reduced } from '../state.js';
 import { exitPlay } from '../cube/modes.js';
@@ -61,7 +61,7 @@ export function celebrate({ byHand, moves, time }) {
     }, 220);
   }
 
-  // la récompense d'abord, ensuite seulement la page descend vers « Écrivez-moi », au message adapté
+  // la récompense d'abord, ensuite seulement la page descend vers « Contactez-moi », au message adapté
   const mine = ++token;
   setTimeout(
     () => {

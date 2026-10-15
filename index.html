@@ -140,6 +140,9 @@
         <div class="contact-text">
           <h2 class="contact-title" id="contact-title"></h2>
           <p class="contact-lead" id="contact-lead"></p>
+          <!-- le message s'écrit ici ; le bouton ouvre la messagerie avec le mail déjà rédigé -->
+          <label class="visually-hidden" for="message" data-i18n="messageLabel"></label>
+          <textarea class="message" id="message" rows="4"></textarea>
           <p class="actions">
             <a class="btn primary" id="mail" href="mailto:r.goldenchtein@proton.me">
               <svg
@@ -156,7 +159,7 @@
                 <rect x="3" y="5" width="18" height="14" rx="2.5" />
                 <path d="M4 7l8 6 8-6" />
               </svg>
-              <span data-i18n="writeMe"></span>
+              <span id="mail-label"></span>
             </a>
             <button type="button" class="btn secondary" id="copy-mail">
               <span id="copy-label" data-i18n="copyMail"></span>
