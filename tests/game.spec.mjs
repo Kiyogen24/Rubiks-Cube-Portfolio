@@ -37,8 +37,16 @@ test('mélanger puis résoudre avec le solveur de Kociemba', async ({ page }) =>
   await expect(page.locator('#status')).toHaveText('Résolution…');
   await page.waitForFunction(() => !window.__play.busy() && !window.__S.moves.length, null, { timeout: 40_000 });
   expect(logs.some((l) => l.includes('solution cubejs'))).toBe(true);
-  // résolu exactement, centres compris (la photo du sticker du haut est droite)
-  expect(await cubeAtHome(page)).toBe(true);
+  // coins et arêtes exactement à leur place ; un centre peut rester tourné sur lui-même, comme le logo d'un vrai cube
+  expect(await page.evaluate(() => window.__play.isSolved())).toBe(true);
+  const placed = await page.evaluate(() =>
+    window.__scene.cubies.every((c) => {
+      const { x, y, z } = c.userData.grid;
+      const center = [x, y, z].filter((v) => v !== 0).length < 2;
+      return c.position.distanceTo(c.userData.home) < 1e-3 && (center || Math.abs(Math.abs(c.quaternion.w) - 1) < 1e-6);
+    }),
+  );
+  expect(placed).toBe(true);
   await expect(page.locator('#status')).toHaveText('');
 });
 

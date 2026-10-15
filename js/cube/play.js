@@ -15,8 +15,8 @@ export function setStatus(key) {
   statusEl.textContent = key ? t()[key] : '';
 }
 
-// Le jeu est occupé : une rangée tourne, des mouvements attendent, le solveur cherche ou des centres se redressent
-export const busy = () => Boolean(S.layer || S.queue.length || S.solving || twists.length);
+// Le jeu est occupé : une rangée tourne, des mouvements attendent, ou le solveur cherche
+export const busy = () => Boolean(S.layer || S.queue.length || S.solving);
 
 // ---------- Une rangée ----------
 function layerCubies(axis, layer) {
@@ -73,39 +73,14 @@ function finishLayer(record) {
   if (isSolved()) {
     setStatus(S.userMoves ? 'bravo' : '');
     S.moves = [];
-    straightenCenters();
   } else if (turns) {
     setStatus('shuffled');
   }
 }
 
-// Une solution ne s'occupe pas des centres : ils peuvent finir tournés sur eux-mêmes, ce qui ne se voit
-// qu'à la photo du haut. Ils se redressent alors d'un petit tour, puis `then` est appelé.
-const twists = [];
-let twistsDone = null;
+// Une solution ne s'occupe pas des centres : comme le logo d'un vrai cube, la photo du centre du haut peut
+// finir tournée sur elle-même ; tout se remet droit en quittant le jeu (normalizeSolved)
 const isCenter = (c) => Object.values(c.userData.grid).filter((v) => v !== 0).length < 2; // centres et cubie du milieu
-function straightenCenters(then) {
-  const q0 = cubies[0].quaternion;
-  cubies.forEach((c) => {
-    if (isCenter(c) && Math.abs(c.quaternion.dot(q0)) < 0.999) {
-      twists.push({ cubie: c, from: c.quaternion.clone(), to: q0.clone(), t: 0 });
-    }
-  });
-  if (twists.length) twistsDone = then || null;
-  else then?.();
-}
-function updateTwists(dt) {
-  twists.forEach((tw) => {
-    tw.t = Math.min(1, tw.t + dt / (reduced.matches ? 0.001 : 0.3));
-    tw.cubie.quaternion.slerpQuaternions(tw.from, tw.to, easeInOut(tw.t));
-  });
-  if (twists.some((tw) => tw.t < 1)) return;
-  twists.length = 0;
-  S.markDirty = true;
-  const then = twistsDone;
-  twistsDone = null;
-  then?.();
-}
 
 // Début d'un glissé sur un sticker : des deux axes du plan de la face touchée, on garde celui que le geste suit le mieux
 export function startLayerDrag(d, tx, ty) {
@@ -164,10 +139,6 @@ export function releaseLayer(still) {
 }
 
 export function updateLayer(dt) {
-  if (twists.length) {
-    updateTwists(dt);
-    return;
-  }
   const L = S.layer;
   if (!L) {
     runQueue();
@@ -249,7 +220,7 @@ export async function solve(then) {
     S.queueDone = null;
     S.userMoves = 0;
     setStatus('');
-    straightenCenters(then);
+    then?.();
   };
   if (!moves.length) {
     finish();
@@ -278,7 +249,6 @@ export function normalizeSolved() {
     S.base.multiply(q0);
     cube.quaternion.copy(S.base);
   }
-  twists.length = 0;
   cubies.forEach((c) => {
     c.quaternion.identity();
     c.position.copy(c.userData.home);
@@ -292,8 +262,6 @@ export function resetCube() {
   S.solving = false;
   S.queue.length = 0;
   S.queueDone = null;
-  twists.length = 0;
-  twistsDone = null;
   if (S.layer) {
     S.layer.group.forEach((c) => cube.attach(c));
     pivot.quaternion.identity();
