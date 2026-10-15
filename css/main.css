@@ -235,6 +235,18 @@ a {
     background: var(--surface-3);
   }
 }
+/* en sombre, sous le cube, le fond prend la teinte de la face : les boutons clairs y sont un voile blanc */
+:root[data-theme='dark'] .cube-ui .btn.secondary,
+:root[data-theme='dark'] .cube-ui .btn.quiet {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  :root[data-theme='dark'] .cube-ui .btn.secondary:hover,
+  :root[data-theme='dark'] .cube-ui .btn.quiet:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
 
 /* Barre du haut */
 .bar {
@@ -476,10 +488,14 @@ h1 {
   height: 100%;
   border-radius: 3px;
   background: var(--c);
-  opacity: 0.4;
+  opacity: var(--net-off, 0.4);
   transition:
     opacity 180ms ease,
     transform 140ms var(--ease-out);
+}
+/* sur fond sombre, les faces éteintes restent lisibles */
+:root[data-theme='dark'] .net {
+  --net-off: 0.6;
 }
 .net button[aria-current='true']::before {
   opacity: 1;
