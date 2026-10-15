@@ -75,7 +75,7 @@ export const CUBE_CONTENT = {
       infos: 'Liste',
       details: ['SQL', 'MongoDB'],
       icon: 'fa-solid fa-database',
-      preview: 'assets/previews/skills/data_b.webp',
+      preview: 'assets/previews/skills/database.svg',
       hasContent: true,
       i18n: {
         en: {
@@ -217,7 +217,7 @@ export const CUBE_CONTENT = {
         'Développement de compétences pédagogiques et de communication.',
       ],
       icon: 'fa-solid fa-chalkboard-user',
-      preview: 'assets/previews/exp/tutorat.webp',
+      preview: 'assets/previews/exp/tutorat.svg',
       hasContent: true,
       i18n: {
         en: {
@@ -274,7 +274,7 @@ export const CUBE_CONTENT = {
         '<strong>Permis B</strong>',
       ],
       icon: 'fa-regular fa-user',
-      preview: 'assets/previews/about/person.webp',
+      preview: 'assets/previews/about/about.svg',
       hasContent: true,
       i18n: {
         en: {
@@ -321,7 +321,7 @@ export const CUBE_CONTENT = {
       title: 'Soft Skills',
       details: ['Curiosité', 'Persévérance', 'Résolution des problèmes', 'Organisé', 'Gestion de Projet'],
       icon: 'fa-regular fa-lightbulb',
-      preview: 'assets/previews/about/soft.webp',
+      preview: 'assets/previews/about/soft.svg',
       hasContent: true,
       i18n: {
         en: {
@@ -353,7 +353,7 @@ export const CUBE_CONTENT = {
       details: [],
       icon: 'fa-regular fa-file-pdf',
       file: 'assets/previews/cv.pdf',
-      preview: 'assets/previews/cv_pr.webp',
+      preview: 'assets/previews/cv.svg',
       hasContent: true,
       i18n: {
         en: {
@@ -1171,7 +1171,7 @@ export const CUBE_CONTENT = {
         `<a class="info-list-link" href="https://pix.fr/" target="_blank">PIX</a>`,
       ],
       icon: 'fa-solid fa-certificate',
-      preview: 'assets/previews/formation/certif.avif',
+      preview: 'assets/previews/formation/certif.svg',
       hasContent: true,
       i18n: {
         en: {
