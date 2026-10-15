@@ -50,30 +50,37 @@
   --socket-top: #2b2760;
   color-scheme: dark;
 }
-/* Chaque face prête sa couleur à l'interface (l'accent) avec le texte qui va dessus. La face du haut est blanche :
-   son accent est l'indigo du site. Le vert est un peu plus sombre que celui du cube pour rester lisible. */
+/* Chaque face prête à l'interface la couleur de ses stickers (le ton, pour les fonds), une couleur d'accent et le
+   texte qui va dessus. La face du haut est blanche : son accent est l'indigo du site. Le vert d'accent est un peu
+   plus sombre que celui du cube pour rester lisible. */
 :root,
 [data-accent='top'] {
+  --tone: var(--face-top);
   --accent: var(--primary);
   --accent-ink: #ffffff;
 }
 [data-accent='front'] {
+  --tone: var(--face-front);
   --accent: #b90000;
   --accent-ink: #ffffff;
 }
 [data-accent='right'] {
+  --tone: var(--face-right);
   --accent: #000fff;
   --accent-ink: #ffffff;
 }
 [data-accent='left'] {
+  --tone: var(--face-left);
   --accent: #00873f;
   --accent-ink: #ffffff;
 }
 [data-accent='back'] {
+  --tone: var(--face-back);
   --accent: #ff8000;
   --accent-ink: #16124a;
 }
 [data-accent='bottom'] {
+  --tone: var(--face-bottom);
   --accent: #ffe100;
   --accent-ink: #16124a;
 }
@@ -104,7 +111,7 @@ body {
 }
 /* au centre, le fond prend un peu la couleur de la face tournée vers soi (un pastel de sa couleur) */
 :root[data-accent] body {
-  background-color: color-mix(in srgb, var(--accent) 9%, #ffffff);
+  background-color: color-mix(in srgb, var(--accent) 7%, #ffffff);
 }
 :root[data-theme='dark'][data-accent] body {
   background-color: color-mix(in srgb, var(--accent) 11%, var(--bg));
@@ -559,7 +566,7 @@ h1 {
   width: min(620px, 46vw);
   display: flex;
   flex-direction: column;
-  background: var(--surface);
+  background: var(--paper);
   border-radius: 28px;
   box-shadow: var(--card-shadow); /* taste-skill-ignore : la carte flotte comme un dialogue */
   overflow: hidden;
@@ -657,11 +664,17 @@ h1 {
   height: 16px;
   border-radius: 4px;
 }
+/* la carte est un pastel de la couleur de ses stickers (blanche pour la face du haut) ; ses cases sont plus claires */
 .card {
-  --tint: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  --paper: color-mix(in srgb, var(--tone) 24%, var(--surface));
+  --tint: color-mix(in srgb, var(--accent) 7%, var(--surface));
 }
 :root[data-theme='dark'] .card {
-  --tint: color-mix(in srgb, var(--accent) 20%, var(--surface));
+  --paper: color-mix(in srgb, var(--tone) 16%, var(--surface));
+  --tint: color-mix(in srgb, var(--accent) 24%, var(--surface));
+}
+.card .card-close {
+  background: var(--tint);
 }
 .card-body {
   display: grid;
