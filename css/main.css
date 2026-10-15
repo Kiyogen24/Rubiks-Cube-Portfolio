@@ -111,10 +111,10 @@ body {
 }
 /* au centre, le fond prend un peu la couleur de la face tournée vers soi (un pastel de sa couleur) */
 :root[data-accent] body {
-  background-color: color-mix(in srgb, var(--accent) 7%, #ffffff);
+  background-color: color-mix(in srgb, var(--accent) 13%, #ffffff);
 }
 :root[data-theme='dark'][data-accent] body {
-  background-color: color-mix(in srgb, var(--accent) 11%, var(--bg));
+  background-color: color-mix(in srgb, var(--accent) 17%, var(--bg));
 }
 p,
 h1,
@@ -666,11 +666,11 @@ h1 {
 }
 /* la carte est un pastel de la couleur de ses stickers (blanche pour la face du haut) ; ses cases sont plus claires */
 .card {
-  --paper: color-mix(in srgb, var(--tone) 24%, var(--surface));
+  --paper: color-mix(in srgb, var(--tone) 28%, var(--surface));
   --tint: color-mix(in srgb, var(--accent) 7%, var(--surface));
 }
 :root[data-theme='dark'] .card {
-  --paper: color-mix(in srgb, var(--tone) 16%, var(--surface));
+  --paper: color-mix(in srgb, var(--tone) 20%, var(--surface));
   --tint: color-mix(in srgb, var(--accent) 24%, var(--surface));
 }
 .card .card-close {
