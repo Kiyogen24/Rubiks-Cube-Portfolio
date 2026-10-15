@@ -22,6 +22,7 @@ export const S = {
   scale: { x: 1, v: 0 },
   view: { shift: { x: 0.21, v: 0 }, lift: { x: 0.04, v: 0 }, dist: { x: 11, v: 0 } },
   scrollP: 0, // 0 à l'accueil, 1 sur le cube
+  contactP: 0, // 0 sur le cube, 1 sur « Écrivez-moi »
   hovered: null,
   markDirty: true,
   // jeu
@@ -34,6 +35,11 @@ export const S = {
   userMoves: 0,
   solving: false,
   status: '',
+  scrambled: false, // mélangé avec le bouton : le résoudre à la main mérite une vraie fête
+  shuffledAt: 0,
+  score: null, // { moves, time } de la dernière résolution à la main
+  celebrating: false,
+  flourish: null, // tour de joie du cube entier
 };
 
 // localStorage peut être indisponible (navigation privée, stockage bloqué)

@@ -107,6 +107,36 @@ test('« Terminé » remet le cube en ordre, à sa place et à sa taille d’ava
   await expect(page.locator('#play')).toBeFocused();
 });
 
+test('résolu à la main après un mélange : la fête, puis « Écrivez-moi » au message adapté', async ({ page }) => {
+  await play(page);
+  // un quart de tour à la main, puis trois autres dans le même sens : le cube revient résolu
+  const p = await frontEdgePoint(page);
+  const turn = async () => {
+    await drag(page, p, { x: 160, y: 0 });
+    await page.waitForFunction(() => !window.__S.layer);
+  };
+  await turn();
+  // comme après un mélange au bouton, il y a 1 min 23 s
+  await page.evaluate(() => {
+    window.__S.scrambled = true;
+    window.__S.shuffledAt = performance.now() - 83_000;
+    window.__S.userMoves = 0;
+  });
+  await turn();
+  await turn();
+  await turn();
+  await expect(page.locator('#status')).toHaveText('Résolu, bravo !');
+  await expect(page.locator('#score')).toHaveText(/^3 mouvements · 1 min \d\d s$/);
+
+  // la récompense d'abord, puis la page descend vers « Écrivez-moi », dont le message a changé
+  await page.waitForFunction(() => window.__S.contactP > 0.99, null, { timeout: 10_000 });
+  await expect(page.locator('html')).not.toHaveClass(/locked/);
+  await expect(page.locator('#contact-title')).toHaveText('Cube résolu.\nEt maintenant ?');
+  await expect(page.locator('#contact-lead')).toContainText('En 3 mouvements');
+  await expect(page.locator('#mail')).toHaveAttribute('href', /subject=J%E2%80%99ai%20r%C3%A9solu/);
+  await expect(page.locator('#mail')).toBeFocused();
+});
+
 test('un coin tourné sur place n’est pas résolu, un centre tourné sur lui-même l’est', async ({ page }) => {
   await prepare(page);
   await open(page);

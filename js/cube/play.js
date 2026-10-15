@@ -8,15 +8,24 @@ import { cube, cubies, pivot, project } from './scene.js';
 
 const QUARTER = Math.PI / 2;
 
-// Message sous le cube : '', 'shuffling', 'shuffled', 'solving' ou 'bravo' (retraduit si la langue change)
+// Message sous le cube : '', 'shuffling', 'shuffled', 'solving' ou 'bravo' (retraduit si la langue change) ;
+// après une résolution à la main, le score s'affiche dessous
 const statusEl = $('#status');
+const scoreEl = $('#score');
 export function setStatus(key) {
   S.status = key;
   statusEl.textContent = key ? t()[key] : '';
+  scoreEl.textContent = key === 'bravo' && S.score ? t().score(S.score.moves, S.score.time) : '';
 }
 
-// Le jeu est occupé : une rangée tourne, des mouvements attendent, ou le solveur cherche
-export const busy = () => Boolean(S.layer || S.queue.length || S.solving);
+// Le jeu est occupé : une rangée tourne, des mouvements attendent, le solveur cherche, ou c'est la fête
+export const busy = () => Boolean(S.layer || S.queue.length || S.solving || S.celebrating);
+
+// Prévient la page qu'un cube vient d'être résolu, à la main ou par le bouton (main.js : la célébration)
+let solvedHandler = null;
+export function onSolved(handler) {
+  solvedHandler = handler;
+}
 
 // ---------- Une rangée ----------
 function layerCubies(axis, layer) {
@@ -71,8 +80,9 @@ function finishLayer(record) {
     S.userMoves++;
   }
   if (isSolved()) {
-    setStatus(S.userMoves ? 'bravo' : '');
     S.moves = [];
+    if (S.userMoves) solvedHandler?.({ byHand: true, moves: S.userMoves, time: performance.now() - S.shuffledAt });
+    else setStatus('');
   } else if (turns) {
     setStatus('shuffled');
   }
@@ -183,10 +193,14 @@ export function shuffle() {
   }
   list.forEach((m) => S.moves.push({ axis: m.axis, layer: m.layer, turns: m.turns }));
   S.userMoves = 0;
+  S.scrambled = false;
+  S.score = null;
   setStatus('shuffling');
   S.queue.push(...list);
   S.queueDone = () => {
     S.queueDone = null;
+    S.scrambled = true; // le chrono part quand le mélange est fini
+    S.shuffledAt = performance.now();
     setStatus('shuffled');
   };
 }
@@ -201,6 +215,7 @@ export async function solve(then) {
     return;
   }
   S.solving = true;
+  S.scrambled = false; // résolu par le bouton, pas à la main
   setStatus('solving');
   const token = solveToken;
   let moves = null;
@@ -220,6 +235,7 @@ export async function solve(then) {
     S.queueDone = null;
     S.userMoves = 0;
     setStatus('');
+    solvedHandler?.({ byHand: false });
     then?.();
   };
   if (!moves.length) {
@@ -260,6 +276,7 @@ export function normalizeSolved() {
 export function resetCube() {
   solveToken++;
   S.solving = false;
+  S.scrambled = false;
   S.queue.length = 0;
   S.queueDone = null;
   if (S.layer) {

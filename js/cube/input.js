@@ -34,7 +34,7 @@ function spin(dx, dy, dt) {
 
 function onPointerDown(e) {
   if (e.pointerType === 'touch') touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  if (S.phase !== 'ready' || e.button > 0) return;
+  if (S.phase !== 'ready' || e.button > 0 || S.celebrating) return;
   // en jeu, deux doigts tournent le cube entier et, en s'écartant, le rapprochent ;
   // une rangée en cours va au quart de tour le plus proche
   if (S.mode === 'play' && touches.size === 2) {

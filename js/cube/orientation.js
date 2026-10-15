@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { S } from '../state.js';
 import { TILT, faceForward, nearestOrientation } from './geometry.js';
-import { angleBetween, qAxis, springQuat } from './math.js';
+import { Y, angleBetween, easeOut, qAxis, springQuat } from './math.js';
 
 // Au lâcher, l'élan est projeté comme un défilement, puis le cube se pose sur la face la plus proche de ce point
 export function snapFromThrow() {
@@ -40,7 +40,24 @@ export function turnByKeys(axis, sign) {
     .multiply(untilted);
 }
 
+// Tour de joie : le cube entier fait `turns` tours sur lui-même, vite puis en ralentissant, et se repose
+export function flourish(turns, duration) {
+  S.flourish = { t: 0, duration, angle: turns * 2 * Math.PI, start: S.base.clone() };
+  S.target = null;
+  S.w.set(0, 0, 0);
+}
+
 export function updateOrientation(dt, fast) {
+  if (S.flourish) {
+    const f = S.flourish;
+    f.t = Math.min(1, f.t + dt / f.duration);
+    S.base.copy(qAxis(Y, f.angle * easeOut(f.t)).multiply(f.start));
+    if (f.t === 1) {
+      S.flourish = null;
+      S.target = nearestOrientation(S.base);
+    }
+    return;
+  }
   if (S.drag && S.drag.type === 'rotate') return; // le cube suit le pointeur
   if (S.target) {
     springQuat(S.base, S.w, S.target, dt, fast ? 1 : 0.8, fast ? 0.2 : 0.42);

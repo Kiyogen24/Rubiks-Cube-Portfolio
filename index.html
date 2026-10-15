@@ -135,6 +135,40 @@
       <section class="page" id="cube-view" aria-labelledby="cube-title">
         <h2 class="visually-hidden" id="cube-title" data-i18n="cubeTitle"></h2>
       </section>
+      <!-- la fin de la page : m'écrire ; le cube revient à droite, comme à l'accueil -->
+      <section class="page" id="contact" aria-labelledby="contact-title">
+        <div class="contact-text">
+          <h2 class="contact-title" id="contact-title"></h2>
+          <p class="contact-lead" id="contact-lead"></p>
+          <p class="actions">
+            <a class="btn primary" id="mail" href="mailto:r.goldenchtein@proton.me">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="5" width="18" height="14" rx="2.5" />
+                <path d="M4 7l8 6 8-6" />
+              </svg>
+              <span data-i18n="writeMe"></span>
+            </a>
+            <button type="button" class="btn secondary" id="copy-mail">
+              <span id="copy-label" data-i18n="copyMail"></span>
+            </button>
+          </p>
+          <p class="contact-links">
+            <span id="contact-email">r.goldenchtein@proton.me</span>
+            <a href="https://www.linkedin.com/in/romain-goldenchtein/" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://github.com/Kiyogen24" target="_blank" rel="noopener">GitHub</a>
+          </p>
+        </div>
+      </section>
     </main>
 
     <!-- sous le cube : le patron et la face devant, puis les commandes du jeu -->
@@ -168,6 +202,7 @@
       <div class="cube-row" id="row-play" hidden>
         <div class="play-panel">
           <p class="status" id="status" aria-live="polite"></p>
+          <p class="score" id="score"></p>
           <div class="play-actions">
             <button type="button" class="btn primary small" id="shuffle" data-i18n="shuffle"></button>
             <button type="button" class="btn secondary small" id="solve" data-i18n="solve"></button>

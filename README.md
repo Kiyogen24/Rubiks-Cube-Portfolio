@@ -33,6 +33,8 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 - Changement de langue dynamique (FR/EN) via le bouton de langue
 - Même site sur téléphone (cartes en bas de l'écran)
 - Mode jeu : rotations de rangées au doigt, mélange, résolution automatique, zoom à la molette ou en pinçant
+- Une fête quand le cube est résolu à la main (confettis en forme de stickers, score), puis la page descend vers « Écrivez-moi »
+- Section « Écrivez-moi » en fin de page : un mail au sujet déjà rempli, l'adresse à copier
 - Navigation au clavier (flèches, Entrée, Échap)
 
 ## Technologies Utilisées

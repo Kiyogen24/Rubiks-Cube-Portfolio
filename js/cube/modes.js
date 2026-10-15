@@ -64,6 +64,8 @@ export function exitPlay() {
 
 // Sortie immédiate (l'accueil ou une carte demandés pendant le jeu) : le cube est remis en ordre d'un coup
 export function exitPlayNow() {
+  S.celebrating = false;
+  S.flourish = null;
   resetCube();
   root.classList.remove('locked');
   S.mode = 'explore';

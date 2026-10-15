@@ -128,7 +128,8 @@ export function framingTarget() {
   const room = n ? { shift: 0, lift: 0.1, dist: 16 } : { shift: 0, lift: 0.07, dist: Math.max(9.4, 13 / a) };
   if (S.mode === 'play') return { ...room, dist: room.dist * S.zoom };
   const home = n ? { shift: 0, lift: 0.19, dist: 16.5 } : { shift: 0.21, lift: 0.05, dist: Math.max(11, 15 / a) };
-  const e = easeInOut(S.scrollP);
+  // en descendant encore, vers « Écrivez-moi », le cube retourne à côté du texte, comme à l'accueil
+  const e = easeInOut(S.scrollP) * (1 - easeInOut(S.contactP));
   return {
     shift: lerp(home.shift, room.shift, e),
     lift: lerp(home.lift, room.lift, e),

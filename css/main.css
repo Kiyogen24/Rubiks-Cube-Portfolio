@@ -424,6 +424,53 @@ h1 {
     text-decoration-color: currentColor;
   }
 }
+/* « Écrivez-moi » : le texte à gauche, le cube revenu à droite comme à l'accueil */
+.contact-text {
+  position: absolute;
+  left: var(--margin);
+  top: 50%;
+  width: min(600px, 46vw);
+  display: grid;
+  gap: 22px;
+  justify-items: start;
+  transform: translateY(-50%);
+  pointer-events: auto; /* l'adresse se sélectionne */
+}
+.contact-title {
+  white-space: pre-line; /* « Cube résolu. » puis « Et maintenant ? » */
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 1rem + 3.8vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+.contact-lead {
+  font-size: clamp(1.0625rem, 0.95rem + 0.35vw, 1.25rem);
+  color: var(--muted);
+  max-width: 48ch;
+}
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.contact-links a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.25em;
+  transition:
+    color 180ms ease,
+    text-decoration-color 180ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact-links a:hover {
+    color: var(--ink);
+    text-decoration-color: currentColor;
+  }
+}
 .contacts.away {
   opacity: 0;
   pointer-events: none;
@@ -556,6 +603,38 @@ h1 {
 .cube-ui.over .status,
 .cube-ui.over .hint {
   opacity: 0;
+}
+.score {
+  margin-top: -8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.score:empty {
+  display: none;
+}
+/* le message qui fête la résolution arrive avec un petit rebond */
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.status.pop {
+  animation: pop 620ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .status.pop {
+    animation: none;
+  }
 }
 .status {
   min-height: 1.3em;
@@ -874,6 +953,14 @@ h1 {
     transform: translateX(3px);
   }
 }
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 .flyer {
   position: fixed;
   left: 0;
@@ -984,6 +1071,21 @@ h1 {
   }
   .contacts {
     display: none;
+  }
+  .contact-text {
+    left: 20px;
+    right: 20px;
+    top: auto;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    gap: 14px;
+    transform: none;
+  }
+  .contact-title {
+    font-size: clamp(2.2rem, 10vw, 3rem);
+  }
+  .contact-lead {
+    font-size: 16px;
   }
   .card {
     left: 0;

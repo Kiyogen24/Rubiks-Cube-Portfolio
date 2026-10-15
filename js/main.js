@@ -10,12 +10,15 @@ import { setupInput } from './cube/input.js';
 import { clamp, springStep } from './cube/math.js';
 import { enterExplore, enterPlay, exitPlay, exitPlayNow, leaveExplore } from './cube/modes.js';
 import { turnTo, updateOrientation } from './cube/orientation.js';
-import { setStatus, shuffle, solve, updateLayer } from './cube/play.js';
+import { onSolved, setStatus, shuffle, solve, updateLayer } from './cube/play.js';
 import { canvas, cube, render, resize, snapFraming, updateCamera, updateTiles } from './cube/scene.js';
 import { loadImage } from './cube/textures.js';
+import { celebrate } from './ui/celebrate.js';
+import { renderContact, setupContact } from './ui/contact.js';
 
 const intro = $('#intro');
 const cubeView = $('#cube-view');
+const contact = $('#contact');
 const loading = $('#loading');
 const langButtons = [...document.querySelectorAll('.lang button')];
 
@@ -36,6 +39,7 @@ function applyLang() {
   if (S.front) setFront(S.front);
   setStatus(S.status);
   refreshCard();
+  renderContact();
 }
 langButtons.forEach((b) =>
   b.addEventListener('click', () => {
@@ -91,6 +95,7 @@ netButtons.forEach((b) =>
 // du navigateur du téléphone se replie
 function readScroll() {
   S.scrollP = clamp(window.scrollY / Math.max(1, cubeView.offsetTop));
+  S.contactP = clamp((window.scrollY - cubeView.offsetTop) / Math.max(1, contact.offsetTop - cubeView.offsetTop));
 }
 window.addEventListener('scroll', readScroll, { passive: true });
 window.addEventListener('resize', () => {
@@ -160,13 +165,17 @@ function updateLoader(dt, fast) {
 function update(dt) {
   const fast = reduced.matches;
   updateLoader(dt, fast);
+  if (S.phase === 'ready') springStep(S.scale, 1, dt, 0.4, 0.5); // les bonds des célébrations
   updateOrientation(dt, fast);
   // le défilement fait passer de l'accueil au cube, et retour
   if (S.phase === 'ready' && S.mode !== 'play' && !S.drag) {
-    if (S.mode === 'intro' && S.scrollP > 0.55) enterExplore();
-    else if (S.mode === 'explore' && S.scrollP < 0.45) leaveExplore();
+    // le cube s'explore sur sa page ; à l'accueil et sur « Écrivez-moi », il tourne, vide, à côté du texte
+    if (S.mode === 'intro' && S.scrollP > 0.55 && S.contactP < 0.45) enterExplore();
+    else if (S.mode === 'explore' && (S.scrollP < 0.45 || S.contactP > 0.55)) leaveExplore();
   }
-  if (S.card && S.card.target === 1 && Math.abs(S.scrollP - S.card.scrollAt) > 0.15) closeCard(true);
+  if (S.card && S.card.target === 1 && (Math.abs(S.scrollP - S.card.scrollAt) > 0.15 || S.contactP > 0.15)) {
+    closeCard(true);
+  }
   // le texte d'accueil s'efface dès qu'on descend, avant de croiser le cube (plus tôt sur téléphone)
   const introOpacity = clamp(1 - S.scrollP / (S.narrow ? 0.16 : 0.42));
   intro.style.opacity = String(introOpacity);
@@ -204,6 +213,8 @@ function frame(now) {
 resize();
 readScroll();
 setupInput();
+setupContact();
+onSolved(celebrate);
 applyLang();
 setFront('back');
 updateCubeUi();

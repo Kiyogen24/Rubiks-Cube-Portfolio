@@ -113,6 +113,29 @@ test('la version anglaise traduit les cartes, le CV et les liens', async ({ page
   await expect(card.locator('#card-foot a')).toHaveAttribute('href', 'assets/previews/cv.pdf');
 });
 
+test('« Écrivez-moi », la dernière section : un mail au sujet rempli, l’adresse à copier', async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await prepare(page);
+  await open(page);
+  await page.evaluate(() => window.scrollTo(0, document.getElementById('contact').offsetTop));
+  await page.waitForFunction(() => window.__S.contactP > 0.99 && window.__S.mode === 'intro');
+  await expect(page.locator('#contact-title')).toHaveText('Écrivez-moi');
+  await expect(page.locator('#mail')).toHaveAttribute(
+    'href',
+    'mailto:r.goldenchtein@proton.me?subject=Contact%20depuis%20votre%20portfolio',
+  );
+  await page.click('#copy-mail');
+  await expect(page.locator('#copy-label')).toHaveText('Adresse copiée');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('r.goldenchtein@proton.me');
+
+  await page.click('.lang button[data-lang="en"]');
+  await expect(page.locator('#contact-title')).toHaveText('Write to me');
+  await expect(page.locator('#mail')).toHaveAttribute('href', /subject=Contact%20from%20your%20portfolio/);
+});
+
 test('le survol nomme le sticker, et remonter à l’accueil ferme la carte et vide le cube', async ({ page }) => {
   await prepare(page);
   await open(page);
