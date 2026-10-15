@@ -283,6 +283,17 @@ export function updateTiles(dt, fast) {
   return best;
 }
 
+// Les images des stickers et leur matériau partent vers la carte graphique pendant l'accueil : sans cela, la page
+// se fige un instant quand le cube arrive au centre et qu'elles apparaissent pour la première fois
+export function warmUp() {
+  tiles.forEach((tl) => {
+    renderer.initTexture(tl.mesh.material.map);
+    tl.mesh.visible = true;
+  });
+  renderer.compile(scene, camera);
+  tiles.forEach((tl) => (tl.mesh.visible = false));
+}
+
 export function render() {
   camera.setViewOffset(S.width, S.height, -S.view.shift.x * S.width, S.view.lift.x * S.height, S.width, S.height);
   renderer.render(scene, camera);

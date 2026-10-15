@@ -11,7 +11,7 @@ import { clamp, springStep } from './cube/math.js';
 import { enterExplore, enterPlay, exitPlay, exitPlayNow, leaveExplore } from './cube/modes.js';
 import { turnTo, updateOrientation } from './cube/orientation.js';
 import { onSolved, setStatus, shuffle, solve, updateLayer } from './cube/play.js';
-import { canvas, cube, render, resize, snapFraming, updateCamera, updateTiles } from './cube/scene.js';
+import { canvas, cube, render, resize, snapFraming, updateCamera, updateTiles, warmUp } from './cube/scene.js';
 import { loadImage } from './cube/textures.js';
 import { celebrate } from './ui/celebrate.js';
 import { measureContact, renderContact, setupContact } from './ui/contact.js';
@@ -108,29 +108,31 @@ window.addEventListener('resize', () => {
 // sans s'arrêter au cube ; l'élan qui suit un geste est ignoré tant qu'il dure. (Au doigt, le défilement
 // natif s'arrête à chaque page : scroll-snap-stop.) En jeu, la molette zoome (cube/input.js).
 const pages = [...document.querySelectorAll('.page')];
-let wheelLock = 0;
-let lastWheel = 0;
+// Un geste dure tant que les crans s'enchaînent : chacun relance un minuteur, et le geste ne finit que si le
+// minuteur arrive au bout. L'élan d'un pavé tactile, même irrégulier, reste un seul geste ; et si la page se fige
+// un instant, les crans en attente passent avant le minuteur : le geste n'est pas coupé en deux.
+let gesture = false;
+let gestureEnd = 0;
 window.addEventListener(
   'wheel',
   (e) => {
     if (S.mode === 'play' || e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
     if (e.target instanceof Element && e.target.closest('.card, textarea')) return; // une carte, un message défilent
     e.preventDefault();
-    const now = performance.now();
-    // tant que les crans s'enchaînent sans pause, c'est le même geste (l'élan d'un pavé tactile est irrégulier) :
-    // il faut une vraie pause pour tourner la page suivante
-    const sameGesture = now - lastWheel < 300;
-    lastWheel = now;
-    if (now < wheelLock || sameGesture) return;
+    const fresh = !gesture;
+    gesture = true;
+    clearTimeout(gestureEnd);
+    gestureEnd = setTimeout(() => (gesture = false), 250);
+    if (!fresh) return;
     const current = pages.reduce(
       (best, p, i) =>
         Math.abs(p.offsetTop - window.scrollY) < Math.abs(pages[best].offsetTop - window.scrollY) ? i : best,
       0,
     );
     const next = clamp(current + Math.sign(e.deltaY), 0, pages.length - 1);
-    if (next !== current)
+    if (next !== current) {
       window.scrollTo({ top: pages[next].offsetTop, behavior: reduced.matches ? 'auto' : 'smooth' });
-    wheelLock = now + 700;
+    }
   },
   { passive: false },
 );
@@ -146,6 +148,7 @@ function showIntro() {
   void root.offsetWidth; // relance l'entrée du texte
   root.classList.add('is-ready');
   loadImage(`assets/cv/cv-${getLang()}-1.webp`); // le CV est prêt quand on l'ouvre
+  requestAnimationFrame(warmUp);
 }
 function startLoader() {
   S.phase = 'loading';

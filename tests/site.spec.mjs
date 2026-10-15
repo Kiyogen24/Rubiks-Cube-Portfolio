@@ -10,6 +10,7 @@ import {
   cardOpen,
   stickerPoint,
   expectedAge,
+  fling,
 } from './helpers.mjs';
 
 test('la page se charge sans erreur, du nom jusqu’au cube', async ({ page }) => {
@@ -116,14 +117,9 @@ test('la version anglaise traduit les cartes, le CV et les liens', async ({ page
 test('un grand lancer à la molette depuis l’accueil s’arrête au cube', async ({ page }) => {
   await prepare(page);
   await open(page);
-  await page.mouse.move(700, 450);
   // comme un pavé tactile : des crans rapprochés qui ralentissent (l'élan)
-  let delta = 500;
-  for (let i = 0; i < 30; i++) {
-    await page.mouse.wheel(0, delta);
-    delta *= 0.9;
-    await page.waitForTimeout(16);
-  }
+  const deltas = Array.from({ length: 30 }, (_, i) => Math.round(500 * 0.9 ** i));
+  await fling(page, { x: 700, y: 450 }, deltas);
   await page.waitForTimeout(800);
   expect(await page.evaluate(() => Math.round(scrollY / innerHeight))).toBe(1);
   await page.waitForFunction(() => window.__S.mode === 'explore');
@@ -134,15 +130,15 @@ test('depuis « Contactez-moi », un lancer vers le haut à l’élan irrégulie
   await open(page);
   await page.evaluate(() => window.scrollTo(0, document.getElementById('contact').offsetTop));
   await page.waitForFunction(() => window.__S.contactP > 0.99);
-  await page.mouse.move(1100, 450);
   // l'élan d'un pavé tactile : il monte, puis ralentit par à-coups (1, 2, 1, 3…)
   const deltas = [
     4, 12, 30, 60, 90, 80, 52, 61, 40, 47, 31, 35, 22, 27, 15, 19, 11, 13, 7, 9, 4, 6, 2, 3, 1, 2, 1, 3, 1,
   ];
-  for (const delta of deltas) {
-    await page.mouse.wheel(0, -delta);
-    await page.waitForTimeout(14);
-  }
+  await fling(
+    page,
+    { x: 1100, y: 450 },
+    deltas.map((d) => -d),
+  );
   await page.waitForTimeout(800);
   expect(await page.evaluate(() => Math.round(scrollY / innerHeight))).toBe(1);
   await page.waitForFunction(() => window.__S.mode === 'explore');

@@ -141,6 +141,24 @@ export async function drag(page, from, by = { x: 180, y: 0 }) {
   await page.mouse.up();
 }
 
+// Un lancer à la molette ou au pavé tactile : les crans arrivent toutes les 16 ms, sans attendre que la page ait
+// fini de dessiner, comme ceux d'un vrai pavé tactile (page.mouse.wheel attend chaque image, et sans carte
+// graphique, en CI, une image peut prendre plusieurs centaines de millisecondes)
+export function fling(page, at, deltas) {
+  return page.evaluate(
+    async ({ at, deltas }) => {
+      const target = document.elementFromPoint(at.x, at.y);
+      for (const deltaY of deltas) {
+        target.dispatchEvent(
+          new WheelEvent('wheel', { deltaY, clientX: at.x, clientY: at.y, bubbles: true, cancelable: true }),
+        );
+        await new Promise((resolve) => setTimeout(resolve, 16));
+      }
+    },
+    { at, deltas },
+  );
+}
+
 // Âge attendu sur la carte « À propos » (né le 21/10/2004)
 export function expectedAge(now = new Date()) {
   const birth = new Date(2004, 9, 21);
