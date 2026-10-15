@@ -19,10 +19,28 @@ function updateMail() {
   $('#mail-label').textContent = body ? ui.sendMail : ui.writeMe;
 }
 
-// Sur téléphone, le cube se place dans la hauteur libre au-dessus du texte (cube/scene.js)
+// Sur téléphone, le contenu va de sous la barre jusqu'en bas ; s'il reste assez de place, une partie en haut est
+// gardée pour le cube (cube/scene.js), et la zone d'écriture prend le reste
+const BAR = 92;
+const MESSAGE_MIN = 110;
 export function measureContact() {
-  S.contactTextTop = $('.contact-text').offsetTop;
+  const text = $('.contact-text');
+  if (!S.narrow) {
+    text.style.removeProperty('--contact-top');
+    S.contactTextTop = text.offsetTop;
+    return;
+  }
+  text.style.setProperty('--contact-top', `${BAR}px`);
+  const parts = [...text.children].filter((el) => getComputedStyle(el).position !== 'absolute');
+  const gap = parseFloat(getComputedStyle(text).rowGap) || 0;
+  const content =
+    parts.reduce((sum, el) => sum + (el === message ? MESSAGE_MIN : el.offsetHeight), 0) + gap * (parts.length - 1);
+  const extra = text.clientHeight - content;
+  const cube = extra >= 170 ? Math.min(200, extra - 60) : 0;
+  text.style.setProperty('--contact-top', `${BAR + cube}px`);
+  S.contactTextTop = BAR + cube;
 }
+document.fonts?.ready.then(() => measureContact()); // les polices changent la hauteur du texte
 
 export function renderContact() {
   const ui = t();

@@ -88,6 +88,23 @@ test.describe('petit téléphone', () => {
     const ui = await page.locator('#cube-ui').boundingBox();
     expect(Math.abs(ui.x + ui.width / 2 - 180)).toBeLessThan(12);
   });
+
+  test('« Contactez-moi » tient dans la page, et la zone d’écriture ne déborde pas', async ({ page }) => {
+    await prepare(page);
+    await open(page);
+    await page.evaluate(() => window.scrollTo(0, document.getElementById('contact').offsetTop));
+    await page.waitForFunction(() => window.__S.contactP > 0.99);
+    const text = await page.locator('.contact-text').boundingBox();
+    expect(text.y).toBeGreaterThanOrEqual(76); // sous la barre
+    expect(text.y + text.height).toBeLessThanOrEqual(740);
+    const message = page.locator('#message');
+    expect((await message.boundingBox()).height).toBeGreaterThanOrEqual(110);
+    await expect(message).toHaveCSS('resize', 'none');
+    // un long message défile dans la zone, sans l'agrandir
+    const before = (await message.boundingBox()).height;
+    await message.fill('Bonjour Romain,\n'.repeat(40));
+    expect((await message.boundingBox()).height).toBe(before);
+  });
 });
 
 test.describe('ancienne page mobile', () => {

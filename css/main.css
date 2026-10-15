@@ -461,7 +461,7 @@ h1 {
 /* l'espace où l'on écrit son message */
 .message {
   width: 100%;
-  min-height: 116px;
+  height: 132px; /* taille fixe : un long message défile à l'intérieur */
   padding: 14px 16px;
   border: 1px solid var(--surface-3);
   border-radius: 18px;
@@ -470,7 +470,7 @@ h1 {
   font: inherit;
   font-size: 16px; /* pas de zoom automatique sur iPhone */
   line-height: 1.5;
-  resize: vertical;
+  resize: none;
 }
 .message::placeholder {
   color: var(--muted);
@@ -1106,14 +1106,22 @@ h1 {
   .contacts {
     display: none;
   }
+  /* sur téléphone, le contenu occupe la hauteur sous le cube (ou sous la barre s'il n'y a pas la place pour lui),
+     et la zone d'écriture prend tout ce qui reste (ui/contact.js) */
   .contact-text {
     left: 20px;
     right: 20px;
-    top: auto;
-    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    top: var(--contact-top, 92px);
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 14px;
     transform: none;
+  }
+  .contact-text .btn {
+    padding: 0 18px;
   }
   .contact-title {
     font-size: clamp(2.2rem, 10vw, 3rem);
@@ -1122,7 +1130,9 @@ h1 {
     font-size: 15px;
   }
   .message {
-    min-height: 92px;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 110px;
   }
   .card {
     left: 0;
