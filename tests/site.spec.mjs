@@ -65,6 +65,9 @@ test('« Mon CV » et « À propos » s’ouvrent depuis leur bouton', async ({ 
   await expect(card.locator('.cv-sheet img')).toHaveAttribute('src', 'assets/cv/cv-fr-1.webp');
   expect(await card.locator('.cv-sheet img').evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(card.locator('#card-foot a')).toHaveAttribute('href', 'assets/previews/cv.pdf');
+  // la carte du CV prend la couleur de sa face : un bouton jaune
+  await expect(card).toHaveAttribute('data-accent', 'bottom');
+  await expect(card.locator('#card-foot a')).toHaveCSS('background-color', 'rgb(255, 225, 0)');
   await closeCard(page);
   await expect(page.locator('#open-cv')).toBeFocused();
 

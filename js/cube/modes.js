@@ -25,7 +25,7 @@ export function leaveExplore() {
 
 // Un clic sur le cube de l'accueil fait comme un défilement : le cube vient au centre
 export function scrollToCube() {
-  window.scrollTo({ top: S.height, behavior: reduced.matches ? 'auto' : 'smooth' });
+  window.scrollTo({ top: $('#cube-view').offsetTop, behavior: reduced.matches ? 'auto' : 'smooth' });
 }
 
 export function enterPlay() {

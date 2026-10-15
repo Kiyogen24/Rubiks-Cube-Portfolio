@@ -1,5 +1,5 @@
 // Souris, doigt et clavier sur le cube : le tourner, tourner une rangée en jeu, ouvrir un sticker,
-// et en jeu, le rapprocher ou l'éloigner (molette, pincement)
+// et en jeu, le rapprocher ou l'éloigner (molette, deux doigts)
 import * as THREE from 'three';
 import { S } from '../state.js';
 import { openSticker } from '../cards/card.js';
@@ -20,14 +20,26 @@ const spread = () => {
   const [a, b] = [...touches.values()];
   return Math.max(1, Math.hypot(a.x - b.x, a.y - b.y));
 };
+const midpoint = () => {
+  const [a, b] = [...touches.values()];
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+};
+
+// Le cube entier suit le pointeur dans toutes les directions et garde sa vitesse pour le lâcher
+function spin(dx, dy, dt) {
+  S.base.premultiply(qAxis(Y, dx * SPEED)).premultiply(qAxis(X, dy * SPEED));
+  S.w.lerp(new THREE.Vector3(dy * SPEED, dx * SPEED, 0).divideScalar(dt), 0.5);
+  S.target = null;
+}
 
 function onPointerDown(e) {
   if (e.pointerType === 'touch') touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (S.phase !== 'ready' || e.button > 0) return;
-  // en jeu, deux doigts rapprochent ou éloignent le cube ; une rangée en cours va au quart de tour le plus proche
+  // en jeu, deux doigts tournent le cube entier et, en s'écartant, le rapprochent ;
+  // une rangée en cours va au quart de tour le plus proche
   if (S.mode === 'play' && touches.size === 2) {
     if (S.drag?.type === 'layer') releaseLayer(true);
-    S.drag = { type: 'pinch', spread: spread(), zoom: S.zoom };
+    S.drag = { type: 'pinch', spread: spread(), zoom: S.zoom, mid: midpoint(), t: performance.now() };
     canvas.setPointerCapture(e.pointerId);
     return;
   }
@@ -57,7 +69,13 @@ function onPointerMove(e) {
     return;
   }
   if (d.type === 'pinch') {
-    if (touches.size === 2) zoomTo((d.zoom * d.spread) / spread());
+    if (touches.size < 2) return;
+    zoomTo((d.zoom * d.spread) / spread());
+    const mid = midpoint();
+    const now = performance.now();
+    spin(mid.x - d.mid.x, mid.y - d.mid.y, Math.max(1, now - d.t) / 1000);
+    d.mid = mid;
+    d.t = now;
     return;
   }
   if (e.pointerId !== d.pointerId) return;
@@ -68,10 +86,7 @@ function onPointerMove(e) {
   d.moved += Math.abs(dx) + Math.abs(dy);
   if (d.type === 'rotate') {
     if (d.moved < 4) return;
-    // le cube suit le pointeur dans toutes les directions et garde sa vitesse pour le lâcher
-    S.base.premultiply(qAxis(Y, dx * SPEED)).premultiply(qAxis(X, dy * SPEED));
-    S.w.lerp(new THREE.Vector3(dy * SPEED, dx * SPEED, 0).divideScalar(dt), 0.5);
-    S.target = null;
+    spin(dx, dy, dt);
     canvas.classList.add('dragging');
     clearHover();
   } else if (d.type === 'layer-pending') {
@@ -89,7 +104,9 @@ function onRelease(e) {
   const d = S.drag;
   if (!d) return;
   if (d.type === 'pinch') {
-    if (!touches.size) S.drag = null; // le pincement finit quand les deux doigts sont levés
+    if (touches.size) return; // le geste finit quand les deux doigts sont levés
+    S.drag = null;
+    if (performance.now() - d.t > 80) S.w.multiplyScalar(0.2); // les doigts s'étaient arrêtés
     return;
   }
   if (e.pointerId !== d.pointerId) return;

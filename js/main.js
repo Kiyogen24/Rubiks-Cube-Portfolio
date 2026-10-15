@@ -15,6 +15,7 @@ import { canvas, cube, render, resize, snapFraming, updateCamera, updateTiles } 
 import { loadImage } from './cube/textures.js';
 
 const intro = $('#intro');
+const cubeView = $('#cube-view');
 const loading = $('#loading');
 const langButtons = [...document.querySelectorAll('.lang button')];
 
@@ -86,8 +87,10 @@ netButtons.forEach((b) =>
 );
 
 // ---------- Défilement ----------
+// 0 à l'accueil, 1 au cube : mesuré sur la section du cube, dont la hauteur ne bouge pas quand la barre
+// du navigateur du téléphone se replie
 function readScroll() {
-  S.scrollP = clamp(window.scrollY / Math.max(1, S.height));
+  S.scrollP = clamp(window.scrollY / Math.max(1, cubeView.offsetTop));
 }
 window.addEventListener('scroll', readScroll, { passive: true });
 window.addEventListener('resize', () => {
@@ -168,6 +171,12 @@ function update(dt) {
   const introOpacity = clamp(1 - S.scrollP / (S.narrow ? 0.16 : 0.42));
   intro.style.opacity = String(introOpacity);
   intro.style.visibility = introOpacity < 0.01 ? 'hidden' : '';
+  // au centre, le fond prend un peu la couleur de la face tournée vers soi
+  const accent = S.mode === 'intro' ? undefined : S.front;
+  if (root.dataset.accent !== accent) {
+    if (accent) root.dataset.accent = accent;
+    else delete root.dataset.accent;
+  }
   cube.quaternion.copy(S.base);
   cube.scale.setScalar(S.scale.x);
   if (S.markDirty) {

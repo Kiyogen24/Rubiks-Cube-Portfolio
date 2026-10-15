@@ -27,7 +27,7 @@ export function placeCubeUi() {
     ((2.45 * S.scale.x) / (S.view.dist.x * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)))) * (S.height / 2);
   const w = cubeUi.offsetWidth;
   const h = cubeUi.offsetHeight;
-  const x = clamp(c.x - w / 2, 16, S.width - w - 16);
+  const x = w > S.width - 32 ? (S.width - w) / 2 : clamp(c.x - w / 2, 16, S.width - w - 16);
   const below = c.y + radius * 0.98 + (S.mode === 'explore' ? 44 : 10);
   const y = Math.min(below, S.height - h - 24);
   cubeUi.style.transform = `translate3d(${x}px, ${y}px, 0)`;

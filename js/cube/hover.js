@@ -13,6 +13,7 @@ function setHover(tile, x, y) {
   tile.cubie.userData.liftTarget = 0.08;
   tile.cubie.userData.liftNormal.set(...NORMALS[tile.face]);
   tag.textContent = tagText(tile.key);
+  tag.dataset.accent = tile.face; // l'étiquette prend la couleur de la face
   tag.style.left = `${x}px`;
   tag.style.top = `${y}px`;
   tag.classList.add('on');

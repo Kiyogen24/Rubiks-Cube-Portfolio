@@ -42,15 +42,15 @@ test.describe('téléphone en anglais', () => {
     await page.locator('#play').tap();
     await still(page);
     const client = await page.context().newCDPSession(page);
-    const fingers = (type, gap) =>
+    const fingers = (type, gap, x = 195) =>
       client.send('Input.dispatchTouchEvent', {
         type,
         touchPoints:
           gap === null
             ? []
             : [
-                { id: 1, x: 195 - gap, y: 330 },
-                { id: 2, x: 195 + gap, y: 330 },
+                { id: 1, x: x - gap, y: 330 },
+                { id: 2, x: x + gap, y: 330 },
               ],
       });
     await fingers('touchStart', 40);
@@ -58,7 +58,35 @@ test.describe('téléphone en anglais', () => {
     await fingers('touchEnd', null);
     expect(await page.evaluate(() => window.__S.zoom)).toBeLessThan(0.8);
     expect(await page.evaluate(() => window.__S.moves.length)).toBe(0);
+
+    // deux doigts qui glissent ensemble tournent le cube entier, toujours sans tourner de rangée
+    const before = await page.evaluate(() => window.__S.base.toArray());
+    await fingers('touchStart', 60, 150);
+    for (let x = 170; x <= 250; x += 20) await fingers('touchMove', 60, x);
+    await fingers('touchEnd', null);
+    expect(await page.evaluate(() => window.__S.base.toArray())).not.toEqual(before);
+    expect(await page.evaluate(() => window.__S.moves.length)).toBe(0);
     expect(errors).toEqual([]);
+  });
+});
+
+test.describe('petit téléphone', () => {
+  test.use({ ...phone, viewport: { width: 360, height: 740 } });
+
+  test('le patron et le bouton Jouer tiennent dans l’écran, centrés sous le cube', async ({ page }) => {
+    await prepare(page);
+    await open(page);
+    await page.evaluate(() => window.scrollTo(0, innerHeight));
+    await page.waitForFunction(() => window.__S.mode === 'explore');
+    await still(page);
+    await expect(page.locator('#net')).toBeVisible();
+    for (const selector of ['#cube-ui', '#net', '#play']) {
+      const box = await page.locator(selector).boundingBox();
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(360);
+    }
+    const ui = await page.locator('#cube-ui').boundingBox();
+    expect(Math.abs(ui.x + ui.width / 2 - 180)).toBeLessThan(12);
   });
 });
 

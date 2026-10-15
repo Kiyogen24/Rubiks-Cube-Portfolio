@@ -2,6 +2,8 @@
 import { AGE } from './utils/constants.js';
 import { stored, store } from './state.js';
 
+const TOUCH = window.matchMedia('(pointer: coarse)').matches; // téléphone, tablette
+
 const UI = {
   fr: {
     tagline:
@@ -13,7 +15,9 @@ const UI = {
     shuffle: 'Mélanger',
     solve: 'Résoudre',
     done: 'Terminé',
-    playHint: 'Faites glisser un sticker pour tourner sa rangée.',
+    playHint: TOUCH
+      ? 'Un doigt tourne une rangée, deux doigts tournent le cube.'
+      : 'Faites glisser un sticker pour tourner sa rangée.',
     shuffling: 'Mélange…',
     shuffled: 'À vous de jouer',
     solving: 'Résolution…',
@@ -50,7 +54,7 @@ const UI = {
     shuffle: 'Shuffle',
     solve: 'Solve',
     done: 'Done',
-    playHint: 'Drag a sticker to turn its row.',
+    playHint: TOUCH ? 'One finger turns a row, two fingers turn the cube.' : 'Drag a sticker to turn its row.',
     shuffling: 'Shuffling…',
     shuffled: 'Your turn',
     solving: 'Solving…',

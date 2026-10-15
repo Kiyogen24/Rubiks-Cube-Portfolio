@@ -33,4 +33,9 @@ test("les images suivent la face tournée vers l'écran", async ({ page }) => {
   await expect.poll(() => shownFaces(page)).toEqual(['right']);
   await expect(page.locator('#face-name')).toHaveText('Projets');
   await expect(page.locator('#net button[data-face="right"]')).toHaveAttribute('aria-current', 'true');
+  // le fond prend la couleur de la face devant ; il redevient lavande à l'accueil
+  await expect(page.locator('html')).toHaveAttribute('data-accent', 'right');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForFunction(() => window.__S.mode === 'intro');
+  await expect(page.locator('html')).not.toHaveAttribute('data-accent', /./);
 });

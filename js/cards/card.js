@@ -109,6 +109,7 @@ function fillCard(kind) {
     }
   }
   card.style.setProperty('--c', face === 'top' ? 'var(--socket-top)' : `var(--face-${face})`);
+  card.dataset.accent = face; // la carte prend la couleur de sa face (css/main.css)
   $('#card-img').src = img;
   $('#card-title').textContent = title;
   $('#card-org').textContent = org;
