@@ -129,6 +129,25 @@ test('un grand lancer à la molette depuis l’accueil s’arrête au cube', asy
   await page.waitForFunction(() => window.__S.mode === 'explore');
 });
 
+test('depuis « Contactez-moi », un lancer vers le haut à l’élan irrégulier s’arrête au cube', async ({ page }) => {
+  await prepare(page);
+  await open(page);
+  await page.evaluate(() => window.scrollTo(0, document.getElementById('contact').offsetTop));
+  await page.waitForFunction(() => window.__S.contactP > 0.99);
+  await page.mouse.move(1100, 450);
+  // l'élan d'un pavé tactile : il monte, puis ralentit par à-coups (1, 2, 1, 3…)
+  const deltas = [
+    4, 12, 30, 60, 90, 80, 52, 61, 40, 47, 31, 35, 22, 27, 15, 19, 11, 13, 7, 9, 4, 6, 2, 3, 1, 2, 1, 3, 1,
+  ];
+  for (const delta of deltas) {
+    await page.mouse.wheel(0, -delta);
+    await page.waitForTimeout(14);
+  }
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => Math.round(scrollY / innerHeight))).toBe(1);
+  await page.waitForFunction(() => window.__S.mode === 'explore');
+});
+
 test('« Contactez-moi », la dernière section : le mail s’écrit sur la page, l’adresse se copie', async ({
   page,
   context,

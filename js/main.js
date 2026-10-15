@@ -109,7 +109,7 @@ window.addEventListener('resize', () => {
 // natif s'arrête à chaque page : scroll-snap-stop.) En jeu, la molette zoome (cube/input.js).
 const pages = [...document.querySelectorAll('.page')];
 let wheelLock = 0;
-let lastWheel = { t: 0, size: 0 };
+let lastWheel = 0;
 window.addEventListener(
   'wheel',
   (e) => {
@@ -117,10 +117,10 @@ window.addEventListener(
     if (e.target instanceof Element && e.target.closest('.card, textarea')) return; // une carte, un message défilent
     e.preventDefault();
     const now = performance.now();
-    const size = Math.abs(e.deltaY);
-    // la suite du même geste : peu après le cran précédent, et pas plus fort (l'élan ralentit)
-    const sameGesture = now - lastWheel.t < 350 && size <= lastWheel.size * 1.2;
-    lastWheel = { t: now, size };
+    // tant que les crans s'enchaînent sans pause, c'est le même geste (l'élan d'un pavé tactile est irrégulier) :
+    // il faut une vraie pause pour tourner la page suivante
+    const sameGesture = now - lastWheel < 300;
+    lastWheel = now;
     if (now < wheelLock || sameGesture) return;
     const current = pages.reduce(
       (best, p, i) =>
