@@ -58,7 +58,7 @@ export function updateOrientation(dt, fast) {
     }
     return;
   }
-  if (S.drag && S.drag.type === 'rotate') return; // le cube suit le pointeur
+  if (S.drag && (S.drag.type === 'rotate' || S.drag.type === 'pinch')) return; // le cube suit le pointeur
   if (S.target) {
     springQuat(S.base, S.w, S.target, dt, fast ? 1 : 0.8, fast ? 0.2 : 0.42);
     if (S.mode === 'intro' && S.phase === 'ready' && angleBetween(S.base, S.target) < 0.01) S.target = null;

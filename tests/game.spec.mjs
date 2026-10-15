@@ -62,10 +62,13 @@ test('en jeu, glisser sur un sticker tourne une rangée, et à côté tout le cu
   expect(await turned()).toBeLessThan(0.01);
   await expect(page.locator('#status')).toHaveText('À vous de jouer');
 
-  // en dehors du cube, le glissé fait tourner le cube entier
+  // en dehors du cube, le glissé fait tourner le cube entier, qui reste là où on le lâche (ni élan ni recalage)
   await drag(page, { x: 150, y: 450 }, { x: 200, y: 60 });
   expect(await turned()).toBeGreaterThan(0.3);
   expect(await moves()).toBe(1);
+  const released = await cubeOrientation(page);
+  await page.waitForTimeout(800);
+  expect(await turnedSince(page, released)).toBeLessThan(0.001);
 });
 
 test('un geste, un quart de tour : un petit glissé revient, un très long n’en fait qu’un ; le clavier aussi', async ({

@@ -99,6 +99,12 @@ function onPointerMove(e) {
   d.last = { x: e.clientX, y: e.clientY, t: now };
 }
 
+// En jeu, le cube entier ne bouge que sous le doigt : ni élan après le lâcher, ni recalage sur une face
+function holdStill() {
+  S.w.set(0, 0, 0);
+  S.target = null;
+}
+
 function onRelease(e) {
   touches.delete(e.pointerId);
   const d = S.drag;
@@ -106,8 +112,7 @@ function onRelease(e) {
   if (d.type === 'pinch') {
     if (touches.size) return; // le geste finit quand les deux doigts sont levés
     S.drag = null;
-    if (performance.now() - d.t > 80) S.w.multiplyScalar(0.2); // les doigts s'étaient arrêtés
-    snapFromThrow();
+    holdStill(); // en jeu, le cube reste là où les doigts le laissent
     return;
   }
   if (e.pointerId !== d.pointerId) return;
@@ -120,9 +125,10 @@ function onRelease(e) {
       return;
     }
     if (still) S.w.multiplyScalar(0.2);
-    // le cube se pose bien droit, sur la face la plus proche : en jeu aussi, les rangées restent lisibles
     if (S.mode === 'intro') scrollToCube();
-    else snapFromThrow();
+    else if (S.mode === 'explore')
+      snapFromThrow(); // en exploration, il se pose sur la face la plus proche
+    else holdStill(); // en jeu, il reste exactement là où on le lâche
   } else if (d.type === 'layer') {
     releaseLayer(still);
   }
