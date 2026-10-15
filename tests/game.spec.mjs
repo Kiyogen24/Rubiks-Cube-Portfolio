@@ -68,8 +68,13 @@ test('en jeu, la molette rapproche ou éloigne le cube sans faire défiler la pa
   await page.mouse.move(720, 450);
   await page.mouse.wheel(0, -400);
   await expect.poll(distance).toBeLessThan(start);
+  // rapproché, le cube passe sous les commandes : les textes s'effacent, les boutons restent
+  await expect(page.locator('#cube-ui')).toHaveClass(/\bover\b/);
+  await expect(page.locator('.hint')).toHaveCSS('opacity', '0');
+  await expect(page.locator('#shuffle')).toBeVisible();
   await page.mouse.wheel(0, 800);
   await expect.poll(distance).toBeGreaterThan(start);
+  await expect(page.locator('#cube-ui')).not.toHaveClass(/\bover\b/);
   expect(await page.evaluate(() => scrollY)).toBe(scroll);
 });
 

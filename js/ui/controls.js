@@ -28,8 +28,10 @@ export function placeCubeUi() {
   const w = cubeUi.offsetWidth;
   const h = cubeUi.offsetHeight;
   const x = clamp(c.x - w / 2, 16, S.width - w - 16);
-  const y = Math.min(c.y + radius * 0.98 + (S.mode === 'explore' ? 44 : 10), S.height - h - 24);
+  const below = c.y + radius * 0.98 + (S.mode === 'explore' ? 44 : 10);
+  const y = Math.min(below, S.height - h - 24);
   cubeUi.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  cubeUi.classList.toggle('over', below > y + 1); // le cube déborde sur les commandes
   const hidden =
     S.phase !== 'ready' ||
     S.mode === 'intro' ||
