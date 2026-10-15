@@ -113,6 +113,22 @@ test('la version anglaise traduit les cartes, le CV et les liens', async ({ page
   await expect(card.locator('#card-foot a')).toHaveAttribute('href', 'assets/previews/cv.pdf');
 });
 
+test('un grand lancer à la molette depuis l’accueil s’arrête au cube', async ({ page }) => {
+  await prepare(page);
+  await open(page);
+  await page.mouse.move(700, 450);
+  // comme un pavé tactile : des crans rapprochés qui ralentissent (l'élan)
+  let delta = 500;
+  for (let i = 0; i < 30; i++) {
+    await page.mouse.wheel(0, delta);
+    delta *= 0.9;
+    await page.waitForTimeout(16);
+  }
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => Math.round(scrollY / innerHeight))).toBe(1);
+  await page.waitForFunction(() => window.__S.mode === 'explore');
+});
+
 test('« Écrivez-moi », la dernière section : un mail au sujet rempli, l’adresse à copier', async ({
   page,
   context,

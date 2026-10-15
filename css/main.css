@@ -360,6 +360,7 @@ main button {
   position: relative;
   height: 100svh;
   scroll-snap-align: start;
+  scroll-snap-stop: always; /* un grand coup de molette s'arrête quand même au cube */
 }
 .intro-text {
   position: absolute;

@@ -103,6 +103,37 @@ window.addEventListener('resize', () => {
   readScroll();
 });
 
+// Molette et pavé tactile : un geste, une page. Sinon un grand lancer passe de l'accueil à « Écrivez-moi »
+// sans s'arrêter au cube ; l'élan qui suit un geste est ignoré tant qu'il dure. (Au doigt, le défilement
+// natif s'arrête à chaque page : scroll-snap-stop.) En jeu, la molette zoome (cube/input.js).
+const pages = [...document.querySelectorAll('.page')];
+let wheelLock = 0;
+let lastWheel = { t: 0, size: 0 };
+window.addEventListener(
+  'wheel',
+  (e) => {
+    if (S.mode === 'play' || e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    if (e.target instanceof Element && e.target.closest('.card')) return; // le contenu d'une carte défile
+    e.preventDefault();
+    const now = performance.now();
+    const size = Math.abs(e.deltaY);
+    // la suite du même geste : peu après le cran précédent, et pas plus fort (l'élan ralentit)
+    const sameGesture = now - lastWheel.t < 350 && size <= lastWheel.size * 1.2;
+    lastWheel = { t: now, size };
+    if (now < wheelLock || sameGesture) return;
+    const current = pages.reduce(
+      (best, p, i) =>
+        Math.abs(p.offsetTop - window.scrollY) < Math.abs(pages[best].offsetTop - window.scrollY) ? i : best,
+      0,
+    );
+    const next = clamp(current + Math.sign(e.deltaY), 0, pages.length - 1);
+    if (next !== current)
+      window.scrollTo({ top: pages[next].offsetTop, behavior: reduced.matches ? 'auto' : 'smooth' });
+    wheelLock = now + 700;
+  },
+  { passive: false },
+);
+
 // ---------- Chargement : le cube ne sert de chargeur que si les images tardent ----------
 const previews = Object.values(CUBE_CONTENT).flatMap((cells) => Object.values(cells).map((it) => it.preview));
 const everything = () => Promise.all([...previews.map(loadImage), loadImage('assets/pp.png'), document.fonts?.ready]);
