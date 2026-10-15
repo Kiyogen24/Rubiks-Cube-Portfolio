@@ -127,25 +127,43 @@ export function startLayerDrag(d, tx, ty) {
   d.pxPerRad = best.pxPerRad;
 }
 
-// Pendant le glissé, la rangée suit le doigt ; sa vitesse est gardée pour le lâcher
+// Un geste, un quart de tour. Pendant le glissé, la rangée suit le doigt (un peu plus vite que lui) ; passé un
+// tiers de quart de tour, elle se cale d'elle-même sur le quart de tour et le geste est terminé : la suite du
+// glissé ne fait plus rien, et une rangée ne fait jamais deux quarts de tour d'un coup
+const GAIN = 1.4;
+const COMMIT = 0.49; // environ 28°
 export function dragLayer(d, clientX, clientY, dt) {
+  const L = S.layer;
   const along = (clientX - d.sx) * d.dir.x + (clientY - d.sy) * d.dir.y;
-  const angle = along / d.pxPerRad;
-  S.layer.vel = lerp(S.layer.vel, (angle - S.layer.anim.x) / dt, 0.5);
+  const angle = (along / d.pxPerRad) * GAIN;
+  L.vel = lerp(L.vel, (angle - L.anim.x) / dt, 0.5);
+  if (Math.abs(angle) >= COMMIT) {
+    L.anim.v = clamp(L.vel, -6, 6); // le calage part de la vitesse du doigt
+    L.target = Math.sign(angle) * QUARTER;
+    d.type = 'committed';
+    return;
+  }
   setLayerAngle(angle);
 }
 
-// Au lâcher, la rangée va au quart de tour le plus proche ; l'élan ne fait que terminer un petit coup rapide,
-// jamais un second quart de tour (un double demande d'avoir vraiment tourné)
+// Lâchée avant de se caler, la rangée revient en place, sauf petit coup rapide qui fait le quart de tour
 export function releaseLayer(still) {
   const L = S.layer;
   if (still) L.vel *= 0.2;
   const a = L.anim.x;
-  let turns = Math.round(a / QUARTER);
-  if (turns === 0 && Math.abs(a) > 0.12 && Math.abs(L.vel) > 3 && Math.sign(L.vel) === Math.sign(a)) {
-    turns = Math.sign(a);
-  }
-  L.target = clamp(turns, -2, 2) * QUARTER;
+  const flick = Math.abs(a) > 0.15 && Math.abs(L.vel) > 4 && Math.sign(L.vel) === Math.sign(a);
+  L.target = flick ? Math.sign(a) * QUARTER : 0;
+}
+
+// Clavier : U, D, L, R, F, B tournent la face vue en haut, en bas, à gauche, à droite, devant ou derrière,
+// dans le sens des aiguilles d'une montre vu depuis cette face (`inverse` : dans l'autre sens)
+const VIEW = { U: [0, 1, 0], D: [0, -1, 0], L: [-1, 0, 0], R: [1, 0, 0], F: [0, 0, 1], B: [0, 0, -1] };
+export function turnFace(letter, inverse) {
+  if (S.solving || S.celebrating || S.drag) return;
+  const n = new THREE.Vector3(...VIEW[letter]).applyQuaternion((S.target || S.base).clone().invert());
+  const axis = ['x', 'y', 'z'].reduce((best, k) => (Math.abs(n[k]) > Math.abs(n[best]) ? k : best), 'x');
+  const side = Math.sign(n[axis]);
+  S.queue.push({ axis, layer: side, turns: inverse ? side : -side, duration: 0.16, record: true });
 }
 
 export function updateLayer(dt) {
@@ -158,13 +176,13 @@ export function updateLayer(dt) {
     L.scripted.t += dt / L.scripted.duration;
     setLayerAngle(L.target * easeInOut(Math.min(1, L.scripted.t)));
     if (L.scripted.t >= 1) {
-      finishLayer(false);
+      finishLayer(L.record); // un tour au clavier compte comme un tour à la main
       if (!S.queue.length) S.queueDone?.();
     }
     return;
   }
   if (L.target === null) return; // la rangée suit encore le doigt
-  springStep(L.anim, L.target, dt, reduced.matches ? 1 : 0.8, 0.3); // léger dépassement en arrivant
+  springStep(L.anim, L.target, dt, 1, 0.18); // calage net, sans rebond
   pivot.quaternion.setFromAxisAngle(AXES[L.axis], L.anim.x);
   if (Math.abs(L.anim.x - L.target) < 0.002 && Math.abs(L.anim.v) < 0.02) finishLayer(true);
 }
@@ -173,6 +191,7 @@ function runQueue() {
   if (!S.queue.length || S.drag) return;
   const m = S.queue.shift();
   beginLayer(m.axis, m.layer);
+  S.layer.record = Boolean(m.record);
   S.layer.target = m.turns * QUARTER;
   S.layer.scripted = { t: 0, duration: reduced.matches ? 0.001 : m.duration };
 }

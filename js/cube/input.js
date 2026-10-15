@@ -8,7 +8,7 @@ import { clearHover, hoverAt } from './hover.js';
 import { X, Y, clamp, qAxis } from './math.js';
 import { scrollToCube } from './modes.js';
 import { snapFromThrow, turnByKeys, turnTo } from './orientation.js';
-import { busy, dragLayer, releaseLayer, startLayerDrag } from './play.js';
+import { busy, dragLayer, releaseLayer, startLayerDrag, turnFace } from './play.js';
 import { canvas, faces, pick, tileByKey } from './scene.js';
 
 const SPEED = 0.009; // radians par pixel glissé
@@ -107,6 +107,7 @@ function onRelease(e) {
     if (touches.size) return; // le geste finit quand les deux doigts sont levés
     S.drag = null;
     if (performance.now() - d.t > 80) S.w.multiplyScalar(0.2); // les doigts s'étaient arrêtés
+    snapFromThrow();
     return;
   }
   if (e.pointerId !== d.pointerId) return;
@@ -119,11 +120,13 @@ function onRelease(e) {
       return;
     }
     if (still) S.w.multiplyScalar(0.2);
+    // le cube se pose bien droit, sur la face la plus proche : en jeu aussi, les rangées restent lisibles
     if (S.mode === 'intro') scrollToCube();
-    else if (S.mode === 'explore') snapFromThrow();
+    else snapFromThrow();
   } else if (d.type === 'layer') {
     releaseLayer(still);
   }
+  // 'committed' : la rangée s'est déjà calée pendant le glissé
 }
 
 // En jeu, la page ne défile pas : la molette (ou le pincement du pavé tactile) rapproche ou éloigne le cube
@@ -169,6 +172,21 @@ function onKeyDown(e) {
   }
 }
 
+// Clavier en jeu : U, D, L, R, F, B tournent une face (Maj : dans l'autre sens), les flèches le cube entier
+function onPlayKey(e) {
+  if (S.mode !== 'play' || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target instanceof Element && e.target.closest('input, textarea')) return;
+  const arrows = { ArrowLeft: [Y, -1], ArrowRight: [Y, 1], ArrowUp: [X, -1], ArrowDown: [X, 1] };
+  const letter = /^Key([UDLRFB])$/.exec(e.code)?.[1];
+  if (arrows[e.key]) {
+    e.preventDefault();
+    turnByKeys(...arrows[e.key]);
+  } else if (letter) {
+    e.preventDefault();
+    turnFace(letter, e.shiftKey);
+  }
+}
+
 export function setupInput() {
   // un doigt posé sur le cube le fait tourner ; ailleurs, la page défile
   canvas.addEventListener(
@@ -187,5 +205,6 @@ export function setupInput() {
     if (!S.drag) clearHover();
   });
   canvas.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keydown', onPlayKey);
   window.addEventListener('wheel', onWheel, { passive: false });
 }

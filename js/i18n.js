@@ -23,7 +23,7 @@ const UI = {
     done: 'Terminé',
     playHint: TOUCH
       ? 'Un doigt tourne une rangée, deux doigts tournent le cube.'
-      : 'Faites glisser un sticker pour tourner sa rangée.',
+      : 'Glissez un sticker pour tourner sa rangée, ou tapez U, D, L, R, F, B (Maj : sens inverse).',
     shuffling: 'Mélange…',
     shuffled: 'À vous de jouer',
     solving: 'Résolution…',
@@ -75,7 +75,9 @@ const UI = {
     shuffle: 'Shuffle',
     solve: 'Solve',
     done: 'Done',
-    playHint: TOUCH ? 'One finger turns a row, two fingers turn the cube.' : 'Drag a sticker to turn its row.',
+    playHint: TOUCH
+      ? 'One finger turns a row, two fingers turn the cube.'
+      : 'Drag a sticker to turn its row, or type U, D, L, R, F, B (Shift: reverse).',
     shuffling: 'Shuffling…',
     shuffled: 'Your turn',
     solving: 'Solving…',

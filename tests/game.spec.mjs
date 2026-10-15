@@ -68,6 +68,28 @@ test('en jeu, glisser sur un sticker tourne une rangée, et à côté tout le cu
   expect(await moves()).toBe(1);
 });
 
+test('un geste, un quart de tour : un petit glissé revient, un très long n’en fait qu’un ; le clavier aussi', async ({
+  page,
+}) => {
+  await play(page);
+  const moves = () => page.evaluate(() => window.__S.moves.length);
+  const p = await frontEdgePoint(page);
+  await drag(page, p, { x: 30, y: 0 });
+  await page.waitForFunction(() => !window.__S.layer);
+  expect(await moves()).toBe(0);
+  await drag(page, p, { x: 400, y: 0 });
+  await page.waitForFunction(() => !window.__S.layer);
+  expect(await moves()).toBe(1);
+
+  // au clavier, F tourne la face tournée vers l'écran ; Maj + F la tourne dans l'autre sens
+  await page.keyboard.press('f');
+  await expect.poll(moves).toBe(2);
+  await page.keyboard.press('Shift+F');
+  await expect.poll(moves).toBe(3);
+  const [turn, back] = await page.evaluate(() => window.__S.moves.slice(-2));
+  expect(back).toEqual({ ...turn, turns: -turn.turns });
+});
+
 test('en jeu, la molette rapproche ou éloigne le cube sans faire défiler la page', async ({ page }) => {
   await play(page);
   const distance = () => page.evaluate(() => window.__scene.framingTarget().dist);

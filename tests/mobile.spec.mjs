@@ -62,7 +62,7 @@ test.describe('téléphone en anglais', () => {
     // deux doigts qui glissent ensemble tournent le cube entier, toujours sans tourner de rangée
     const before = await page.evaluate(() => window.__S.base.toArray());
     await fingers('touchStart', 60, 150);
-    for (let x = 170; x <= 250; x += 20) await fingers('touchMove', 60, x);
+    for (let x = 180; x <= 330; x += 30) await fingers('touchMove', 60, x);
     await fingers('touchEnd', null);
     expect(await page.evaluate(() => window.__S.base.toArray())).not.toEqual(before);
     expect(await page.evaluate(() => window.__S.moves.length)).toBe(0);
