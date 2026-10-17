@@ -178,12 +178,30 @@
       <div class="cube-row" id="row-explore" hidden>
         <div class="readout">
           <div class="net" id="net" role="group">
-            <button type="button" class="u" data-face="top" style="--c: var(--face-top)"></button>
-            <button type="button" class="f" data-face="front" style="--c: var(--face-front)"></button>
-            <button type="button" class="r" data-face="right" style="--c: var(--face-right)"></button>
-            <button type="button" class="b" data-face="back" style="--c: var(--face-back)"></button>
-            <button type="button" class="l" data-face="left" style="--c: var(--face-left)"></button>
-            <button type="button" class="d" data-face="bottom" style="--c: var(--face-bottom)"></button>
+            <button type="button" class="u" data-face="top" data-accent="top" style="--c: var(--face-top)"></button>
+            <button
+              type="button"
+              class="f"
+              data-face="front"
+              data-accent="front"
+              style="--c: var(--face-front)"
+            ></button>
+            <button
+              type="button"
+              class="r"
+              data-face="right"
+              data-accent="right"
+              style="--c: var(--face-right)"
+            ></button>
+            <button type="button" class="b" data-face="back" data-accent="back" style="--c: var(--face-back)"></button>
+            <button type="button" class="l" data-face="left" data-accent="left" style="--c: var(--face-left)"></button>
+            <button
+              type="button"
+              class="d"
+              data-face="bottom"
+              data-accent="bottom"
+              style="--c: var(--face-bottom)"
+            ></button>
           </div>
           <p class="readout-text" aria-live="polite">
             <span class="readout-face" id="face-name"></span><span class="readout-count" id="face-count"></span>

@@ -28,6 +28,11 @@ test("les images suivent la face tournée vers l'écran", async ({ page }) => {
   await toCube(page);
   await expect.poll(() => shownFaces(page)).toEqual(['back']);
 
+  // au survol d'une case du patron, le nom de la face visée s'affiche au-dessus
+  const right = page.locator('#net button[data-face="right"]');
+  await right.hover();
+  await expect.poll(() => right.evaluate((b) => getComputedStyle(b, '::after').opacity)).toBe('1');
+  expect(await right.evaluate((b) => getComputedStyle(b, '::after').content)).toBe('"Projets"');
   await page.click('#net button[data-face="right"]');
   await still(page);
   await expect.poll(() => shownFaces(page)).toEqual(['right']);
