@@ -596,38 +596,49 @@ export const CUBE_CONTENT = {
           </div>
         </div>
         <section class="project-summary">
-          <p>Ce site est mon portfolio : un <em>Rubik's Cube</em> en 3D dont chaque face présente une partie de mon parcours, et qu'on peut aussi mélanger et résoudre.</p>
+          <p>Ce site est mon portfolio : un <em>Rubik's Cube</em> en 3D dont chaque face présente une partie de mon parcours. Il a connu deux versions.</p>
         </section>
         <hr>
         <div class="card-content">
           <article class="project-content">
-            <p>Le site tient en une page. À l'accueil, le cube tourne à côté de mon nom ; en descendant, il vient au centre et ses faces se couvrent de contenus : compétences, expériences, projets, formation, à propos et CV. Chaque sticker ouvre une carte qui sort de son image, aux couleurs de sa face.</p>
-            <h3>Fonctionnalités principales :</h3>
+            <h3>La première version (02/2025 - 09/2025)</h3>
+            <p>Elle présentait déjà mon portfolio sous la forme d'un Rubik's Cube en 3D : chaque face était dédiée à une catégorie (expériences, projets, passions, compétences) et chaque carré à un élément de cette catégorie.</p>
             <ul>
-              <li><strong>Cube en 3D :</strong> construit avec Three.js. On le fait tourner librement, il se pose sur la face la plus proche, et les images n'apparaissent que sur la face tournée vers soi.</li>
-              <li><strong>Cartes :</strong> la face se tourne d'abord vers soi, puis la carte sort de son sticker. Tout le contenu, en français et en anglais, vient d'un même fichier.</li>
-              <li><strong>Mode jeu :</strong> tourner les rangées au doigt ou au clavier, mélanger, et résoudre automatiquement avec l'algorithme de Kociemba (cubejs, dans un Web Worker). Une petite fête attend ceux qui le résolvent à la main.</li>
-              <li><strong>Identité visuelle :</strong> les couleurs du cube habillent les cartes, le fond de la page et les boutons, en thème clair comme en thème sombre.</li>
-              <li><strong>Partout :</strong> version téléphone (gestes à un et deux doigts), navigation au clavier, français et anglais.</li>
+              <li><strong>Interface 3D interactive :</strong> le cube, créé avec Three.js, se regardait sous tous les angles en faisant tourner la caméra autour de lui.</li>
+              <li><strong>Navigation :</strong> un menu listait les faces ; on zoomait sur l'une d'elles, et chaque carré ouvrait une fiche détaillée.</li>
+              <li><strong>Mélange et mode jeu :</strong> on pouvait mélanger le cube et jouer avec.</li>
+              <li><strong>Bouton EN/FR :</strong> changement de langue pour une expérience bilingue.</li>
+              <li><strong>Téléphone :</strong> une page à part annonçait une version mobile en développement.</li>
             </ul>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_v1_2.webp" alt="La première version : le cube et le menu des faces" class="project-image"><figcaption>La page du cube, avec le menu des faces</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_v1_1.webp" alt="La première version : une face vue de près" class="project-image"><figcaption>Une face vue de près, avec l'aperçu au survol</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_v1_3.webp" alt="La première version : le cube mélangé en mode jeu" class="project-image"><figcaption>Le cube mélangé en mode jeu</figcaption></figure>
 
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Accueil du portfolio : le nom, une phrase et le cube" class="project-image"><figcaption>L'accueil : le cube tourne à côté du nom</figcaption></figure>
-
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="Une carte de projet ouverte à côté du cube" class="project-image"><figcaption>Une carte sortie de son sticker, aux couleurs de sa face</figcaption></figure>
+            <h3>La nouvelle version (10/2026)</h3>
+            <p>En octobre 2026, j'ai entièrement repensé le site pour le rendre plus clair, plus complet et plus agréable, sur ordinateur comme sur téléphone. Ce qui a changé :</p>
+            <ul>
+              <li><strong>Une seule page en trois temps :</strong> l'accueil, avec mon nom et le cube qui tourne ; le cube au centre, à explorer ; puis une page pour m'écrire.</li>
+              <li><strong>On tourne le cube, plus la caméra :</strong> il se pose sur la face la plus proche, et les images n'apparaissent que sur la face tournée vers soi.</li>
+              <li><strong>Des cartes refaites :</strong> la face se tourne d'abord vers soi, puis la carte sort de son sticker, aux couleurs de sa face, avec tout son contenu.</li>
+              <li><strong>Une nouvelle identité visuelle :</strong> les couleurs du cube habillent les cartes, le fond de la page et les boutons, en thème clair comme en thème sombre.</li>
+              <li><strong>Un vrai mode jeu :</strong> tourner les rangées au doigt ou au clavier, résoudre automatiquement avec l'algorithme de Kociemba (cubejs, dans un Web Worker), et une petite fête pour ceux qui le résolvent à la main.</li>
+              <li><strong>Une vraie version téléphone,</strong> à la place de la page « en développement ».</li>
+              <li><strong>Le CV dans sa carte</strong> et une page « Contactez-moi » pour m'écrire un mail depuis le site.</li>
+              <li><strong>Sous le capot :</strong> code découpé en modules, tests automatiques avec Playwright, ESLint et Prettier, intégration continue avec GitHub Actions.</li>
+            </ul>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="La nouvelle version : l'accueil, avec le nom et le cube" class="project-image"><figcaption>L'accueil : le cube tourne à côté du nom</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="La nouvelle version : une carte de projet ouverte à côté du cube" class="project-image"><figcaption>Une carte sortie de son sticker, aux couleurs de sa face</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="La nouvelle version : le cube résolu à la main, avec des confettis et le score" class="project-image"><figcaption>Le cube résolu à la main : confettis et score</figcaption></figure>
+            <figure class="project-figure"><img src="assets/previews/projects/portfolio_4.webp" alt="La nouvelle version sur téléphone : le cube, puis une carte" class="project-image"><figcaption>Sur téléphone : le cube au centre, puis une carte</figcaption></figure>
 
             <h3>Technologies utilisées :</h3>
             <ul>
               <li><strong>Frontend :</strong> HTML, CSS, JavaScript (modules ES, sans framework)</li>
               <li><strong>3D :</strong> Three.js</li>
-              <li><strong>Résolution :</strong> cubejs (algorithme de Kociemba), dans un Web Worker</li>
-              <li><strong>Qualité :</strong> tests Playwright, ESLint et Prettier, intégration continue avec GitHub Actions</li>
+              <li><strong>Résolution :</strong> cubejs (algorithme de Kociemba)</li>
+              <li><strong>Qualité :</strong> Playwright, ESLint, Prettier, GitHub Actions</li>
               <li><strong>Déploiement :</strong> Vercel</li>
             </ul>
-
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Cube résolu à la main, avec des confettis et le score" class="project-image"><figcaption>Le cube résolu à la main : confettis et score</figcaption></figure>
-
-            <figure class="project-figure"><img src="assets/previews/projects/portfolio_4.webp" alt="Le portfolio sur téléphone : le cube, puis une carte" class="project-image"><figcaption>Sur téléphone : le cube au centre, puis une carte</figcaption></figure>
-            <p>Le site a été entièrement repensé en octobre 2026 : une seule page, des cartes plus complètes et un vrai mode jeu.</p>
             <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">Voir le projet sur GitHub</a>
           </article>
         </div>
@@ -645,38 +656,49 @@ export const CUBE_CONTENT = {
               </div>
             </div>
             <section class="project-summary">
-              <p>This website is my portfolio: a 3D <em>Rubik's Cube</em> whose faces each present a part of my background, and which you can also scramble and solve.</p>
+              <p>This website is my portfolio: a 3D <em>Rubik's Cube</em> whose faces each present a part of my background. It has had two versions.</p>
             </section>
             <hr>
             <div class="card-content">
               <article class="project-content">
-                <p>The site fits on one page. On the home screen, the cube spins next to my name; scrolling down brings it to the centre, and its faces fill with content: skills, experience, projects, education, about me and CV. Each sticker opens a card that comes out of its image, in the colours of its face.</p>
-                <h3>Main features:</h3>
+                <h3>The first version (02/2025 - 09/2025)</h3>
+                <p>It already presented my portfolio as a 3D Rubik's Cube: each face was dedicated to a category (experiences, projects, passions, skills) and each square to an item of that category.</p>
                 <ul>
-                  <li><strong>3D cube:</strong> built with Three.js. It turns freely, settles on the nearest face, and images only appear on the face turned towards you.</li>
-                  <li><strong>Cards:</strong> the face first turns towards you, then the card comes out of its sticker. All the content, in French and English, comes from a single file.</li>
-                  <li><strong>Play mode:</strong> turn rows with your finger or the keyboard, scramble, and solve automatically with Kociemba's algorithm (cubejs, in a Web Worker). A small celebration awaits those who solve it by hand.</li>
-                  <li><strong>Visual identity:</strong> the cube's colours dress the cards, the page background and the buttons, in light and dark themes.</li>
-                  <li><strong>Everywhere:</strong> phone version (one- and two-finger gestures), keyboard navigation, French and English.</li>
+                  <li><strong>Interactive 3D interface:</strong> the cube, built with Three.js, could be seen from every angle by turning the camera around it.</li>
+                  <li><strong>Navigation:</strong> a menu listed the faces; you zoomed in on one, and each square opened a detailed card.</li>
+                  <li><strong>Shuffle and play mode:</strong> you could scramble the cube and play with it.</li>
+                  <li><strong>EN/FR toggle:</strong> a language switch for a bilingual experience.</li>
+                  <li><strong>Phones:</strong> a separate page announced a mobile version in progress.</li>
                 </ul>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_v1_2.webp" alt="The first version: the cube and the faces menu" class="project-image"><figcaption>The cube page, with the faces menu</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_v1_1.webp" alt="The first version: a face up close" class="project-image"><figcaption>A face up close, with the hover preview</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_v1_3.webp" alt="The first version: the scrambled cube in play mode" class="project-image"><figcaption>The scrambled cube in play mode</figcaption></figure>
 
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="Portfolio home: the name, a sentence and the cube" class="project-image"><figcaption>The home screen: the cube spins next to the name</figcaption></figure>
-
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="A project card open next to the cube" class="project-image"><figcaption>A card out of its sticker, in the colours of its face</figcaption></figure>
+                <h3>The new version (10/2026)</h3>
+                <p>In October 2026, I fully redesigned the site to make it clearer, richer and more pleasant to use, on a computer as well as on a phone. What changed:</p>
+                <ul>
+                  <li><strong>A single page in three steps:</strong> the home screen, with my name and the spinning cube; the cube in the centre, to explore; then a page to write to me.</li>
+                  <li><strong>You turn the cube, not the camera:</strong> it settles on the nearest face, and images only appear on the face turned towards you.</li>
+                  <li><strong>Redesigned cards:</strong> the face first turns towards you, then the card comes out of its sticker, in the colours of its face, with all its content.</li>
+                  <li><strong>A new visual identity:</strong> the cube's colours dress the cards, the page background and the buttons, in light and dark themes.</li>
+                  <li><strong>A real play mode:</strong> turn rows with your finger or the keyboard, solve automatically with Kociemba's algorithm (cubejs, in a Web Worker), and a small celebration for those who solve it by hand.</li>
+                  <li><strong>A real phone version,</strong> instead of the "in progress" page.</li>
+                  <li><strong>The CV inside its card</strong> and a "Get in touch" page to email me from the site.</li>
+                  <li><strong>Under the hood:</strong> code split into modules, automated tests with Playwright, ESLint and Prettier, continuous integration with GitHub Actions.</li>
+                </ul>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_1.webp" alt="The new version: the home screen, with the name and the cube" class="project-image"><figcaption>The home screen: the cube spins next to the name</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_2.webp" alt="The new version: a project card open next to the cube" class="project-image"><figcaption>A card out of its sticker, in the colours of its face</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="The new version: the cube solved by hand, with confetti and the score" class="project-image"><figcaption>The cube solved by hand: confetti and score</figcaption></figure>
+                <figure class="project-figure"><img src="assets/previews/projects/portfolio_4.webp" alt="The new version on a phone: the cube, then a card" class="project-image"><figcaption>On a phone: the cube in the centre, then a card</figcaption></figure>
 
                 <h3>Technologies used:</h3>
                 <ul>
                   <li><strong>Frontend:</strong> HTML, CSS, JavaScript (ES modules, no framework)</li>
                   <li><strong>3D:</strong> Three.js</li>
-                  <li><strong>Solving:</strong> cubejs (Kociemba's algorithm), in a Web Worker</li>
-                  <li><strong>Quality:</strong> Playwright tests, ESLint and Prettier, continuous integration with GitHub Actions</li>
+                  <li><strong>Solving:</strong> cubejs (Kociemba's algorithm)</li>
+                  <li><strong>Quality:</strong> Playwright, ESLint, Prettier, GitHub Actions</li>
                   <li><strong>Deployment:</strong> Vercel</li>
                 </ul>
-
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_3.webp" alt="Cube solved by hand, with confetti and the score" class="project-image"><figcaption>The cube solved by hand: confetti and score</figcaption></figure>
-
-                <figure class="project-figure"><img src="assets/previews/projects/portfolio_4.webp" alt="The portfolio on a phone: the cube, then a card" class="project-image"><figcaption>On a phone: the cube in the centre, then a card</figcaption></figure>
-                <p>The site was fully redesigned in October 2026: a single page, richer cards and a real play mode.</p>
                 <a href="https://github.com/Kiyogen24/Rubiks-Cube-Portfolio" target="_blank" class="project-link">View the project on GitHub</a>
               </article>
             </div>

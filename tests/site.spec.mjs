@@ -92,7 +92,7 @@ test('la version anglaise traduit les cartes, le CV et les liens', async ({ page
   card = await openSticker(page, 'right_2');
   await expect(card.locator('h2')).toHaveText('Portfolio');
   const images = card.locator('.card-body img');
-  await expect(images).toHaveCount(4);
+  await expect(images).toHaveCount(7);
   for (const img of await images.all()) {
     await img.scrollIntoViewIfNeeded();
     await expect.poll(() => img.evaluate((i) => i.complete && i.naturalWidth > 0)).toBe(true);
