@@ -48,8 +48,7 @@ export function renderSolver() {
     input.checked = m === method;
     input.disabled = off;
     input.parentElement.querySelector('.solver-name').textContent = ui[m];
-    input.parentElement.querySelector('.solver-short').textContent = ui.short[m];
-    input.parentElement.querySelector('.solver-desc').textContent = off ? ui.neuralOff : ui[`${m}Desc`];
+    input.parentElement.title = off ? ui.neuralOff : '';
   });
   renderStats(ui);
 }

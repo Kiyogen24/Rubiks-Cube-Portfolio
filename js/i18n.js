@@ -31,13 +31,9 @@ const UI = {
     kociemba: (n) => `Résolu par l’algorithme de Kociemba en ${n} ${n > 1 ? 'coups' : 'coup'}`,
     solver: {
       title: 'Méthode de résolution',
-      neural: 'Mon réseau de neurones',
-      neuralDesc:
-        'Il prédit les coups qui mènent à la solution : 14,6 millions de paramètres, calculés sur votre carte graphique.',
+      neural: 'Réseau de neurones',
       neuralOff: 'Indisponible sur ce navigateur : il faut WebGPU.',
-      kociemba: 'Algorithme de Kociemba',
-      kociembaDesc: 'La méthode classique en deux phases (cubejs), calculée par votre processeur.',
-      short: { neural: 'Mon réseau de neurones', kociemba: 'Kociemba' },
+      kociemba: 'Kociemba',
       stats: 'Dernières résolutions',
       empty: 'Mélangez puis résolvez le cube pour comparer les deux méthodes.',
       columns: { neural: 'Réseau', kociemba: 'Kociemba' },
@@ -104,13 +100,9 @@ const UI = {
     kociemba: (n) => `Solved by Kociemba’s algorithm in ${n} ${n > 1 ? 'moves' : 'move'}`,
     solver: {
       title: 'Solving method',
-      neural: 'My neural network',
-      neuralDesc:
-        'It predicts the moves that lead to the solution: 14.6 million parameters, computed on your graphics card.',
+      neural: 'Neural network',
       neuralOff: 'Unavailable in this browser: it needs WebGPU.',
-      kociemba: 'Kociemba’s algorithm',
-      kociembaDesc: 'The classic two-phase method (cubejs), computed by your processor.',
-      short: { neural: 'My neural network', kociemba: 'Kociemba' },
+      kociemba: 'Kociemba',
       stats: 'Latest solves',
       empty: 'Shuffle, then solve the cube to compare both methods.',
       columns: { neural: 'Network', kociemba: 'Kociemba' },
