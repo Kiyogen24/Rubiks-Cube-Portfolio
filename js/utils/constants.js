@@ -621,7 +621,7 @@ export const CUBE_CONTENT = {
               <li><strong>On tourne le cube, plus la caméra :</strong> il se pose sur la face la plus proche, et les images n'apparaissent que sur la face tournée vers soi.</li>
               <li><strong>Des cartes refaites :</strong> la face se tourne d'abord vers soi, puis la carte sort de son sticker, aux couleurs de sa face, avec tout son contenu.</li>
               <li><strong>Une nouvelle identité visuelle :</strong> les couleurs du cube habillent les cartes, le fond de la page et les boutons, en thème clair comme en thème sombre.</li>
-              <li><strong>Un vrai mode jeu :</strong> tourner les rangées au doigt ou au clavier, résoudre automatiquement avec l'algorithme de Kociemba (cubejs, dans un Web Worker), et une petite fête pour ceux qui le résolvent à la main.</li>
+              <li><strong>Un vrai mode jeu :</strong> tourner les rangées au doigt ou au clavier, résoudre automatiquement avec mon propre réseau de neurones, exécuté sur la carte graphique du visiteur avec WebGPU (l'algorithme de Kociemba prend le relais sans WebGPU), et une petite fête pour ceux qui le résolvent à la main.</li>
               <li><strong>Une vraie version téléphone,</strong> à la place de la page « en développement ».</li>
               <li><strong>Le CV dans sa carte</strong> et une page « Contactez-moi » pour m'écrire un mail depuis le site.</li>
               <li><strong>Sous le capot :</strong> code découpé en modules, tests automatiques avec Playwright, ESLint et Prettier, intégration continue avec GitHub Actions.</li>
@@ -635,7 +635,7 @@ export const CUBE_CONTENT = {
             <ul>
               <li><strong>Frontend :</strong> HTML, CSS, JavaScript (modules ES, sans framework)</li>
               <li><strong>3D :</strong> Three.js</li>
-              <li><strong>Résolution :</strong> cubejs (algorithme de Kociemba)</li>
+              <li><strong>Résolution :</strong> mon réseau de neurones (entraîné avec PyTorch, quantifié en int8, exécuté avec WebGPU), et cubejs (algorithme de Kociemba) en secours</li>
               <li><strong>Qualité :</strong> Playwright, ESLint, Prettier, GitHub Actions</li>
               <li><strong>Déploiement :</strong> Vercel</li>
             </ul>
@@ -681,7 +681,7 @@ export const CUBE_CONTENT = {
                   <li><strong>You turn the cube, not the camera:</strong> it settles on the nearest face, and images only appear on the face turned towards you.</li>
                   <li><strong>Redesigned cards:</strong> the face first turns towards you, then the card comes out of its sticker, in the colours of its face, with all its content.</li>
                   <li><strong>A new visual identity:</strong> the cube's colours dress the cards, the page background and the buttons, in light and dark themes.</li>
-                  <li><strong>A real play mode:</strong> turn rows with your finger or the keyboard, solve automatically with Kociemba's algorithm (cubejs, in a Web Worker), and a small celebration for those who solve it by hand.</li>
+                  <li><strong>A real play mode:</strong> turn rows with your finger or the keyboard, solve automatically with my own neural network, running on the visitor's graphics card with WebGPU (Kociemba's algorithm takes over without WebGPU), and a small celebration for those who solve it by hand.</li>
                   <li><strong>A real phone version,</strong> instead of the "in progress" page.</li>
                   <li><strong>The CV inside its card</strong> and a "Get in touch" page to email me from the site.</li>
                   <li><strong>Under the hood:</strong> code split into modules, automated tests with Playwright, ESLint and Prettier, continuous integration with GitHub Actions.</li>
@@ -695,7 +695,7 @@ export const CUBE_CONTENT = {
                 <ul>
                   <li><strong>Frontend:</strong> HTML, CSS, JavaScript (ES modules, no framework)</li>
                   <li><strong>3D:</strong> Three.js</li>
-                  <li><strong>Solving:</strong> cubejs (Kociemba's algorithm)</li>
+                  <li><strong>Solving:</strong> my neural network (trained with PyTorch, quantized to int8, run with WebGPU), with cubejs (Kociemba's algorithm) as a fallback</li>
                   <li><strong>Quality:</strong> Playwright, ESLint, Prettier, GitHub Actions</li>
                   <li><strong>Deployment:</strong> Vercel</li>
                 </ul>

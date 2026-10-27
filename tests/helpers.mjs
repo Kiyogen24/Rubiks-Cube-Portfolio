@@ -1,4 +1,5 @@
 // Outils communs aux tests : préparation de la page et accès à l'état du cube 3D
+import { expect } from '@playwright/test';
 
 // Langue et thème posés une seule fois avant le premier chargement.
 // Sans `motion`, l'utilisateur préfère réduire les animations : le cube vide ne tourne pas à l'accueil
@@ -58,6 +59,23 @@ export async function still(page) {
 export async function toCube(page) {
   await page.evaluate(() => window.scrollTo(0, innerHeight));
   await page.waitForFunction(() => window.__S.mode === 'explore');
+  await still(page);
+}
+
+// Défile jusqu'au cube et entre dans le jeu
+export async function play(page) {
+  await prepare(page);
+  await open(page);
+  await toCube(page);
+  await page.click('#play');
+  await expect(page.locator('html')).toHaveClass(/locked/);
+  await still(page);
+}
+
+// Mélange le cube et attend la fin du mélange
+export async function shuffle(page) {
+  await page.click('#shuffle');
+  await expect(page.locator('#status')).toHaveText('À vous de jouer', { timeout: 30_000 });
   await still(page);
 }
 

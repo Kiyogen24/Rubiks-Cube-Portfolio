@@ -39,6 +39,7 @@ export const S = {
   scrambled: false, // mélangé avec le bouton : le résoudre à la main mérite une vraie fête
   shuffledAt: 0,
   score: null, // { moves, time } de la dernière résolution à la main
+  neuralMoves: 0, // coups de la dernière solution de mon réseau de neurones
   celebrating: false,
   flourish: null, // tour de joie du cube entier
 };

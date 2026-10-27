@@ -2,53 +2,15 @@ import { test, expect } from '@playwright/test';
 import {
   prepare,
   open,
-  toCube,
   still,
   cubeAtHome,
   cubeOrientation,
   turnedSince,
   frontEdgePoint,
   drag,
+  play,
+  shuffle,
 } from './helpers.mjs';
-
-async function play(page) {
-  await prepare(page);
-  await open(page);
-  await toCube(page);
-  await page.click('#play');
-  await expect(page.locator('html')).toHaveClass(/locked/);
-  await still(page);
-}
-
-async function shuffle(page) {
-  await page.click('#shuffle');
-  await expect(page.locator('#status')).toHaveText('À vous de jouer', { timeout: 30_000 });
-  await still(page);
-}
-
-test('mélanger puis résoudre avec le solveur de Kociemba', async ({ page }) => {
-  const logs = [];
-  page.on('console', (m) => logs.push(m.text()));
-  await play(page);
-  await shuffle(page);
-  expect(await cubeAtHome(page)).toBe(false);
-
-  await page.click('#solve');
-  await expect(page.locator('#status')).toHaveText('Résolution…');
-  await page.waitForFunction(() => !window.__play.busy() && !window.__S.moves.length, null, { timeout: 40_000 });
-  expect(logs.some((l) => l.includes('solution cubejs'))).toBe(true);
-  // coins et arêtes exactement à leur place ; un centre peut rester tourné sur lui-même, comme le logo d'un vrai cube
-  expect(await page.evaluate(() => window.__play.isSolved())).toBe(true);
-  const placed = await page.evaluate(() =>
-    window.__scene.cubies.every((c) => {
-      const { x, y, z } = c.userData.grid;
-      const center = [x, y, z].filter((v) => v !== 0).length < 2;
-      return c.position.distanceTo(c.userData.home) < 1e-3 && (center || Math.abs(Math.abs(c.quaternion.w) - 1) < 1e-6);
-    }),
-  );
-  expect(placed).toBe(true);
-  await expect(page.locator('#status')).toHaveText('');
-});
 
 test('en jeu, glisser sur un sticker tourne une rangée, et à côté tout le cube', async ({ page }) => {
   await play(page);

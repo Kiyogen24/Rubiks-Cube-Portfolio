@@ -9,8 +9,8 @@ export default [
     languageOptions: { ecmaVersion: 2022, sourceType: 'module', globals: globals.browser },
   },
   {
-    // Worker classique : cubejs est chargé par importScripts et expose la variable globale Cube
-    files: ['js/cube/solver-worker.js'],
+    // Worker classique : cubejs et mon réseau sont chargés par importScripts, cubejs expose la variable globale Cube
+    files: ['js/cube/solver-worker.js', 'js/cube/neural-solver.js'],
     languageOptions: { sourceType: 'script', globals: { ...globals.worker, Cube: 'readonly' } },
   },
   {

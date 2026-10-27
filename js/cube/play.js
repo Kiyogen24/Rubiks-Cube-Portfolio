@@ -1,4 +1,5 @@
-// Le jeu : tourner une rangée au doigt, mélanger, résoudre (Kociemba dans un worker, sinon à rebours)
+// Le jeu : tourner une rangée au doigt, mélanger, résoudre (mon réseau de neurones ou Kociemba dans un worker,
+// sinon à rebours)
 import * as THREE from 'three';
 import { S, $, reduced } from '../state.js';
 import { t } from '../i18n.js';
@@ -8,13 +9,14 @@ import { cube, cubies, pivot, project } from './scene.js';
 
 const QUARTER = Math.PI / 2;
 
-// Message sous le cube : '', 'shuffling', 'shuffled', 'solving' ou 'bravo' (retraduit si la langue change) ;
-// après une résolution à la main, le score s'affiche dessous
+// Message sous le cube : '', 'shuffling', 'shuffled', 'solving', 'neural' ou 'bravo' (retraduit si la langue
+// change) ; après une résolution à la main, le score s'affiche dessous
 const statusEl = $('#status');
 const scoreEl = $('#score');
 export function setStatus(key) {
   S.status = key;
-  statusEl.textContent = key ? t()[key] : '';
+  const text = key ? t()[key] : '';
+  statusEl.textContent = typeof text === 'function' ? text(S.neuralMoves) : text;
   scoreEl.textContent = key === 'bravo' && S.score ? t().score(S.score.moves, S.score.time) : '';
 }
 
@@ -215,6 +217,7 @@ export function shuffle() {
   S.scrambled = false;
   S.score = null;
   setStatus('shuffling');
+  postToSolver('load').catch(() => {}); // les poids du réseau de neurones arrivent pendant qu'on joue
   S.queue.push(...list);
   S.queueDone = () => {
     S.queueDone = null;
@@ -238,22 +241,27 @@ export async function solve(then) {
   setStatus('solving');
   const token = solveToken;
   let moves = null;
+  let neural = false;
   try {
-    // cubejs (Kociemba) : le cube entier est d'abord remis droit (centres à leur place), puis résolu
+    // le cube entier est d'abord remis droit (centres à leur place), puis résolu par mon réseau de neurones,
+    // ou par cubejs (Kociemba)
     const alg = history.map(moveToAlg).filter(Boolean).join(' ');
-    const { upright, solution } = await postToSolver('solve', { alg });
-    console.log('[jeu] solution cubejs :', `${upright} ${solution}`.trim());
+    const { upright, solution, solver } = await postToSolver('solve', { alg });
+    console.log(`[jeu] solution ${solver} :`, `${upright} ${solution}`.trim());
     moves = algToMoves(`${upright} ${solution}`);
+    neural = solver === 'neural' && Boolean(solution);
+    if (neural) S.neuralMoves = solution.split(' ').length;
   } catch (e) {
-    console.warn('[jeu] cubejs indisponible, résolution à rebours :', e);
+    console.warn('[jeu] solveur indisponible, résolution à rebours :', e);
   }
   if (token !== solveToken) return; // le cube a été remis en ordre entre-temps
   S.solving = false;
   moves ||= history.reverse().map((m) => ({ ...m, turns: -m.turns }));
+  if (neural) setStatus('neural'); // le message reste après la résolution
   const finish = () => {
     S.queueDone = null;
     S.userMoves = 0;
-    setStatus('');
+    setStatus(neural ? 'neural' : '');
     solvedHandler?.({ byHand: false });
     then?.();
   };
@@ -312,7 +320,7 @@ export function resetCube() {
   S.markDirty = true;
 }
 
-// ---------- Solveur de Kociemba (cubejs), dans un worker car son initialisation bloque plusieurs secondes ----------
+// ---------- Les solveurs, dans un worker : mon réseau de neurones (WebGPU), sinon Kociemba (cubejs) ----------
 // Notation standard → rangée. Un quart de tour positif fait +90° autour de l'axe ;
 // `cw` est le sens horaire de la notation, vu depuis la face concernée.
 const NOTATION = {
@@ -356,7 +364,7 @@ let workerFailed = false;
 const requests = new Map();
 let nextRequestId = 0;
 
-// Lancé dès qu'on entre dans le jeu : les tables de Kociemba se calculent pendant le mélange
+// Lancé dès qu'on entre dans le jeu : sans WebGPU, les tables de Kociemba se calculent pendant le mélange
 export function startSolver() {
   if (worker || workerFailed || typeof Worker === 'undefined') return;
   worker = new Worker(new URL('./solver-worker.js', import.meta.url));
@@ -367,7 +375,7 @@ export function startSolver() {
     if (e.data.ok) request.resolve(e.data);
     else request.reject(new Error(e.data.error));
   };
-  // cubejs n'a pas pu être chargé (réseau, CDN…) : on résoudra à rebours
+  // le worker n'a pas pu charger cubejs (réseau, CDN…) : on résoudra à rebours
   worker.onerror = (e) => {
     worker.terminate();
     worker = null;
