@@ -39,7 +39,9 @@ export const S = {
   scrambled: false, // mélangé avec le bouton : le résoudre à la main mérite une vraie fête
   shuffledAt: 0,
   score: null, // { moves, time } de la dernière résolution à la main
-  neuralMoves: 0, // coups de la dernière solution de mon réseau de neurones
+  solver: stored('solver') === 'kociemba' ? 'kociemba' : 'neural', // méthode choisie pour « Résoudre »
+  neuralUsable: null, // mon réseau de neurones peut-il tourner ici (WebGPU) ? null tant qu'on ne le sait pas
+  solves: { neural: null, kociemba: null }, // { moves, quarters, ms, evaluations } de la dernière résolution
   celebrating: false,
   flourish: null, // tour de joie du cube entier
 };

@@ -10,11 +10,12 @@ import { setupInput } from './cube/input.js';
 import { clamp, springStep } from './cube/math.js';
 import { enterExplore, enterPlay, exitPlay, exitPlayNow, leaveExplore } from './cube/modes.js';
 import { turnTo, updateOrientation } from './cube/orientation.js';
-import { onSolved, setStatus, shuffle, solve, updateLayer } from './cube/play.js';
+import { onSolved, onSolverChange, setStatus, shuffle, solve, updateLayer } from './cube/play.js';
 import { canvas, cube, render, resize, snapFraming, updateCamera, updateTiles, warmUp } from './cube/scene.js';
 import { loadImage } from './cube/textures.js';
 import { celebrate } from './ui/celebrate.js';
 import { measureContact, renderContact, setupContact } from './ui/contact.js';
+import { renderSolver, setupSolver } from './ui/solver.js';
 
 const intro = $('#intro');
 const cubeView = $('#cube-view');
@@ -40,6 +41,7 @@ function applyLang() {
   setStatus(S.status);
   refreshCard();
   renderContact();
+  renderSolver();
 }
 langButtons.forEach((b) =>
   b.addEventListener('click', () => {
@@ -250,6 +252,8 @@ readScroll();
 setupInput();
 setupContact();
 onSolved(celebrate);
+onSolverChange(renderSolver);
+setupSolver();
 applyLang();
 setFront('back');
 updateCubeUi();

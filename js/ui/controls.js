@@ -9,6 +9,7 @@ import { clamp } from '../cube/math.js';
 import { blackMaterial, camera, cube, cubies, project } from '../cube/scene.js';
 
 const cubeUi = $('#cube-ui');
+const solverPanel = $('#solver');
 const contacts = $('#contacts');
 const markSquares = [...document.querySelectorAll('#mark span')];
 export const netButtons = [...document.querySelectorAll('#net button')];
@@ -41,6 +42,10 @@ export function placeCubeUi() {
     (S.narrow && Boolean(S.card));
   cubeUi.classList.toggle('on', !hidden);
   cubeUi.inert = hidden;
+  // le panneau des méthodes de résolution, seulement en jeu
+  const solving = !hidden && S.mode === 'play';
+  solverPanel.classList.toggle('on', solving);
+  solverPanel.inert = !solving;
 }
 
 // La face devant : allumée dans le patron, nommée à côté avec son nombre de contenus

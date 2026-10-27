@@ -720,6 +720,187 @@ h1 {
   justify-content: center;
   gap: 10px;
 }
+/* En jeu, à droite du cube : la méthode de « Résoudre » et les chiffres des dernières résolutions */
+.solver {
+  position: fixed;
+  z-index: 4;
+  right: calc(var(--margin) - 24px);
+  top: calc(50% + 28px);
+  translate: 0 -50%;
+  width: 300px;
+  display: grid;
+  gap: 20px;
+  padding: 22px;
+  background: var(--surface);
+  border-radius: 24px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+.solver.on {
+  pointer-events: auto;
+  opacity: 1;
+}
+.solver-methods {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.solver-title {
+  margin-bottom: 6px;
+  padding: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+}
+.solver-method {
+  position: relative;
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px 12px 40px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 140ms var(--ease-out);
+}
+.solver-method:active {
+  transform: scale(0.98);
+}
+/* le bouton radio est dessiné : un anneau, plein quand la méthode est choisie */
+.solver-method input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.solver-method::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 15px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--muted);
+  transition: box-shadow 160ms ease;
+}
+.solver-method:has(input:checked) {
+  background: color-mix(in srgb, var(--primary) 9%, var(--surface));
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+.solver-method:has(input:checked)::before {
+  box-shadow: inset 0 0 0 5px var(--primary);
+}
+.solver-method:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+.solver-method:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
+.solver-method:has(input:disabled):active {
+  transform: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .solver-method:not(:has(input:checked, input:disabled)):hover {
+    background: var(--surface-3);
+  }
+}
+.solver-name {
+  font-weight: 600;
+}
+.solver-short {
+  display: none;
+}
+.solver-desc,
+.solver-note {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.solver-sub {
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.solver-stats table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.solver-stats th,
+.solver-stats td {
+  padding: 5px 0;
+  text-align: right;
+}
+.solver-stats th[scope='row'] {
+  font-weight: 400;
+  color: var(--muted);
+  text-align: left;
+}
+.solver-stats th[scope='col'] {
+  font-weight: 600;
+}
+.solver-stats tbody td {
+  font-weight: 600;
+}
+.solver-stats .solver-note {
+  margin-top: 10px;
+}
+/* écran étroit : seul le choix reste, en haut, comme un interrupteur à deux positions */
+@media (max-width: 1199px) {
+  .solver {
+    left: 50%;
+    right: auto;
+    top: calc(env(safe-area-inset-top, 0px) + 78px);
+    translate: -50% 0;
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    padding: 4px;
+    border-radius: 999px;
+  }
+  .solver-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .solver-name,
+  .solver-desc,
+  .solver-stats,
+  .solver-method::before {
+    display: none;
+  }
+  .solver-short {
+    display: inline;
+    font-weight: 600;
+  }
+  .solver-methods {
+    grid-auto-flow: column;
+    gap: 4px;
+  }
+  .solver-method {
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: none;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .solver-method:has(input:checked) {
+    background: var(--primary);
+    color: var(--primary-ink);
+    box-shadow: none;
+  }
+}
 
 /* Carte : sur la moitié gauche, arrondie, tout le contenu du site */
 .card {

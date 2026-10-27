@@ -233,6 +233,26 @@
       </div>
     </div>
 
+    <!-- en jeu, à droite du cube : la méthode de « Résoudre », et les chiffres des dernières résolutions -->
+    <aside class="solver" id="solver" aria-labelledby="solver-title">
+      <fieldset class="solver-methods">
+        <legend class="solver-title" id="solver-title"></legend>
+        <label class="solver-method">
+          <input type="radio" name="solver" value="neural" />
+          <span class="solver-name"></span>
+          <span class="solver-short"></span>
+          <span class="solver-desc"></span>
+        </label>
+        <label class="solver-method">
+          <input type="radio" name="solver" value="kociemba" />
+          <span class="solver-name"></span>
+          <span class="solver-short"></span>
+          <span class="solver-desc"></span>
+        </label>
+      </fieldset>
+      <div class="solver-stats" id="solver-stats"></div>
+    </aside>
+
     <article class="card" id="card" hidden aria-labelledby="card-title">
       <button type="button" class="icon-btn card-close" id="card-close" data-i18n-label="close">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">

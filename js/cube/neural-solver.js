@@ -61,13 +61,20 @@ self.NeuralSolver = (() => {
       }
     }`;
 
+  // La carte graphique, ou null : sans WebGPU, en économie de données (les poids pèsent 15 Mo), ou si la carte
+  // est émulée par le processeur, trop lente (Kociemba fera mieux)
+  async function findAdapter() {
+    if (!navigator.gpu || navigator.connection?.saveData) return null;
+    const adapter = await navigator.gpu.requestAdapter().catch(() => null);
+    return adapter && !(adapter.info?.isFallbackAdapter || adapter.isFallbackAdapter) ? adapter : null;
+  }
+  let adapterFound = null;
+  const gpuAdapter = () => (adapterFound ||= findAdapter());
+
   // Le réseau sur le GPU : retourne run(couleurs, n), les 12 logits de chacun des n états
   async function load() {
-    const adapter = await navigator.gpu.requestAdapter();
-    // une carte émulée par le processeur serait trop lente : Kociemba fera mieux
-    if (!adapter || adapter.info?.isFallbackAdapter || adapter.isFallbackAdapter) {
-      throw new Error('pas de carte graphique WebGPU');
-    }
+    const adapter = await gpuAdapter();
+    if (!adapter) throw new Error('pas de carte graphique WebGPU');
     const device = await adapter.requestDevice();
     const response = await fetch(MODEL_URL);
     if (!response.ok) throw new Error(`${MODEL_URL} : ${response.status}`);
@@ -148,9 +155,10 @@ self.NeuralSolver = (() => {
     };
   }
 
-  // Recherche en faisceau : les coups du chemin trouvé, ou null
+  // Recherche en faisceau : les coups du chemin trouvé (ou null) et le nombre de positions évaluées par le réseau
   async function search(run, facelets) {
-    if (facelets === SOLVED) return [];
+    let evaluations = 0;
+    if (facelets === SOLVED) return { actions: [], evaluations };
     const colours = new Uint32Array(WIDTH * 54);
     const seen = new Set([facelets]);
     let beam = [{ cube: Cube.fromString(facelets), key: facelets, cost: 0, parent: null }];
@@ -158,6 +166,7 @@ self.NeuralSolver = (() => {
     for (let depth = 0; depth < MAX_DEPTH && beam.length; depth++) {
       beam.forEach((s, b) => [...s.key].forEach((face, i) => (colours[b * 54 + i] = COLOUR[face])));
       const logits = await run(colours, beam.length);
+      evaluations += beam.length;
       const children = [];
       for (const [b, parent] of beam.entries()) {
         const z = logits.subarray(b * 12, b * 12 + 12);
@@ -166,7 +175,7 @@ self.NeuralSolver = (() => {
         for (const [a, action] of ACTIONS.entries()) {
           const cube = parent.cube.clone().move(action);
           const child = { cube, key: cube.asString(), cost: parent.cost + logSum - z[a], parent, action };
-          if (child.key === SOLVED) return path(child);
+          if (child.key === SOLVED) return { actions: path(child), evaluations };
           children.push(child);
         }
       }
@@ -179,7 +188,7 @@ self.NeuralSolver = (() => {
         if (beam.push(child) === WIDTH) break;
       }
     }
-    return null;
+    return { actions: null, evaluations };
   }
 
   // F F → F2 : deux quarts de tour de suite sur la même face se jouent en un demi-tour
@@ -201,13 +210,15 @@ self.NeuralSolver = (() => {
   let model = null;
   const ready = () => (model ||= load());
   return {
-    // WebGPU présent, et pas d'économie de données demandée : les poids pèsent 15 Mo
-    available: () => Boolean(navigator.gpu) && !navigator.connection?.saveData,
+    usable: async () => Boolean(await gpuAdapter()),
     load: ready,
-    // La solution en notation standard (« R U2 F' … »), ou null si le faisceau n'a rien trouvé
+    // La solution en notation standard (« R U2 F' … », ou null si le faisceau n'a rien trouvé), le nombre de
+    // positions évaluées et la durée de la recherche (sans le téléchargement des poids)
     async solve(facelets) {
-      const actions = await search(await ready(), facelets);
-      return actions && notation(actions);
+      const run = await ready();
+      const start = performance.now();
+      const { actions, evaluations } = await search(run, facelets);
+      return { solution: actions && notation(actions), evaluations, ms: performance.now() - start };
     },
   };
 })();
