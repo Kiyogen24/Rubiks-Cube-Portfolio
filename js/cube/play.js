@@ -263,7 +263,7 @@ export async function solve(then) {
     // le cube entier est d'abord remis droit (centres à leur place), puis résolu par mon réseau de neurones,
     // ou par cubejs (Kociemba)
     const alg = history.map(moveToAlg).filter(Boolean).join(' ');
-    const { upright, solution, solver, ms, evaluations, neural } = await postToSolver('solve', {
+    const { upright, solution, solver, ms, neural } = await postToSolver('solve', {
       alg,
       method: activeSolver(),
     });
@@ -273,7 +273,7 @@ export async function solve(then) {
     if (solution) {
       const tokens = solution.split(' ');
       const quarters = tokens.reduce((n, m) => n + (m.endsWith('2') ? 2 : 1), 0);
-      S.solves[solver] = { moves: tokens.length, quarters, ms, evaluations };
+      S.solves[solver] = { moves: tokens.length, quarters, ms };
       solvedBy = solver;
     }
     solverHandler?.();

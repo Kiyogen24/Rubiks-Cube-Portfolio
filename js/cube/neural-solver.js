@@ -155,10 +155,9 @@ self.NeuralSolver = (() => {
     };
   }
 
-  // Recherche en faisceau : les coups du chemin trouvé (ou null) et le nombre de positions évaluées par le réseau
+  // Recherche en faisceau : les coups du chemin trouvé, ou null
   async function search(run, facelets) {
-    let evaluations = 0;
-    if (facelets === SOLVED) return { actions: [], evaluations };
+    if (facelets === SOLVED) return [];
     const colours = new Uint32Array(WIDTH * 54);
     const seen = new Set([facelets]);
     let beam = [{ cube: Cube.fromString(facelets), key: facelets, cost: 0, parent: null }];
@@ -166,7 +165,6 @@ self.NeuralSolver = (() => {
     for (let depth = 0; depth < MAX_DEPTH && beam.length; depth++) {
       beam.forEach((s, b) => [...s.key].forEach((face, i) => (colours[b * 54 + i] = COLOUR[face])));
       const logits = await run(colours, beam.length);
-      evaluations += beam.length;
       const children = [];
       for (const [b, parent] of beam.entries()) {
         const z = logits.subarray(b * 12, b * 12 + 12);
@@ -175,7 +173,7 @@ self.NeuralSolver = (() => {
         for (const [a, action] of ACTIONS.entries()) {
           const cube = parent.cube.clone().move(action);
           const child = { cube, key: cube.asString(), cost: parent.cost + logSum - z[a], parent, action };
-          if (child.key === SOLVED) return { actions: path(child), evaluations };
+          if (child.key === SOLVED) return path(child);
           children.push(child);
         }
       }
@@ -188,7 +186,7 @@ self.NeuralSolver = (() => {
         if (beam.push(child) === WIDTH) break;
       }
     }
-    return { actions: null, evaluations };
+    return null;
   }
 
   // F F → F2 : deux quarts de tour de suite sur la même face se jouent en un demi-tour
@@ -212,13 +210,13 @@ self.NeuralSolver = (() => {
   return {
     usable: async () => Boolean(await gpuAdapter()),
     load: ready,
-    // La solution en notation standard (« R U2 F' … », ou null si le faisceau n'a rien trouvé), le nombre de
-    // positions évaluées et la durée de la recherche (sans le téléchargement des poids)
+    // La solution en notation standard (« R U2 F' … », ou null si le faisceau n'a rien trouvé) et la durée de la
+    // recherche (sans le téléchargement des poids)
     async solve(facelets) {
       const run = await ready();
       const start = performance.now();
-      const { actions, evaluations } = await search(run, facelets);
-      return { solution: actions && notation(actions), evaluations, ms: performance.now() - start };
+      const actions = await search(run, facelets);
+      return { solution: actions && notation(actions), ms: performance.now() - start };
     },
   };
 })();

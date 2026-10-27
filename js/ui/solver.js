@@ -1,6 +1,6 @@
-// En jeu, à droite du cube : le choix de la méthode de « Résoudre » (mon réseau de neurones ou l'algorithme de
-// Kociemba) et les chiffres de leurs dernières résolutions, côte à côte. Sur un écran étroit, seul le choix reste,
-// en haut ; le message sous le cube donne le nombre de coups.
+// En jeu, à droite du cube, après le premier clic sur « Résoudre » : le choix de la méthode (mon réseau de
+// neurones ou l'algorithme de Kociemba) et les chiffres de leurs dernières résolutions, côte à côte. Sur un écran
+// étroit, seul le choix reste, en haut ; le message sous le cube donne le nombre de coups.
 import { S, $ } from '../state.js';
 import { getLang, t } from '../i18n.js';
 import { activeSolver, chooseSolver } from '../cube/play.js';
@@ -19,12 +19,11 @@ function duration(ms) {
 function renderStats(ui) {
   const solves = METHODS.map((m) => S.solves[m]);
   if (!solves.some(Boolean)) {
-    stats.innerHTML = `<p class="solver-note">${ui.empty}</p>`;
+    stats.innerHTML = '';
     return;
   }
   const row = (label, value) =>
     `<tr><th scope="row">${label}</th>${solves.map((s) => `<td>${s ? value(s) : '–'}</td>`).join('')}</tr>`;
-  const evaluations = S.solves.neural?.evaluations;
   stats.innerHTML = `
     <p class="solver-sub">${ui.stats}</p>
     <table>
@@ -34,8 +33,7 @@ function renderStats(ui) {
         ${row(ui.quarters, (s) => s.quarters)}
         ${row(ui.time, (s) => duration(s.ms))}
       </tbody>
-    </table>
-    ${evaluations ? `<p class="solver-note">${ui.evaluated(evaluations.toLocaleString(getLang()))}</p>` : ''}`;
+    </table>`;
 }
 
 export function renderSolver() {

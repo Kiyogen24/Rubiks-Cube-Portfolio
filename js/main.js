@@ -59,7 +59,11 @@ $('#theme').addEventListener('click', () => {
 $('#play').addEventListener('click', enterPlay);
 $('#done').addEventListener('click', exitPlay);
 $('#shuffle').addEventListener('click', shuffle);
-$('#solve').addEventListener('click', () => solve());
+// le premier clic sur « Résoudre » fait apparaître le panneau des méthodes et leurs chiffres
+$('#solve').addEventListener('click', () => {
+  S.solverShown = true;
+  solve();
+});
 $('#card-close').addEventListener('click', () => closeCard());
 for (const [id, kind] of [
   ['#open-about', 'about'],

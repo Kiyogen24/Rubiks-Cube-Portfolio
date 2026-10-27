@@ -35,11 +35,10 @@ const column = (page, n) => page.locator(`#solver-stats tbody td:nth-child(${n +
 test('mélanger puis résoudre avec Kociemba quand mon réseau de neurones manque', async ({ page }) => {
   await page.route('**/neural-solver.bin', (route) => route.abort());
   await play(page);
-  await expect(page.locator('#solver')).toHaveClass(/\bon\b/);
-  await expect(page.locator('#solver-stats')).toHaveText(
-    'Mélangez puis résolvez le cube pour comparer les deux méthodes.',
-  );
+  // le panneau des méthodes n'apparaît qu'après le clic sur « Résoudre »
+  await expect(page.locator('#solver')).not.toHaveClass(/\bon\b/);
   const logs = await shuffleAndSolve(page);
+  await expect(page.locator('#solver')).toHaveClass(/\bon\b/);
   expect(logs.some((l) => l.includes('solution kociemba'))).toBe(true);
   await expect(page.locator('#status')).toHaveText(/^Résolu par l’algorithme de Kociemba en \d+ coups$/);
   // le réseau est marqué indisponible ; seule la colonne de Kociemba a ses chiffres
@@ -58,7 +57,6 @@ test('mon réseau de neurones résout le cube sur la carte graphique, puis Kocie
   // le message dit qui l'a résolu, et reste affiché ; le panneau donne ses chiffres
   await expect(page.locator('#status')).toHaveText(/^Résolu par mon réseau de neurones en \d+ coups$/);
   await expect(column(page, 1)).toHaveText([/^\d+$/, /^\d+$/, /^[\d,.]+ m?s$/]);
-  await expect(page.locator('#solver-stats .solver-note')).toHaveText(/le réseau a évalué [\d\s]+ positions/);
 
   // on choisit Kociemba : les deux colonnes se remplissent
   await page.click('#solver .solver-method:has(input[value="kociemba"])');

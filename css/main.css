@@ -725,8 +725,7 @@ h1 {
   position: fixed;
   z-index: 4;
   right: calc(var(--margin) - 24px);
-  top: calc(50% + 28px);
-  translate: 0 -50%;
+  top: calc(50% - 150px);
   width: 300px;
   display: grid;
   gap: 20px;
@@ -814,11 +813,6 @@ h1 {
 .solver-name {
   font-weight: 600;
 }
-.solver-note {
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--muted);
-}
 .solver-sub {
   margin-bottom: 6px;
   font-weight: 600;
@@ -845,9 +839,6 @@ h1 {
 }
 .solver-stats tbody td {
   font-weight: 600;
-}
-.solver-stats .solver-note {
-  margin-top: 10px;
 }
 /* écran étroit : seul le choix reste, en haut, comme un interrupteur à deux positions */
 @media (max-width: 1199px) {

@@ -41,7 +41,8 @@ export const S = {
   score: null, // { moves, time } de la dernière résolution à la main
   solver: stored('solver') === 'kociemba' ? 'kociemba' : 'neural', // méthode choisie pour « Résoudre »
   neuralUsable: null, // mon réseau de neurones peut-il tourner ici (WebGPU) ? null tant qu'on ne le sait pas
-  solves: { neural: null, kociemba: null }, // { moves, quarters, ms, evaluations } de la dernière résolution
+  solves: { neural: null, kociemba: null }, // { moves, quarters, ms } de la dernière résolution
+  solverShown: false, // le panneau des méthodes, affiché après le premier clic sur « Résoudre »
   celebrating: false,
   flourish: null, // tour de joie du cube entier
 };

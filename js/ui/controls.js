@@ -42,8 +42,8 @@ export function placeCubeUi() {
     (S.narrow && Boolean(S.card));
   cubeUi.classList.toggle('on', !hidden);
   cubeUi.inert = hidden;
-  // le panneau des méthodes de résolution, seulement en jeu
-  const solving = !hidden && S.mode === 'play';
+  // le panneau des méthodes de résolution, en jeu, une fois « Résoudre » cliqué
+  const solving = !hidden && S.mode === 'play' && S.solverShown;
   solverPanel.classList.toggle('on', solving);
   solverPanel.inert = !solving;
 }
