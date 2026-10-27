@@ -233,8 +233,13 @@
       </div>
     </div>
 
-    <!-- en jeu, à droite du cube : la méthode de « Résoudre », et les chiffres des dernières résolutions -->
+    <!-- « Résoudre » ouvre, à droite du cube, le choix de la méthode et les chiffres des dernières résolutions -->
     <aside class="solver" id="solver" aria-labelledby="solver-title">
+      <button type="button" class="icon-btn solver-close" id="solver-close" data-i18n-label="close">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+        </svg>
+      </button>
       <fieldset class="solver-methods">
         <legend class="solver-title" id="solver-title"></legend>
         <label class="solver-method">
@@ -247,6 +252,7 @@
         </label>
       </fieldset>
       <div class="solver-stats" id="solver-stats"></div>
+      <button type="button" class="btn primary small solver-confirm" id="solver-confirm" data-i18n="confirm"></button>
     </aside>
 
     <article class="card" id="card" hidden aria-labelledby="card-title">

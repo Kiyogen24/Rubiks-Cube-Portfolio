@@ -1,12 +1,16 @@
-// En jeu, à droite du cube, après le premier clic sur « Résoudre » : le choix de la méthode (mon réseau de
-// neurones ou l'algorithme de Kociemba) et les chiffres de leurs dernières résolutions, côte à côte. Sur un écran
-// étroit, seul le choix reste, en haut ; le message sous le cube donne le nombre de coups.
+// « Résoudre » ouvre, à droite du cube, le choix de la méthode (mon réseau de neurones ou l'algorithme de
+// Kociemba) avec les chiffres de leurs dernières résolutions, côte à côte ; « Confirmer » lance la résolution et le
+// panneau garde ses chiffres jusqu'à ce qu'on touche au cube ou qu'on mélange. Sur un écran étroit, il s'ouvre en
+// bas, par-dessus les commandes, et se ferme à la confirmation pour laisser voir la résolution.
 import { S, $ } from '../state.js';
 import { getLang, t } from '../i18n.js';
-import { activeSolver, chooseSolver } from '../cube/play.js';
+import { activeSolver, busy, chooseSolver, closeSolver, solve } from '../cube/play.js';
+import { placeCubeUi } from './controls.js';
 
 const panel = $('#solver');
 const stats = $('#solver-stats');
+const confirmButton = $('#solver-confirm');
+const compact = window.matchMedia('(max-width: 1199px)');
 const inputs = [...panel.querySelectorAll('input[name="solver"]')];
 const METHODS = ['neural', 'kociemba'];
 
@@ -39,19 +43,43 @@ function renderStats(ui) {
 export function renderSolver() {
   const ui = t().solver;
   const method = activeSolver();
+  const choosing = S.solverPanel === 'choose';
   $('#solver-title').textContent = ui.title;
   inputs.forEach((input) => {
     const m = input.value;
     const off = m === 'neural' && S.neuralUsable === false;
     input.checked = m === method;
-    input.disabled = off;
-    input.parentElement.querySelector('.solver-name').textContent = ui[m];
+    input.disabled = off || !choosing; // une fois confirmé, le choix ne bouge plus
+    input.parentElement.classList.toggle('off', off);
     input.parentElement.title = off ? ui.neuralOff : '';
+    input.parentElement.querySelector('.solver-name').textContent = ui[m];
   });
+  confirmButton.hidden = !choosing;
   renderStats(ui);
+}
+
+// « Résoudre » : le panneau s'ouvre sur le choix, s'il y a quelque chose à résoudre
+export function openSolver() {
+  if (busy() || !S.moves.length) return;
+  S.solverPanel = 'choose';
+  renderSolver();
+  placeCubeUi();
+  confirmButton.focus({ preventScroll: true });
+}
+
+function confirm() {
+  if (compact.matches) closeSolver();
+  else S.solverPanel = 'result';
+  renderSolver();
+  solve();
 }
 
 export function setupSolver() {
   inputs.forEach((input) => input.addEventListener('change', () => chooseSolver(input.value)));
+  confirmButton.addEventListener('click', confirm);
+  $('#solver-close').addEventListener('click', () => {
+    closeSolver();
+    $('#solve').focus({ preventScroll: true });
+  });
   renderSolver();
 }

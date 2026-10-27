@@ -20,6 +20,7 @@ const UI = {
     cubeTitle: 'Le cube',
     shuffle: 'Mélanger',
     solve: 'Résoudre',
+    confirm: 'Confirmer',
     done: 'Terminé',
     playHint: TOUCH
       ? 'Un doigt tourne une rangée, deux doigts tournent le cube.'
@@ -87,6 +88,7 @@ const UI = {
     cubeTitle: 'The cube',
     shuffle: 'Shuffle',
     solve: 'Solve',
+    confirm: 'Confirm',
     done: 'Done',
     playHint: TOUCH
       ? 'One finger turns a row, two fingers turn the cube.'

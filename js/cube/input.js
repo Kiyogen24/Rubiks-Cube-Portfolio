@@ -8,7 +8,7 @@ import { clearHover, hoverAt } from './hover.js';
 import { X, Y, clamp, qAxis } from './math.js';
 import { scrollToCube } from './modes.js';
 import { snapFromThrow, turnByKeys, turnTo } from './orientation.js';
-import { busy, dragLayer, releaseLayer, startLayerDrag, turnFace } from './play.js';
+import { busy, closeSolver, dragLayer, releaseLayer, startLayerDrag, turnFace } from './play.js';
 import { canvas, faces, pick, tileByKey } from './scene.js';
 
 const SPEED = 0.009; // radians par pixel glissé
@@ -35,6 +35,7 @@ function spin(dx, dy, dt) {
 function onPointerDown(e) {
   if (e.pointerType === 'touch') touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (S.phase !== 'ready' || e.button > 0 || S.celebrating) return;
+  if (S.mode === 'play') closeSolver();
   // en jeu, deux doigts tournent le cube entier et, en s'écartant, le rapprochent ;
   // une rangée en cours va au quart de tour le plus proche
   if (S.mode === 'play' && touches.size === 2) {
@@ -186,9 +187,11 @@ function onPlayKey(e) {
   const letter = /^Key([UDLRFB])$/.exec(e.code)?.[1];
   if (arrows[e.key]) {
     e.preventDefault();
+    closeSolver();
     turnByKeys(...arrows[e.key]);
   } else if (letter) {
     e.preventDefault();
+    closeSolver();
     turnFace(letter, e.shiftKey);
   }
 }

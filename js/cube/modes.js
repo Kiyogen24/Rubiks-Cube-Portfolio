@@ -4,7 +4,7 @@ import { closeCard } from '../cards/card.js';
 import { updateCubeUi } from '../ui/controls.js';
 import { nearestOrientation } from './geometry.js';
 import { clearHover, dropLifts } from './hover.js';
-import { busy, isSolved, normalizeSolved, resetCube, setStatus, solve, startSolver } from './play.js';
+import { busy, closeSolver, isSolved, normalizeSolved, resetCube, setStatus, solve, startSolver } from './play.js';
 
 // Le cube arrive au centre : il se pose sur une face et ses images apparaissent
 export function enterExplore() {
@@ -47,6 +47,7 @@ export function enterPlay() {
 // « Terminé » : le cube se résout s'il le faut, puis il reprend sa position et sa taille d'avant le jeu
 export function exitPlay() {
   if (busy()) return;
+  closeSolver();
   const done = () => {
     normalizeSolved();
     S.mode = 'explore';
@@ -64,6 +65,7 @@ export function exitPlay() {
 
 // Sortie immédiate (l'accueil ou une carte demandés pendant le jeu) : le cube est remis en ordre d'un coup
 export function exitPlayNow() {
+  closeSolver();
   S.celebrating = false;
   S.flourish = null;
   resetCube();

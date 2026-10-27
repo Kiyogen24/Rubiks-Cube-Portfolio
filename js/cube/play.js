@@ -38,6 +38,13 @@ export function onSolverChange(handler) {
 // La méthode de « Résoudre » : celle choisie, sauf si mon réseau de neurones ne peut pas tourner ici
 export const activeSolver = () => (S.neuralUsable === false ? 'kociemba' : S.solver);
 
+// Toucher au cube, mélanger ou quitter le jeu ferme le panneau des méthodes
+export function closeSolver() {
+  if (!S.solverPanel) return;
+  S.solverPanel = null;
+  solverHandler?.();
+}
+
 // Une méthode choisie se prépare tout de suite (les poids du réseau, ou les tables de Kociemba)
 export function chooseSolver(method) {
   S.solver = method;
@@ -218,6 +225,7 @@ function runQueue() {
 // ---------- Mélanger, résoudre ----------
 export function shuffle() {
   if (busy()) return;
+  closeSolver();
   const list = [];
   let lastAxis = null;
   for (let i = 0; i < 22; i++) {

@@ -800,6 +800,9 @@ h1 {
 }
 .solver-method:has(input:disabled) {
   cursor: default;
+}
+/* le réseau, quand il ne peut pas tourner ici */
+.solver-method.off {
   opacity: 0.6;
 }
 .solver-method:has(input:disabled):active {
@@ -812,6 +815,17 @@ h1 {
 }
 .solver-name {
   font-weight: 600;
+}
+.solver-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+.solver-confirm {
+  justify-self: start;
+}
+.solver-stats:empty {
+  display: none;
 }
 .solver-sub {
   margin-bottom: 6px;
@@ -840,45 +854,16 @@ h1 {
 .solver-stats tbody td {
   font-weight: 600;
 }
-/* écran étroit : seul le choix reste, en haut, comme un interrupteur à deux positions */
+/* écran étroit : le panneau s'ouvre en bas, par-dessus les commandes du jeu */
 @media (max-width: 1199px) {
   .solver {
     left: 50%;
     right: auto;
-    top: calc(env(safe-area-inset-top, 0px) + 78px);
+    top: auto;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     translate: -50% 0;
-    width: max-content;
-    max-width: calc(100vw - 24px);
-    padding: 4px;
-    border-radius: 999px;
-  }
-  .solver-title {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-  .solver-stats,
-  .solver-method::before {
-    display: none;
-  }
-  .solver-methods {
-    grid-auto-flow: column;
-    gap: 4px;
-  }
-  .solver-method {
-    padding: 9px 16px;
-    border-radius: 999px;
-    background: none;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-  .solver-method:has(input:checked) {
-    background: var(--primary);
-    color: var(--primary-ink);
-    box-shadow: none;
+    width: min(400px, calc(100vw - 24px));
+    box-shadow: var(--card-shadow); /* taste-skill-ignore : il flotte comme la carte */
   }
 }
 
