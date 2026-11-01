@@ -46,11 +46,34 @@ test('un geste, un quart de tour : un petit glissé revient, un très long n’e
   await page.waitForFunction(() => !window.__S.layer);
   expect(await moves()).toBe(1);
 
+  // deux gestes enchaînés, le second avant que le premier ait fini de se caler (comme au doigt, vite) : deux quarts
+  // de tour, et le cube entier ne bouge pas
+  const orientation = await cubeOrientation(page);
+  const settling = await page.evaluate(({ x, y }) => {
+    const canvas = document.querySelector('#cube');
+    const fire = (type, dx) =>
+      canvas.dispatchEvent(
+        new PointerEvent(type, { clientX: x + dx, clientY: y, pointerId: 1, pointerType: 'mouse', buttons: 1 }),
+      );
+    let caught = false;
+    for (let gesture = 0; gesture < 2; gesture++) {
+      caught ||= Boolean(window.__S.layer); // la rangée du premier geste se cale encore
+      fire('pointerdown', 0);
+      for (let i = 1; i <= 8; i++) fire('pointermove', (180 * i) / 8);
+      fire('pointerup', 180);
+    }
+    return caught;
+  }, p);
+  expect(settling).toBe(true);
+  await page.waitForFunction(() => !window.__S.layer);
+  expect(await moves()).toBe(3);
+  expect(await turnedSince(page, orientation)).toBeLessThan(0.01);
+
   // au clavier, F tourne la face tournée vers l'écran ; Maj + F la tourne dans l'autre sens
   await page.keyboard.press('f');
-  await expect.poll(moves).toBe(2);
+  await expect.poll(moves).toBe(4);
   await page.keyboard.press('Shift+F');
-  await expect.poll(moves).toBe(3);
+  await expect.poll(moves).toBe(5);
   const [turn, back] = await page.evaluate(() => window.__S.moves.slice(-2));
   expect(back).toEqual({ ...turn, turns: -turn.turns });
 });

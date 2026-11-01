@@ -188,6 +188,13 @@ export function releaseLayer(still) {
   L.target = flick ? Math.sign(a) * QUARTER : 0;
 }
 
+// Une rangée lâchée finit de se caler toute seule ; un nouveau geste la termine d'un coup, pour enchaîner les quarts
+// de tour au doigt aussi vite qu'on veut (sinon le second geste, arrivé pendant le calage, tournerait le cube entier)
+export function settleLayer() {
+  const L = S.layer;
+  if (L && !L.scripted && L.target !== null && !S.drag) finishLayer(true);
+}
+
 // Clavier : U, D, L, R, F, B tournent la face vue en haut, en bas, à gauche, à droite, devant ou derrière,
 // dans le sens des aiguilles d'une montre vu depuis cette face (`inverse` : dans l'autre sens)
 const VIEW = { U: [0, 1, 0], D: [0, -1, 0], L: [-1, 0, 0], R: [1, 0, 0], F: [0, 0, 1], B: [0, 0, -1] };
