@@ -4,7 +4,7 @@
 // bas, par-dessus les commandes, et se ferme à la confirmation pour laisser voir la résolution.
 import { S, $ } from '../state.js';
 import { getLang, t } from '../i18n.js';
-import { activeSolver, busy, chooseSolver, closeSolver, solve } from '../cube/play.js';
+import { activeSolver, busy, chooseSolver, closeSolver, prepareSolver, solve } from '../cube/play.js';
 import { placeCubeUi } from './controls.js';
 
 const panel = $('#solver');
@@ -47,13 +47,14 @@ export function renderSolver() {
   $('#solver-title').textContent = ui.title;
   inputs.forEach((input) => {
     const m = input.value;
-    const off = m === 'neural' && S.neuralUsable === false;
+    const off = m === 'neural' && Boolean(S.neuralReason);
     input.checked = m === method;
     input.disabled = off || !choosing; // une fois confirmé, le choix ne bouge plus
     input.parentElement.classList.toggle('off', off);
-    input.parentElement.title = off ? ui.neuralOff : '';
     input.parentElement.querySelector('.solver-name').textContent = ui[m];
   });
+  // le réseau indisponible : pourquoi, en une ligne (visible aussi au doigt, sans survol)
+  $('#solver .solver-why').textContent = S.neuralReason ? ui.off[S.neuralReason] : '';
   confirmButton.hidden = !choosing;
   renderStats(ui);
 }
@@ -62,6 +63,7 @@ export function renderSolver() {
 export function openSolver() {
   if (busy() || !S.moves.length) return;
   S.solverPanel = 'choose';
+  prepareSolver();
   renderSolver();
   placeCubeUi();
   confirmButton.focus({ preventScroll: true });

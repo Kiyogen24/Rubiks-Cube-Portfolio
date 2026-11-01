@@ -46,6 +46,7 @@ test('mélanger puis résoudre avec Kociemba quand mon réseau de neurones manqu
   await expect(page.locator('#status')).toHaveText(/^Résolu par l’algorithme de Kociemba en \d+ coups$/);
   // le réseau est marqué indisponible ; seule la colonne de Kociemba a ses chiffres
   await expect(page.locator('#solver input[value="neural"]')).toBeDisabled();
+  await expect(page.locator('#solver .solver-why')).toHaveText(/^Indisponible : /);
   await expect(page.locator('#solver input[value="kociemba"]')).toBeChecked();
   await expect(column(page, 1)).toHaveText(['–', '–', '–']);
   await expect(column(page, 2)).toHaveText([/^\d+$/, /^\d+$/, /^[\d,.]+ m?s$/]);

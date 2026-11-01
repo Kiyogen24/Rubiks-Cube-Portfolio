@@ -40,7 +40,8 @@ export const S = {
   shuffledAt: 0,
   score: null, // { moves, time } de la dernière résolution à la main
   solver: stored('solver') === 'kociemba' ? 'kociemba' : 'neural', // méthode choisie pour « Résoudre »
-  neuralUsable: null, // mon réseau de neurones peut-il tourner ici (WebGPU) ? null tant qu'on ne le sait pas
+  neuralReason: null, // pourquoi mon réseau de neurones ne peut pas tourner ici : 'webgpu', 'gpu', 'failed', ou null
+  download: 0, // part des poids du réseau déjà téléchargée, de 0 à 1
   solves: { neural: null, kociemba: null }, // { moves, quarters, ms } de la dernière résolution
   solverPanel: null, // le panneau des méthodes : 'choose' (ouvert par « Résoudre »), puis 'result', ou fermé
   celebrating: false,

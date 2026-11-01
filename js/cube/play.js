@@ -9,14 +9,16 @@ import { cube, cubies, pivot, project } from './scene.js';
 
 const QUARTER = Math.PI / 2;
 
-// Message sous le cube : '', 'shuffling', 'shuffled', 'solving', 'bravo', ou la méthode qui vient de le résoudre,
-// 'neural' ou 'kociemba' (retraduit si la langue change) ; après une résolution à la main, le score s'affiche dessous
+// Message sous le cube : '', 'shuffling', 'shuffled', 'solving', 'downloading' (les poids du réseau arrivent),
+// 'bravo', ou la méthode qui vient de le résoudre, 'neural' ou 'kociemba' (retraduit si la langue change) ; après une
+// résolution à la main, le score s'affiche dessous
 const statusEl = $('#status');
 const scoreEl = $('#score');
 export function setStatus(key) {
   S.status = key;
   const text = key ? t()[key] : '';
-  statusEl.textContent = typeof text === 'function' ? text(S.solves[key].moves) : text;
+  const value = key === 'downloading' ? Math.floor(S.download * 100) : S.solves[key]?.moves;
+  statusEl.textContent = typeof text === 'function' ? text(value) : text;
   scoreEl.textContent = key === 'bravo' && S.score ? t().score(S.score.moves, S.score.time) : '';
 }
 
@@ -36,7 +38,7 @@ export function onSolverChange(handler) {
 }
 
 // La méthode de « Résoudre » : celle choisie, sauf si mon réseau de neurones ne peut pas tourner ici
-export const activeSolver = () => (S.neuralUsable === false ? 'kociemba' : S.solver);
+export const activeSolver = () => (S.neuralReason ? 'kociemba' : S.solver);
 
 // Toucher au cube, mélanger ou quitter le jeu ferme le panneau des méthodes
 export function closeSolver() {
@@ -45,11 +47,16 @@ export function closeSolver() {
   solverHandler?.();
 }
 
-// Une méthode choisie se prépare tout de suite (les poids du réseau, ou les tables de Kociemba)
+// Une méthode se prépare dès qu'on la choisit ou qu'on ouvre le panneau (les poids du réseau, ou les tables de
+// Kociemba)
+export function prepareSolver(method = activeSolver()) {
+  postToSolver('load', { method }).catch(() => {});
+}
+
 export function chooseSolver(method) {
   S.solver = method;
   store('solver', method);
-  postToSolver('load', { method }).catch(() => {});
+  prepareSolver(method);
   solverHandler?.();
 }
 
@@ -242,7 +249,7 @@ export function shuffle() {
   S.scrambled = false;
   S.score = null;
   setStatus('shuffling');
-  postToSolver('load', { method: activeSolver() }).catch(() => {}); // la méthode se prépare pendant qu'on joue
+  prepareSolver(); // la méthode se prépare pendant qu'on joue
   S.queue.push(...list);
   S.queueDone = () => {
     S.queueDone = null;
@@ -271,13 +278,14 @@ export async function solve(then) {
     // le cube entier est d'abord remis droit (centres à leur place), puis résolu par mon réseau de neurones,
     // ou par cubejs (Kociemba)
     const alg = history.map(moveToAlg).filter(Boolean).join(' ');
-    const { upright, solution, solver, ms, neural } = await postToSolver('solve', {
-      alg,
-      method: activeSolver(),
-    });
+    const { upright, solution, solver, ms, reason } = await postToSolver(
+      'solve',
+      { alg, method: activeSolver() },
+      90000, // le temps de télécharger les poids du réseau sur un téléphone
+    );
     console.log(`[jeu] solution ${solver} :`, `${upright} ${solution}`.trim());
     moves = algToMoves(`${upright} ${solution}`);
-    S.neuralUsable = neural;
+    S.neuralReason = reason;
     if (solution) {
       const tokens = solution.split(' ');
       const quarters = tokens.reduce((n, m) => n + (m.endsWith('2') ? 2 : 1), 0);
@@ -403,6 +411,12 @@ export function startSolver() {
   if (worker || workerFailed || typeof Worker === 'undefined') return;
   worker = new Worker(new URL('./solver-worker.js', import.meta.url));
   worker.onmessage = (e) => {
+    // les poids du réseau arrivent : pendant une résolution, le message en donne la progression
+    if (e.data.progress !== undefined) {
+      S.download = e.data.progress;
+      if (S.solving) setStatus(S.download < 1 ? 'downloading' : 'solving');
+      return;
+    }
     const request = requests.get(e.data.id);
     if (!request) return;
     requests.delete(e.data.id);
@@ -418,8 +432,8 @@ export function startSolver() {
     requests.clear();
   };
   postToSolver('init')
-    .then(({ neural }) => {
-      S.neuralUsable = neural;
+    .then(({ reason }) => {
+      S.neuralReason = reason;
       solverHandler?.();
     })
     .catch(() => {});

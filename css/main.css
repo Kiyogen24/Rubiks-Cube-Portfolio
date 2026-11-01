@@ -816,6 +816,13 @@ h1 {
 .solver-name {
   font-weight: 600;
 }
+.solver-why {
+  font-size: 13px;
+  color: var(--muted);
+}
+.solver-why:empty {
+  display: none;
+}
 .solver-close {
   position: absolute;
   top: 14px;
