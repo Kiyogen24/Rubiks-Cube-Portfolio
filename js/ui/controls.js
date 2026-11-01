@@ -30,7 +30,9 @@ export function placeCubeUi() {
   const h = cubeUi.offsetHeight;
   const x = w > S.width - 32 ? (S.width - w) / 2 : clamp(c.x - w / 2, 16, S.width - w - 16);
   const below = c.y + radius * 0.98 + (S.mode === 'explore' ? 44 : 10);
-  const y = Math.min(below, S.height - h - 24);
+  // en jeu sur téléphone, les commandes descendent en bas de l'écran : le doigt a de la place tout autour du cube
+  const bottom = S.height - h - 24;
+  const y = S.mode === 'play' && S.narrow ? bottom : Math.min(below, bottom);
   cubeUi.style.transform = `translate3d(${x}px, ${y}px, 0)`;
   cubeUi.classList.toggle('over', below > y + 1); // le cube déborde sur les commandes
   const hidden =
