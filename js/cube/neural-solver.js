@@ -1,5 +1,5 @@
-// Mon réseau de neurones qui résout le Rubik's Cube, exécuté sur la carte graphique avec WebGPU.
-// Chargé par solver-worker.js, à côté de cubejs.
+// Mon réseau de neurones qui résout le Rubik's Cube, exécuté sur la carte graphique avec WebGPU, ou à défaut sur le
+// processeur en WebAssembly SIMD (téléphones et navigateurs sans WebGPU). Chargé par solver-worker.js, à côté de cubejs.
 // Le réseau lit la couleur des 54 facettes (dans l'ordre de cube.asString()) et donne, pour chacun des 12 quarts
 // de tour, la probabilité π(a | s) qu'il mène vers la solution, et sa valeur V(s), le nombre de coups estimé
 // jusqu'au cube résolu. Une recherche en faisceau développe à chaque profondeur ses états et garde les enfants de
@@ -12,10 +12,13 @@ self.NeuralSolver = (() => {
   const ACTIONS = ['F', "F'", 'B', "B'", 'L', "L'", 'R', "R'", 'U', "U'", 'D', "D'"]; // ordre des sorties du réseau
   const COLOUR = Object.fromEntries([...'URFDLB'].map((face, i) => [face, i]));
   const SOLVED = [...'URFDLB'].map((face) => face.repeat(9)).join('');
-  const WIDTH = 256; // états gardés à chaque profondeur : tous les cubes résolus, en 24 quarts de tour en moyenne
+  // états gardés à chaque profondeur : sur la carte graphique, tous les cubes résolus en 24 quarts de tour en moyenne ;
+  // sur le processeur, 8 fois moins pour rester autour d'une seconde
+  const GPU_WIDTH = 256;
+  const CPU_WIDTH = 32;
   const MAX_DEPTH = 40;
   const LAMBDA = 1; // poids de la politique dans le coût
-  const ROWS = 8; // états calculés ensemble par un fil du GPU (WIDTH en est un multiple)
+  const ROWS = 8; // états calculés ensemble par un fil du GPU (GPU_WIDTH en est un multiple)
   const RELU = 1;
   const RESIDUAL = 2;
 
@@ -70,15 +73,92 @@ self.NeuralSolver = (() => {
       }
     }`;
 
-  // La carte graphique, ou la raison de son absence : 'webgpu' (le navigateur n'a pas WebGPU) ou 'gpu' (aucune carte
-  // prise en charge ; une carte émulée par le processeur serait trop lente, Kociemba fera mieux). Les téléphones
-  // Android sans Vulkan n'ont WebGPU qu'en mode compatibilité, demandé en second.
+  // Sur le processeur, une couche en WebAssembly SIMD : layer(x, w, y, K, O, B) ajoute à y[b][o] la somme sur k de
+  // w[k][o] (int8) x x[b][k] (float32), 16 sorties par tour, en sautant les entrées nulles (la moitié, après ReLU) ;
+  // O est un multiple de 16. Le module (343 octets) est assemblé ici, octet par octet : pas d'outil ni de fichier.
+  const LAYER_WASM = (() => {
+    const uleb = (n) => {
+      const out = [];
+      do out.push((n & 0x7f) | (n > 0x7f ? 0x80 : 0));
+      while ((n >>>= 7));
+      return out;
+    };
+    const seq = (...parts) => parts.flat(Infinity);
+    const vec = (items) => seq(uleb(items.length), items);
+    const section = (id, bytes) => seq(id, uleb(bytes.length), bytes);
+    const name = (s) => vec([...s].map((c) => c.charCodeAt(0)));
+    // les instructions utilisées
+    const get = (i) => [0x20, i];
+    const set = (i) => [0x21, i];
+    const int = (n) => [0x41, n]; // i32.const, petits entiers positifs
+    const [add, mul, geU, shl] = [[0x6a], [0x6c], [0x4f], [0x74]];
+    const [loadF32, zeroF32, notEqualF32] = [[0x2a, 2, 0], [0x43, 0, 0, 0, 0], [0x5c]];
+    const [block, loopStart, ifStart, end] = [[0x02, 0x40], [0x03, 0x40], [0x04, 0x40], [0x0b]];
+    const brIf = (depth) => [0x0d, depth];
+    const br = (depth) => [0x0c, depth];
+    const simd = (op, ...rest) => [0xfd, ...uleb(op), ...rest];
+    const load = (offset) => simd(0x00, 0, offset); // v128.load
+    const store = (offset) => simd(0x0b, 0, offset); // v128.store
+    const [low8, high8, low16, high16] = [0x87, 0x88, 0xa7, 0xa8].map((op) => simd(op)); // extend_*_s
+    const [toF32, addF32, mulF32, splat] = [0xfa, 0xe4, 0xe6, 0x13].map((op) => simd(op));
+    // paramètres x w y K O B ; locaux i32 k b o row yrow addr ; f32 v ; v128 vv q lo hi
+    const [x, w, y, K, O, B, k, b, o, row, yrow, addr, v, vv, q, lo, hi] = [...Array(17).keys()];
+
+    // for (counter = …; counter < limit; …) { inner } ; inner fait avancer le compteur
+    const loop = (counter, limit, inner) =>
+      seq(block, loopStart, get(counter), get(limit), geU, brIf(1), inner, br(0), end, end);
+    // y[o + offset / 4 .. + 4] += float(4 poids de half) x v
+    const quarter = (offset, half, ext) =>
+      seq(get(addr), get(addr), load(offset), get(half), ext, toF32, get(vv), mulF32, addF32, store(offset));
+    const body = loop(k, K, [
+      seq(get(w), get(k), get(O), mul, add, set(row)), // row = w + k O : la ligne de poids de l'entrée k
+      seq(int(0), set(b)),
+      loop(b, B, [
+        seq(get(x), get(b), get(K), mul, get(k), add, int(2), shl, add, loadF32, set(v)), // v = x[b][k]
+        seq(get(v), zeroF32, notEqualF32, ifStart), // les entrées nulles ne coûtent rien
+        seq(get(v), splat, set(vv)),
+        seq(get(y), get(b), get(O), mul, int(2), shl, add, set(yrow)), // yrow = y[b]
+        seq(int(0), set(o)),
+        loop(o, O, [
+          seq(get(row), get(o), add, load(0), set(q)), // 16 poids int8
+          seq(get(q), low8, set(lo), get(q), high8, set(hi)), // en deux fois 8 entiers 16 bits
+          seq(get(yrow), get(o), int(2), shl, add, set(addr)),
+          quarter(0, lo, low16),
+          quarter(16, lo, high16),
+          quarter(32, hi, low16),
+          quarter(48, hi, high16),
+          seq(get(o), int(16), add, set(o)),
+        ]),
+        end, // fin du si
+        seq(get(b), int(1), add, set(b)),
+      ]),
+      seq(get(k), int(1), add, set(k)),
+    ]);
+    const locals = vec([
+      [6, 0x7f],
+      [1, 0x7d],
+      [4, 0x7b],
+    ]);
+    const code = seq(locals, body, end);
+    return new Uint8Array(
+      seq(
+        [0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00],
+        section(1, vec([seq(0x60, vec(Array(6).fill(0x7f)), 0)])), // (i32 x 6) -> ()
+        section(3, vec([0])),
+        section(5, vec([[0x00, 1]])), // une page de mémoire, agrandie au chargement
+        section(7, vec([seq(name('layer'), 0x00, 0), seq(name('memory'), 0x02, 0)])),
+        section(10, vec([seq(uleb(code.length), code)])),
+      ),
+    );
+  })();
+
+  // La carte graphique, ou null. Les téléphones Android sans Vulkan n'ont WebGPU qu'en mode compatibilité, demandé en
+  // second ; une carte émulée par le processeur serait plus lente que le WebAssembly
   async function findAdapter() {
-    if (!navigator.gpu) return { reason: 'webgpu' };
+    if (!navigator.gpu) return null;
     const request = (options) => navigator.gpu.requestAdapter(options).catch(() => null);
     const adapter = (await request()) || (await request({ featureLevel: 'compatibility' }));
-    if (!adapter || adapter.info?.isFallbackAdapter || adapter.isFallbackAdapter) return { reason: 'gpu' };
-    return { adapter };
+    return adapter && !(adapter.info?.isFallbackAdapter || adapter.isFallbackAdapter) ? adapter : null;
   }
   let adapterFound = null;
   const gpuAdapter = () => (adapterFound ||= findAdapter());
@@ -116,14 +196,28 @@ self.NeuralSolver = (() => {
     return file.buffer;
   }
 
-  // Le réseau sur le GPU : retourne run(couleurs, n), les 12 logits de chacun des n états
-  async function load(onProgress) {
-    const { adapter } = await gpuAdapter();
-    if (!adapter) throw new Error('pas de carte graphique WebGPU');
-    const device = await adapter.requestDevice();
-    const file = await download(onProgress);
+  // Les couches du fichier : { k entrées, o sorties, at : position de leurs échelles, biais puis poids }
+  function readLayers(file) {
     if (new TextDecoder().decode(new Uint8Array(file, 0, 4)) !== 'CUBE') throw new Error('fichier de poids inconnu');
+    const n = new Uint32Array(file, 4, 1)[0];
+    const dims = new Uint32Array(file, 8, 2 * n);
+    const layers = [];
+    let at = 8 + 8 * n;
+    for (let l = 0; l < n; l++) {
+      const [k, o] = [dims[2 * l], dims[2 * l + 1]];
+      layers.push({ k, o, at });
+      at += 8 * o + k * o;
+    }
+    // le tronc, la politique (12 sorties), puis la tête de valeur (deux couches)
+    const policy = layers.findIndex((L) => L.o === ACTIONS.length);
+    if (layers[0].k !== 54 * 6 || policy < 2 || layers.length !== policy + 3) throw new Error('réseau inattendu');
+    return { layers, policy };
+  }
 
+  // Le réseau sur le GPU : run(couleurs, n) donne les 12 logits et la valeur de chacun des n états
+  async function gpuNetwork(adapter, file) {
+    const { layers, policy } = readLayers(file);
+    const device = await adapter.requestDevice();
     const usage = GPUBufferUsage;
     const buffer = (size, use) => device.createBuffer({ size, usage: use });
     const upload = (data, use) => {
@@ -131,26 +225,19 @@ self.NeuralSolver = (() => {
       device.queue.writeBuffer(b, 0, data);
       return b;
     };
-    const n = new Uint32Array(file, 4, 1)[0];
-    const dims = new Uint32Array(file, 8, 2 * n);
-    const layers = [];
-    let offset = 8 + 8 * n;
-    for (let l = 0; l < n; l++) {
-      const [k, o] = [dims[2 * l], dims[2 * l + 1]];
-      layers.push({ k, o4: o / 4, w: upload(new Uint8Array(file, offset, 8 * o + k * o), usage.STORAGE) });
-      offset += 8 * o + k * o;
-    }
-    // le tronc, la politique (12 sorties), puis la tête de valeur (deux couches)
-    const policy = layers.findIndex((L) => L.o4 * 4 === ACTIONS.length);
-    if (layers[0].k !== 54 * 6 || policy < 2 || layers.length !== policy + 3) throw new Error('réseau inattendu');
+    layers.forEach((L) => {
+      L.o4 = L.o / 4;
+      L.w = upload(new Uint8Array(file, L.at, 8 * L.o + L.k * L.o), usage.STORAGE);
+    });
 
-    const input = buffer(WIDTH * 54 * 4, usage.STORAGE | usage.COPY_DST);
-    const hidden = buffer(WIDTH * layers[0].o4 * 16, usage.STORAGE);
-    const [p0, p1, p2] = [0, 1, 2].map(() => buffer(WIDTH * layers[1].o4 * 16, usage.STORAGE));
-    const logits = buffer(WIDTH * 48, usage.STORAGE | usage.COPY_SRC);
-    const valueHidden = buffer(WIDTH * layers[policy + 1].o4 * 16, usage.STORAGE);
-    const values = buffer(WIDTH * 16, usage.STORAGE | usage.COPY_SRC);
-    const readback = buffer(WIDTH * 64, usage.MAP_READ | usage.COPY_DST); // les logits, puis les valeurs
+    const width = GPU_WIDTH;
+    const input = buffer(width * 54 * 4, usage.STORAGE | usage.COPY_DST);
+    const hidden = buffer(width * layers[0].o4 * 16, usage.STORAGE);
+    const [p0, p1, p2] = [0, 1, 2].map(() => buffer(width * layers[1].o4 * 16, usage.STORAGE));
+    const logits = buffer(width * 48, usage.STORAGE | usage.COPY_SRC);
+    const valueHidden = buffer(width * layers[policy + 1].o4 * 16, usage.STORAGE);
+    const values = buffer(width * 16, usage.STORAGE | usage.COPY_SRC);
+    const readback = buffer(width * 64, usage.MAP_READ | usage.COPY_DST); // les logits, puis les valeurs
     const noResidual = buffer(16, usage.STORAGE); // un tampon ne sert qu'une fois par couche
     const pipeline = (code) =>
       device.createComputePipeline({
@@ -184,7 +271,7 @@ self.NeuralSolver = (() => {
     step(dense, policy + 1, z, valueHidden, RELU);
     step(dense, policy + 2, valueHidden, values, 0);
 
-    return async (colours, count) => {
+    const run = async (colours, count) => {
       device.queue.writeBuffer(input, 0, colours, 0, count * 54);
       // une commande par couche, et la copie à part : une ressource n'y sert qu'une fois (Safari 26.4 se trompait
       // dans le compte des tampons utilisés plusieurs fois dans une même commande)
@@ -199,13 +286,82 @@ self.NeuralSolver = (() => {
       });
       const copy = device.createCommandEncoder();
       copy.copyBufferToBuffer(logits, 0, readback, 0, count * 48);
-      copy.copyBufferToBuffer(values, 0, readback, WIDTH * 48, count * 16);
+      copy.copyBufferToBuffer(values, 0, readback, width * 48, count * 16);
       device.queue.submit([...commands, copy.finish()]);
       await readback.mapAsync(GPUMapMode.READ);
       const result = new Float32Array(readback.getMappedRange().slice(0));
       readback.unmap();
-      return { logits: result.subarray(0, count * 12), values: result.subarray(WIDTH * 12, WIDTH * 12 + count * 4) };
+      return { logits: result.subarray(0, count * 12), values: result.subarray(width * 12, width * 12 + count * 4) };
     };
+    return { width, run };
+  }
+
+  // Le même réseau sur le processeur : les poids int8 dans la mémoire du module WebAssembly, et une zone par couche
+  // pour sa sortie ; les petites couches (12 et 4 sorties) restent en JavaScript
+  async function cpuNetwork(file) {
+    const { layers, policy } = readLayers(file);
+    const { instance } = await WebAssembly.instantiate(LAYER_WASM);
+    const { layer, memory } = instance.exports;
+    const width = CPU_WIDTH;
+    let heap = 0;
+    const alloc = (bytes) => (heap += (bytes + 15) & ~15) - ((bytes + 15) & ~15);
+    const input = alloc(width * 54 * 6 * 4); // le one-hot des couleurs
+    layers.forEach((L) => {
+      L.weights = alloc(L.k * L.o);
+      L.out = alloc(width * L.o * 4);
+      L.factor = new Float32Array(file, L.at, L.o).map((s) => s / 127);
+      L.bias = new Float32Array(file, L.at + 4 * L.o, L.o);
+    });
+    memory.grow(Math.ceil(heap / 65536));
+    const bytes = new Int8Array(memory.buffer);
+    const floats = (at, n) => new Float32Array(memory.buffer, at, n);
+    layers.forEach((L) => bytes.set(new Int8Array(file, L.at + 8 * L.o, L.k * L.o), L.weights));
+
+    // y = biais + échelle x somme(q x entrée) / 127, puis le résidu et ReLU
+    const apply = (L, from, count, relu, residual) => {
+      const { k: K, o: O } = L;
+      const y = floats(L.out, count * O).fill(0);
+      if (O % 16 === 0) layer(from, L.weights, L.out, K, O, count);
+      else {
+        const x = floats(from, count * K);
+        for (let b = 0; b < count; b++)
+          for (let k = 0; k < K; k++) {
+            const v = x[b * K + k];
+            if (v) for (let o = 0; o < O; o++) y[b * O + o] += bytes[L.weights + k * O + o] * v;
+          }
+      }
+      const res = residual && floats(residual.out, count * O);
+      for (let i = 0; i < y.length; i++) {
+        let value = y[i] * L.factor[i % O] + L.bias[i % O] + (res ? res[i] : 0);
+        if (relu && value < 0) value = 0;
+        y[i] = value;
+      }
+      return L.out;
+    };
+    const run = async (colours, count) => {
+      const x = floats(input, count * 54 * 6).fill(0);
+      for (let i = 0; i < count * 54; i++) x[i * 6 + colours[i]] = 1;
+      let z = apply(layers[1], apply(layers[0], input, count, true), count, true);
+      let trunk = layers[1];
+      for (let l = 2; l < policy; l += 2) {
+        apply(layers[l + 1], apply(layers[l], z, count, true), count, true, trunk);
+        [z, trunk] = [layers[l + 1].out, layers[l + 1]];
+      }
+      apply(layers[policy], z, count, false);
+      apply(layers[policy + 2], apply(layers[policy + 1], z, count, true), count, false);
+      return {
+        logits: floats(layers[policy].out, count * 12).slice(),
+        values: floats(layers[policy + 2].out, count * 4).slice(),
+      };
+    };
+    return { width, run };
+  }
+
+  // Le réseau prêt à servir, sur la carte graphique s'il y en a une, sinon sur le processeur
+  async function load(onProgress) {
+    const adapter = await gpuAdapter();
+    const file = await download(onProgress);
+    return adapter ? gpuNetwork(adapter, file) : cpuNetwork(file);
   }
 
   // Les quatre versions du cube obtenu par l'algorithme alg, et pour chacune la traduction d'une de ses solutions
@@ -248,14 +404,14 @@ self.NeuralSolver = (() => {
   };
 
   // Recherche en faisceau : les coups qui résolvent le cube de l'algorithme alg, ou null
-  async function search(run, alg) {
+  async function search({ width, run }, alg) {
     const roots = [];
     for (const [view, { root }] of views.entries()) {
       const key = new Cube().move(root(alg)).asString();
       if (key === SOLVED) return [];
       if (!roots.some((r) => r.key === key)) roots.push({ key, parent: null, view });
     }
-    const colours = new Uint32Array(WIDTH * 54);
+    const colours = new Uint32Array(width * 54);
     const seen = new Set(roots.map((r) => r.key));
     let beam = roots;
     const path = (node) => (node.parent ? [...path(node.parent), node.action] : []);
@@ -274,13 +430,13 @@ self.NeuralSolver = (() => {
           children.push(child);
         }
       }
-      // les WIDTH meilleurs enfants jamais vus
+      // les width meilleurs enfants jamais vus
       children.sort((p, q) => p.cost - q.cost);
       beam = [];
       for (const child of children) {
         if (seen.has(child.key)) continue;
         seen.add(child.key);
-        if (beam.push(child) === WIDTH) break;
+        if (beam.push(child) === width) break;
       }
     }
     return null;
@@ -305,15 +461,15 @@ self.NeuralSolver = (() => {
   let model = null;
   const ready = (onProgress = () => {}) => (model ||= load(onProgress));
   return {
-    // null si le réseau peut tourner ici, sinon la raison : 'webgpu' ou 'gpu'
-    unusable: async () => (await gpuAdapter()).reason || null,
+    // null si le réseau peut tourner ici, sinon 'old' : ni WebGPU ni WebAssembly SIMD, un navigateur trop ancien
+    unusable: async () => ((await gpuAdapter()) || WebAssembly.validate(LAYER_WASM) ? null : 'old'),
     load: ready,
     // La solution du cube de l'algorithme alg (ses centres à leur place), en notation standard (« R U2 F' … », ou
     // null si le faisceau n'a rien trouvé), et la durée de la recherche (sans le téléchargement des poids)
     async solve(alg) {
-      const run = await ready();
+      const network = await ready();
       const start = performance.now();
-      const actions = await search(run, alg);
+      const actions = await search(network, alg);
       return { solution: actions && notation(actions), ms: performance.now() - start };
     },
   };

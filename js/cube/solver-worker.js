@@ -1,5 +1,6 @@
-// Worker de résolution, hors du thread principal, avec la méthode choisie : mon réseau de neurones sur la carte
-// graphique (WebGPU), ou cubejs (algorithme de Kociemba), qui prend aussi le relais si le réseau échoue.
+// Worker de résolution, hors du thread principal, avec la méthode choisie : mon réseau de neurones (sur la carte
+// graphique avec WebGPU, sinon sur le processeur en WebAssembly), ou cubejs (algorithme de Kociemba), qui prend aussi
+// le relais si le réseau échoue.
 // cubejs sert aussi à lire le cube : il rejoue les mouvements, le remet droit (centres à leur place) et donne
 // ses 54 facettes.
 importScripts(
@@ -19,8 +20,8 @@ function initKociemba() {
   }
 }
 
-// Pourquoi le réseau ne peut pas servir ici : null s'il le peut, 'webgpu', 'gpu', ou 'failed' quand la carte
-// graphique ou ses poids ont échoué ; trop lent, Kociemba le remplace seulement pour cette fois
+// Pourquoi le réseau ne peut pas servir ici : null s'il le peut, 'old' (navigateur trop ancien), ou 'failed' quand
+// ses poids ou son calcul ont échoué ; trop lent, Kociemba le remplace seulement pour cette fois
 let failed = false;
 const neuralReason = async () => (failed ? 'failed' : NeuralSolver.unusable());
 const TOO_SLOW = new Error('délai dépassé');
@@ -52,7 +53,7 @@ self.onmessage = async (event) => {
         try {
           // les poids peuvent mettre du temps à arriver sur un téléphone ; la recherche, elle, est rapide
           await Promise.race([loadNeural(), timeout(60000)]);
-          const result = await Promise.race([NeuralSolver.solve(`${alg} ${upright}`), timeout(10000)]);
+          const result = await Promise.race([NeuralSolver.solve(`${alg} ${upright}`), timeout(20000)]);
           if (result.solution !== null) found = { ...result, solver: 'neural' };
         } catch (e) {
           if (e !== TOO_SLOW) failed = true;

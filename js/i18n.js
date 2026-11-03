@@ -34,11 +34,7 @@ const UI = {
     solver: {
       title: 'Méthode de résolution',
       neural: 'Réseau de neurones',
-      off: {
-        webgpu: 'Indisponible : ce navigateur n’a pas WebGPU',
-        gpu: 'Indisponible : carte graphique non prise en charge',
-        failed: 'Indisponible : la carte graphique a échoué',
-      },
+      off: { old: 'Indisponible : navigateur trop ancien', failed: 'Indisponible : le calcul a échoué' },
       kociemba: 'Kociemba',
       stats: 'Dernières résolutions',
       columns: { neural: 'Réseau', kociemba: 'Kociemba' },
@@ -107,11 +103,7 @@ const UI = {
     solver: {
       title: 'Solving method',
       neural: 'Neural network',
-      off: {
-        webgpu: 'Unavailable: this browser has no WebGPU',
-        gpu: 'Unavailable: graphics card not supported',
-        failed: 'Unavailable: the graphics card failed',
-      },
+      off: { old: 'Unavailable: browser too old', failed: 'Unavailable: the computation failed' },
       kociemba: 'Kociemba',
       stats: 'Latest solves',
       columns: { neural: 'Network', kociemba: 'Kociemba' },

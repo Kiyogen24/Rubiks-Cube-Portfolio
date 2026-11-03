@@ -1,6 +1,6 @@
-// Les deux solveurs du bouton « Résoudre » : mon réseau de neurones (WebGPU), et Kociemba (cubejs) quand il
-// manque. En local, ces tests utilisent la carte graphique (--use-angle=swiftshader, dans la configuration, cache
-// WebGPU) ; en CI, sans carte graphique, Kociemba résout le cube et le test du réseau est sauté.
+// Les deux solveurs du bouton « Résoudre » : mon réseau de neurones, et Kociemba (cubejs) quand il manque. En local,
+// ces tests utilisent la carte graphique (--use-angle=swiftshader, dans la configuration, cache WebGPU) ; en CI, sans
+// carte graphique, le réseau tourne sur le processeur (voir aussi solver-cpu.spec.mjs).
 import { test, expect } from '@playwright/test';
 import { cubeAtHome, play, shuffle } from './helpers.mjs';
 
@@ -52,9 +52,8 @@ test('mélanger puis résoudre avec Kociemba quand mon réseau de neurones manqu
   await expect(column(page, 2)).toHaveText([/^\d+$/, /^\d+$/, /^[\d,.]+ m?s$/]);
 });
 
-test('mon réseau de neurones résout le cube sur la carte graphique, puis Kociemba sur demande', async ({ page }) => {
+test('mon réseau de neurones résout le cube, puis Kociemba sur demande', async ({ page }) => {
   await play(page);
-  test.skip(!(await page.evaluate(async () => Boolean(await navigator.gpu?.requestAdapter()))), 'pas de WebGPU');
   await expect(page.locator('#solver input[value="neural"]')).toBeChecked();
   let logs = await shuffleAndSolve(page);
   expect(logs.some((l) => l.includes('solution neural'))).toBe(true);
