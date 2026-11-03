@@ -52,7 +52,7 @@ self.onmessage = async (event) => {
         try {
           // les poids peuvent mettre du temps à arriver sur un téléphone ; la recherche, elle, est rapide
           await Promise.race([loadNeural(), timeout(60000)]);
-          const result = await Promise.race([NeuralSolver.solve(cube.asString()), timeout(10000)]);
+          const result = await Promise.race([NeuralSolver.solve(`${alg} ${upright}`), timeout(10000)]);
           if (result.solution !== null) found = { ...result, solver: 'neural' };
         } catch (e) {
           if (e !== TOO_SLOW) failed = true;

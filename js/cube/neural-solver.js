@@ -1,16 +1,20 @@
 // Mon réseau de neurones qui résout le Rubik's Cube, exécuté sur la carte graphique avec WebGPU.
 // Chargé par solver-worker.js, à côté de cubejs.
 // Le réseau lit la couleur des 54 facettes (dans l'ordre de cube.asString()) et donne, pour chacun des 12 quarts
-// de tour, la probabilité qu'il mène vers la solution. Une recherche en faisceau garde à chaque profondeur les
-// chemins les plus probables (log-probabilité cumulée de leurs coups), jusqu'à tomber sur le cube résolu.
+// de tour, la probabilité π(a | s) qu'il mène vers la solution, et sa valeur V(s), le nombre de coups estimé
+// jusqu'au cube résolu. Une recherche en faisceau développe à chaque profondeur ses états et garde les enfants de
+// plus petit coût V(s) - log π(a | s) : la politique classe les frères, la valeur du parent les familles, en une
+// seule évaluation du réseau par état. Elle part de quatre versions équivalentes du cube (lui-même, son inverse et
+// deux conjugués par les rotations de 120° autour de la diagonale URF), dont les erreurs du réseau diffèrent.
 // Les poids viennent de scripts/export-model.py : BatchNorm fusionnées, int8 avec une échelle par sortie.
 self.NeuralSolver = (() => {
   const MODEL_URL = new URL('../../assets/model/neural-solver.bin', self.location.href);
   const ACTIONS = ['F', "F'", 'B', "B'", 'L', "L'", 'R', "R'", 'U', "U'", 'D', "D'"]; // ordre des sorties du réseau
   const COLOUR = Object.fromEntries([...'URFDLB'].map((face, i) => [face, i]));
   const SOLVED = [...'URFDLB'].map((face) => face.repeat(9)).join('');
-  const WIDTH = 64; // chemins gardés à chaque profondeur : tous les cubes résolus, en 26 quarts de tour en moyenne
-  const MAX_DEPTH = 60;
+  const WIDTH = 256; // états gardés à chaque profondeur : tous les cubes résolus, en 24 quarts de tour en moyenne
+  const MAX_DEPTH = 40;
+  const LAMBDA = 1; // poids de la politique dans le coût
   const ROWS = 8; // états calculés ensemble par un fil du GPU (WIDTH en est un multiple)
   const RELU = 1;
   const RESIDUAL = 2;
@@ -92,7 +96,7 @@ self.NeuralSolver = (() => {
     return size;
   }
 
-  // Les poids (15 Mo), en suivant le téléchargement : onProgress(part reçue, de 0 à 1)
+  // Les poids (4 Mo), en suivant le téléchargement : onProgress(part reçue, de 0 à 1)
   async function download(onProgress) {
     const response = await fetch(MODEL_URL);
     if (!response.ok) throw new Error(`${MODEL_URL} : ${response.status}`);
@@ -136,13 +140,17 @@ self.NeuralSolver = (() => {
       layers.push({ k, o4: o / 4, w: upload(new Uint8Array(file, offset, 8 * o + k * o), usage.STORAGE) });
       offset += 8 * o + k * o;
     }
-    if (layers[0].k !== 54 * 6 || layers.at(-1).o4 * 4 !== ACTIONS.length) throw new Error('réseau inattendu');
+    // le tronc, la politique (12 sorties), puis la tête de valeur (deux couches)
+    const policy = layers.findIndex((L) => L.o4 * 4 === ACTIONS.length);
+    if (layers[0].k !== 54 * 6 || policy < 2 || layers.length !== policy + 3) throw new Error('réseau inattendu');
 
     const input = buffer(WIDTH * 54 * 4, usage.STORAGE | usage.COPY_DST);
     const hidden = buffer(WIDTH * layers[0].o4 * 16, usage.STORAGE);
     const [p0, p1, p2] = [0, 1, 2].map(() => buffer(WIDTH * layers[1].o4 * 16, usage.STORAGE));
     const logits = buffer(WIDTH * 48, usage.STORAGE | usage.COPY_SRC);
-    const readback = buffer(WIDTH * 48, usage.MAP_READ | usage.COPY_DST);
+    const valueHidden = buffer(WIDTH * layers[policy + 1].o4 * 16, usage.STORAGE);
+    const values = buffer(WIDTH * 16, usage.STORAGE | usage.COPY_SRC);
+    const readback = buffer(WIDTH * 64, usage.MAP_READ | usage.COPY_DST); // les logits, puis les valeurs
     const noResidual = buffer(16, usage.STORAGE); // un tampon ne sert qu'une fois par couche
     const pipeline = (code) =>
       device.createComputePipeline({
@@ -163,16 +171,18 @@ self.NeuralSolver = (() => {
       });
       steps.push({ kind, group, groups: o4, rows: kind === embed ? 1 : ROWS });
     };
-    // l'entrée, une couche cachée, des blocs résiduels relu(z + couche(relu(couche(z)))), puis la politique
+    // l'entrée, une couche cachée, des blocs résiduels relu(z + couche(relu(couche(z)))), puis les deux têtes
     step(embed, 0, input, hidden, RELU);
     step(dense, 1, hidden, p0, RELU);
     let [z, out] = [p0, p2];
-    for (let l = 2; l < n - 1; l += 2) {
+    for (let l = 2; l < policy; l += 2) {
       step(dense, l, z, p1, RELU);
       step(dense, l + 1, p1, out, RELU | RESIDUAL, z);
       [z, out] = [out, z];
     }
-    step(dense, n - 1, z, logits, 0);
+    step(dense, policy, z, logits, 0);
+    step(dense, policy + 1, z, valueHidden, RELU);
+    step(dense, policy + 2, valueHidden, values, 0);
 
     return async (colours, count) => {
       device.queue.writeBuffer(input, 0, colours, 0, count * 54);
@@ -189,33 +199,78 @@ self.NeuralSolver = (() => {
       });
       const copy = device.createCommandEncoder();
       copy.copyBufferToBuffer(logits, 0, readback, 0, count * 48);
+      copy.copyBufferToBuffer(values, 0, readback, WIDTH * 48, count * 16);
       device.queue.submit([...commands, copy.finish()]);
-      await readback.mapAsync(GPUMapMode.READ, 0, count * 48);
-      const result = new Float32Array(readback.getMappedRange(0, count * 48).slice(0));
+      await readback.mapAsync(GPUMapMode.READ);
+      const result = new Float32Array(readback.getMappedRange().slice(0));
       readback.unmap();
-      return result;
+      return { logits: result.subarray(0, count * 12), values: result.subarray(WIDTH * 12, WIDTH * 12 + count * 4) };
     };
   }
 
-  // Recherche en faisceau : les coups du chemin trouvé, ou null
-  async function search(run, facelets) {
-    if (facelets === SOLVED) return [];
+  // Les quatre versions du cube obtenu par l'algorithme alg, et pour chacune la traduction d'une de ses solutions
+  // en solution du cube : l'inverse se résout à rebours, un conjugué r⁻¹ · alg · r avec les faces tournées par r
+  const ROTATION = 'x y'; // 120° autour de la diagonale URF : le contenu de F passe en U, U en R, R en F
+  const INVERSE = Cube.inverse(ROTATION);
+  const invert = (actions) => actions.map((a) => (a.endsWith("'") ? a[0] : `${a}'`)).reverse();
+  // la face f vue après la rotation r : la même suite de facettes que r · f · r⁻¹
+  const relabel = (r, rInverse) => {
+    const map = {};
+    for (const f of 'URFDLB') {
+      const target = new Cube().move(`${r} ${f} ${rInverse}`).asString();
+      map[f] = [...'URFDLB'].find((g) => new Cube().move(g).asString() === target);
+    }
+    return (actions) => actions.map((a) => map[a[0]] + a.slice(1));
+  };
+  const views = [
+    { root: (alg) => alg, back: (actions) => actions },
+    { root: (alg) => Cube.inverse(alg), back: invert },
+    { root: (alg) => `${INVERSE} ${alg} ${ROTATION}`, back: relabel(ROTATION, INVERSE) },
+    { root: (alg) => `${ROTATION} ${alg} ${INVERSE}`, back: relabel(INVERSE, ROTATION) },
+  ];
+
+  // Les 12 quarts de tour comme permutations des facettes : après le coup a, la facette en position i vient de la
+  // position MOVES[a][i]. Déduites de cubejs en comparant des cubes au hasard avant et après le coup ; le faisceau
+  // ne manipule ensuite que des chaînes de facettes, trois fois plus vite qu'avec cubejs
+  const MOVES = ACTIONS.map((action) => {
+    const samples = Array.from({ length: 16 }, () => {
+      const cube = Cube.random();
+      return [cube.asString(), cube.move(action).asString()];
+    });
+    return Array.from({ length: 54 }, (_, i) =>
+      [...Array(54).keys()].find((j) => samples.every(([before, after]) => before[j] === after[i])),
+    );
+  });
+  const apply = (key, move) => {
+    let next = '';
+    for (let i = 0; i < 54; i++) next += key[move[i]];
+    return next;
+  };
+
+  // Recherche en faisceau : les coups qui résolvent le cube de l'algorithme alg, ou null
+  async function search(run, alg) {
+    const roots = [];
+    for (const [view, { root }] of views.entries()) {
+      const key = new Cube().move(root(alg)).asString();
+      if (key === SOLVED) return [];
+      if (!roots.some((r) => r.key === key)) roots.push({ key, parent: null, view });
+    }
     const colours = new Uint32Array(WIDTH * 54);
-    const seen = new Set([facelets]);
-    let beam = [{ cube: Cube.fromString(facelets), key: facelets, cost: 0, parent: null }];
+    const seen = new Set(roots.map((r) => r.key));
+    let beam = roots;
     const path = (node) => (node.parent ? [...path(node.parent), node.action] : []);
     for (let depth = 0; depth < MAX_DEPTH && beam.length; depth++) {
       beam.forEach((s, b) => [...s.key].forEach((face, i) => (colours[b * 54 + i] = COLOUR[face])));
-      const logits = await run(colours, beam.length);
+      const { logits, values } = await run(colours, beam.length);
       const children = [];
       for (const [b, parent] of beam.entries()) {
         const z = logits.subarray(b * 12, b * 12 + 12);
         const max = Math.max(...z);
         const logSum = max + Math.log(z.reduce((sum, v) => sum + Math.exp(v - max), 0));
         for (const [a, action] of ACTIONS.entries()) {
-          const cube = parent.cube.clone().move(action);
-          const child = { cube, key: cube.asString(), cost: parent.cost + logSum - z[a], parent, action };
-          if (child.key === SOLVED) return path(child);
+          const cost = values[b * 4] + LAMBDA * (logSum - z[a]); // V(s) - λ log π(a | s)
+          const child = { key: apply(parent.key, MOVES[a]), cost, parent, action, view: parent.view };
+          if (child.key === SOLVED) return views[child.view].back(path(child));
           children.push(child);
         }
       }
@@ -253,12 +308,12 @@ self.NeuralSolver = (() => {
     // null si le réseau peut tourner ici, sinon la raison : 'webgpu' ou 'gpu'
     unusable: async () => (await gpuAdapter()).reason || null,
     load: ready,
-    // La solution en notation standard (« R U2 F' … », ou null si le faisceau n'a rien trouvé) et la durée de la
-    // recherche (sans le téléchargement des poids)
-    async solve(facelets) {
+    // La solution du cube de l'algorithme alg (ses centres à leur place), en notation standard (« R U2 F' … », ou
+    // null si le faisceau n'a rien trouvé), et la durée de la recherche (sans le téléchargement des poids)
+    async solve(alg) {
       const run = await ready();
       const start = performance.now();
-      const actions = await search(run, facelets);
+      const actions = await search(run, alg);
       return { solution: actions && notation(actions), ms: performance.now() - start };
     },
   };
