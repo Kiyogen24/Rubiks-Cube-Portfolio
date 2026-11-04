@@ -32,7 +32,7 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 - Mode sombre/clair avec sauvegarde des préférences
 - Changement de langue dynamique (FR/EN) via le bouton de langue
 - Même site sur téléphone (cartes en bas de l'écran)
-- Mode jeu : rotations de rangées au doigt, mélange, résolution automatique, zoom à la molette ou en pinçant
+- Mode jeu : rotations de rangées au doigt, mélange, zoom à la molette ou en pinçant, résolution automatique par mon réseau de neurones ou par l'algorithme de Kociemba, au choix, avec les chiffres des deux méthodes côte à côte
 - Une fête quand le cube est résolu à la main (confettis en forme de stickers, score), puis la page descend vers « Contactez-moi »
 - Section « Contactez-moi » en fin de page : on y écrit son message, le bouton ouvre la messagerie avec le mail rédigé ; l'adresse se copie aussi
 - Navigation au clavier (flèches, Entrée, Échap)
@@ -48,7 +48,8 @@ Un portfolio interactif et immersif présenté sous la forme d'un Rubik's Cube e
 ### Bibliothèques
 
 - Three.js pour les graphiques 3D
-- cubejs (algorithme de Kociemba) pour la résolution automatique du cube, exécuté dans un Web Worker
+- Mon réseau de neurones (entraîné avec PyTorch, quantifié en int8) pour la résolution automatique, exécuté dans un Web Worker avec WebGPU, ou en WebAssembly SIMD sans carte graphique
+- cubejs (algorithme de Kociemba), l'autre méthode de résolution
 - Polices Bricolage Grotesque et Instrument Sans (Google Fonts)
 
 ## Installation
@@ -93,6 +94,7 @@ python scripts/cv-images.py
 ```plaintext
 ├── assets/              # Images et ressources
 │   ├── cv/              # Le CV en images (scripts/cv-images.py)
+│   ├── model/           # Les poids de mon réseau de neurones (scripts/export-model.py)
 │   ├── og-image.jpg     # Aperçu de partage
 │   ├── pp.png
 │   └── previews/        # Images des contenus, CV en PDF (cv.pdf, cv_en.pdf)
@@ -115,14 +117,19 @@ python scripts/cv-images.py
 │   │   ├── hover.js
 │   │   ├── modes.js     # Accueil, exploration, jeu
 │   │   ├── play.js      # Rangées, mélange, résolution
-│   │   ├── solver-worker.js
+│   │   ├── solver-worker.js # Worker de résolution
+│   │   ├── neural-solver.js # Mon réseau de neurones (WebGPU ou WebAssembly) et sa recherche en faisceau
 │   │   ├── textures.js
 │   │   └── math.js      # Ressorts et rotations
 │   ├── ui/
-│   │   └── controls.js  # Patron, face devant, commandes du jeu
+│   │   ├── controls.js  # Patron, face devant, commandes du jeu
+│   │   ├── solver.js    # Panneau des méthodes de résolution
+│   │   ├── celebrate.js # La fête du cube résolu
+│   │   ├── confetti.js
+│   │   └── contact.js   # « Contactez-moi »
 │   └── utils/
 │       └── constants.js # Tout le contenu du portfolio (FR/EN)
-├── scripts/             # Serveur de développement, images du CV
+├── scripts/             # Serveur de développement, images du CV, export du réseau
 ├── tests/               # Tests Playwright
 └── package.json         # Configuration npm
 ```
@@ -135,7 +142,7 @@ python scripts/cv-images.py
 
 - Scène Three.js : le cube tourne sur lui-même (ressorts façon Apple, élan au lâcher), la caméra cadre selon le défilement
 - Images des contenus posées sur les stickers de la face tournée vers soi
-- Jeu : chaque rangée tourne autour d'un pivot ; la résolution passe par l'algorithme de Kociemba (cubejs, dans un worker), ou rejoue les mouvements à l'envers si cubejs n'est pas disponible
+- Jeu : chaque rangée tourne autour d'un pivot ; la résolution passe, dans un worker, par mon réseau de neurones ou par l'algorithme de Kociemba (cubejs), qui prend le relais si le réseau ne peut pas tourner, et rejoue les mouvements à l'envers si aucun des deux n'est disponible
 
 #### Interface Utilisateur
 

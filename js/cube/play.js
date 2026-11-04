@@ -369,7 +369,7 @@ export function resetCube() {
   S.markDirty = true;
 }
 
-// ---------- Les solveurs, dans un worker : mon réseau de neurones (WebGPU), sinon Kociemba (cubejs) ----------
+// ---------- Les solveurs, dans un worker : mon réseau de neurones, ou Kociemba (cubejs) ----------
 // Notation standard → rangée. Un quart de tour positif fait +90° autour de l'axe ;
 // `cw` est le sens horaire de la notation, vu depuis la face concernée.
 const NOTATION = {
@@ -413,7 +413,8 @@ let workerFailed = false;
 const requests = new Map();
 let nextRequestId = 0;
 
-// Lancé dès qu'on entre dans le jeu : sans WebGPU, les tables de Kociemba se calculent pendant le mélange
+// Lancé dès qu'on entre dans le jeu : si mon réseau ne peut pas tourner ici, les tables de Kociemba se calculent
+// pendant le mélange
 export function startSolver() {
   if (worker || workerFailed || typeof Worker === 'undefined') return;
   worker = new Worker(new URL('./solver-worker.js', import.meta.url));

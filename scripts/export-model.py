@@ -1,5 +1,5 @@
 """
-Exporte mon réseau de neurones (network_torch.ResMLP, encodage stickers, tête policy, et tête value s'il en a une)
+Exporte mon réseau de neurones (network_torch.ResMLP, encodage stickers, têtes policy et value)
 pour le navigateur : les BatchNorm sont fusionnées dans les couches linéaires, puis chaque poids est quantifié en
 int8 avec une échelle par sortie. Le fichier est lu par js/cube/neural-solver.js.
 
@@ -39,11 +39,8 @@ def layers_of(model):
 
 
 def value_linears(model):
-    """Les couches linéaires de la tête value (aucune sans tête value)."""
-    head = model.heads["value"] if "value" in model.heads else None
-    if head is None:
-        return []
-    return [m for m in head if isinstance(m, torch.nn.Linear)] if isinstance(head, torch.nn.Sequential) else [head]
+    """Les deux couches linéaires de la tête value."""
+    return [m for m in model.heads["value"] if isinstance(m, torch.nn.Linear)]
 
 
 def pad(w, b):
@@ -72,7 +69,8 @@ def main():
 
     model, _ = nt.load(args.checkpoint)
     config = model.config
-    assert config["encoding"] == "stickers" and "policy" in config["heads"] and not config["canonical"], config
+    assert config["encoding"] == "stickers" and not config["canonical"], config
+    assert {"policy", "value"} <= set(config["heads"]) and len(value_linears(model)) == 2, config
     layers = [(*quantize(w), b) for w, b in layers_of(model)]
 
     with open(args.out, "wb") as f:

@@ -2,7 +2,6 @@
   "name": "rubiks-cube",
   "version": "1.0.0",
   "description": "Un portfolio en 3D avec un Rubik's Cube flottant représentant différentes catégories.",
-  "main": "main.js",
   "scripts": {
     "start": "node scripts/serve.mjs --watch",
     "test": "playwright test",
@@ -10,16 +9,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-  "dependencies": {
-    "three": "^0.152.2"
-  },
   "keywords": [
     "3D",
     "portfolio",
     "Rubik's Cube",
     "Three.js"
   ],
-  "author": "Votre Nom",
+  "author": "Romain Goldenchtein",
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.39.5",
